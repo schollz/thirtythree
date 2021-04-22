@@ -13,7 +13,7 @@ function Graphics:new(o)
   return o
 end
 
-function Graphics:make_dirty()
+function Graphics:update()
 	self.dirty=true
 end
 

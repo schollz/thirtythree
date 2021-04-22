@@ -15,7 +15,9 @@ function init()
 end
 
 function updater(c)
-  redraw()
+	if true==false then
+		graphics:update()
+	end
 end
 
 function enc(k,d)
