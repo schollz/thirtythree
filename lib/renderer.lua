@@ -44,8 +44,52 @@ function Renderer:register_renderer()
   end)
 end
 
+
+-- zoom in/out of a rendered waveform
+function Renderer:zoom(filename,zoom,i)
+  local window = self.rendered[filename].window
+  local loop_points = self.rendered[filename].loop_points
+  local di=zoom*math.abs(loop_points[i]-window[1])
+  local di2=zoom*math.abs(loop_points[i]-window[2])
+  if di2>di then
+    di=di2
+  end
+  window[1]=loop_points[i]-di
+  if window[1] < 0 then 
+    window[1] = 0
+  end
+  window[2]=loop_points[i]+di
+  self.rendered[filename].window=window
+  self:render(filename,window[1],window[2])
+end
+
+-- jog back/forth translates the loop points
+-- window zooms to fix if you jog one side
+function Renderer:jog(filename,i,d)
+  local p=self.rendered[filename].loop_points[i]
+  local window = self.rendered[filename].window
+  -- if point is out of window, stretch window
+  if p > window[2] then 
+    window[2] = math.min(p,1)
+  end
+  if p < window[1] then 
+    window[1] = math.max(p,0)
+  end
+  -- convert to pixels
+  p = util.linlin(window[1],window[2],1,128,p)
+  -- increase by amount d
+  p = p + d
+  -- convert back to the window
+  p = util.linlin(1,128,window[1],window[2],p)
+  self.rendered[filename].window=window
+  self.rendered[filename].loop_points[i]=p
+  self:render(filename,window[1],window[2])
+end
+
 -- draw a waveform
-function Renderer:draw(filename,window,loop_points)
+function Renderer:draw(filename)
+  local window = self.rendered[filename].window
+  local loop_points = self.rendered[filename].loop_points
   local waveform_height=40
   local waveform_center=38
   local lp={}
@@ -103,6 +147,8 @@ function Renderer:render(filename,s,e)
     }
     self.rendered[filename].ch,self.rendered[filename].samples,self.rendered[filename].sample_rate=audio.file_info(filename)
     self.rendered[filename].duration=self.rendered[filename].samples/48000.0
+    self.rendered[filename].window={0,self.rendered[filename].duration}
+    self.rendered[filename].loop_points={0,self.rendered[filename].duration}
   end
 
   if self.file_loaded~=filename then
