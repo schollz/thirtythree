@@ -19,7 +19,7 @@ function Sound:new(o)
       e=1,
       amp=1.0,
       effect=0,
-      rate_from_type=i/4,
+      rate_from_type=i/4, -- TODO calculate from scale
     }
   end
   o.type == "melodic" or o.type
@@ -91,3 +91,5 @@ function Sound:set_start_end(i,s,e)
   self.splices[i].s=s
   self.splices[i].e=e
 end
+
+
