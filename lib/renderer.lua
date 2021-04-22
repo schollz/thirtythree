@@ -44,6 +44,42 @@ function Renderer:register_renderer()
   end)
 end
 
+-- draw a waveform
+function Renderer:draw(filename,window,loop_points)
+  local waveform_height=40
+  local waveform_center=38
+  local lp={}
+  lp[1]=util.round(util.linlin(window[1],window[2],1,128,loop_points[1]))
+  lp[2]=util.round(util.linlin(window[1],window[2],1,128,loop_points[2]))
+  if loop_points[2]>window[2] then
+    lp[2]=129
+  end
+  local wf=self:render(filename,window[1],window[2])
+  if wf[1]~=nil and wf[2]~=nil then
+    for j=1,2 do
+      for i,s in ipairs(wf[j]) do
+        local height=util.clamp(0,waveform_height,util.round(math.abs(s)*waveform_height))
+        screen.level(13)
+        if i<lp[1] or i>lp[2] then
+          screen.level(4)
+        end
+        if math.abs(pos-i)<2 then
+          if j==1 then
+            screen.level(5)
+            screen.move(i,14)
+            screen.line(i,59)
+            screen.stroke()
+          end
+          screen.level(15)
+        end
+        screen.move(i,waveform_center)
+        screen.line_rel(0,(j*2-3)*height/2)
+        screen.stroke()
+      end
+    end
+  end
+end
+
 function Renderer:render(filename,s,e)
   if self.in_render_function then 
     do return end
