@@ -11,8 +11,12 @@ function Sound:new(o)
   setmetatable(o,self)
   self.__index=self
   self.__tostring=function(t) return t:to_string() end
+
+  -- parameters
   o.melodic=o.melodic or true
-  o.index_sc=o.index_sc or 1
+  o.id=o.id or 1
+
+  -- defaults
   o.splices={}
   for i=1,16 do
     o.splices[i]={
@@ -61,13 +65,14 @@ end
 
 -- Sound:press will play a sound from a button
 function Sound:play(i,override)
+  local voice=voices:get(self.id)
   local s=override.s or self.splices[i].s
   local e=override.e or self.splices[i].e
   if mode_debug then
-    print("playing "..self.name.." on sc slot "..self.index_sc.." at pos ("..s..","..e..")")
+    print("playing "..self.name.." on voice "..voice.." at pos ("..s..","..e..")")
   end
   engine.tt_play(
-    self.index_sc,
+    voice,
     override.amp or self.splices[i].amp,
     self.splices[i].rate_from_type,
     s,
@@ -86,7 +91,7 @@ end
 
 function Sound:set_start_end(i,s,e)
   if mode_debug then
-    print("setting "..self.name.." on sc slot "..self.index_sc.." to pos ("..s..","..e..")")
+    print("setting "..self.name.." to pos ("..s..","..e..")")
   end
   self.splices[i].s=s
   self.splices[i].e=e

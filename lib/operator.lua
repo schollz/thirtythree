@@ -11,13 +11,16 @@ function Operator:new(o)
   self.__index=self
   self.__tostring=function(t) return t:to_string() end
 
-  o.index=o.index or 1
+  -- parameters
+  o.id=o.id or 1
+
+  -- defaults
   o.sound={}
   o.sound_current=1
   o.sound_button=1
   for i=1,16 do
     o.sound[i]=sound_:new({
-      index_sc=(o.index-1)*16+i
+      id=(o.id-1)*16+i
       melodic=i<9,
     })
   end
