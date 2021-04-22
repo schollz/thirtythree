@@ -7,6 +7,8 @@ function Dev:new(o)
   self.__index=self
 
 
+  sel_filename="/home/we/dust/audio/tehn/something.wav"
+
   return o
 end
 

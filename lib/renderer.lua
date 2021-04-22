@@ -46,6 +46,9 @@ end
 
 -- fit the waveform to the set points
 function Renderer:fit(filename,s,e)
+  if filename=="" then
+    do return end
+  end
   if self.rendered[filename]~=nil then
     self.rendered[filename].window={s,e}
     self.rendered[filename].loop_points={s,e}
@@ -55,6 +58,9 @@ end
 
 -- zoom in/out of a rendered waveform
 function Renderer:zoom(filename,zoom,i)
+  if filename=="" then
+    do return end
+  end
   local window=self.rendered[filename].window
   local loop_points=self.rendered[filename].loop_points
   local di=zoom*math.abs(loop_points[i]-window[1])
@@ -74,6 +80,9 @@ end
 -- jog back/forth translates the loop points
 -- window zooms to fix if you jog one side
 function Renderer:jog(filename,i,d)
+  if filename=="" then
+    do return end
+  end
   local p=self.rendered[filename].loop_points[i]
   local window=self.rendered[filename].window
   -- if point is out of window, stretch window
@@ -96,6 +105,13 @@ end
 
 -- draw a waveform
 function Renderer:draw(filename)
+  if filename=="" then
+    do return end
+  end
+  if self.rendered[filename]==nil then
+    self:render(filename,0,1)
+    do return end
+  end
   local window=self.rendered[filename].window
   local loop_points=self.rendered[filename].loop_points
   local waveform_height=40
@@ -133,6 +149,9 @@ function Renderer:draw(filename)
 end
 
 function Renderer:render(filename,s,e)
+  if filename=="" then
+    do return end
+  end
   if self.in_render_function then
     do return end
   end

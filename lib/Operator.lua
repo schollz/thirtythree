@@ -16,7 +16,7 @@ function Operator:new(o)
   o.sound_current=1
   o.sound_button=1
   for i=1,16 do
-    o.sound[i]=sound_class:new({
+    o.sound[i]=sound_:new({
       index_sc=(o.index-1)*16+i
       melodic=i<9,
     })
@@ -53,31 +53,24 @@ function Operator:pattern_update(position)
     self.pattern[self.pattern_current][self.sound_current][self.sound_button]=position
   else
     self.pattern[self.pattern_current][self.sound_current][self.sound_button]=nil
+    if #self.pattern[self.pattern_current][self.sound_current]==0 then
+      self.pattern[self.pattern_current][self.sound_current]=nil
+    end
   end
+end
 
-  function Operator:pattern_play(step)
-    -- play all buttons at specified step
-    for _,pattern in pairs(self.pattern[self.pattern_curent]) do
-      for _,sound_id in pairs(pattern) do
-        for _,button in pairs(sound_pattern) do
-          if button==step then
-            self.sound[sound_id]:play(button)
-          end
+function Operator:pattern_play(step)
+  -- play all buttons at specified step
+  for _,pattern in pairs(self.pattern[self.pattern_curent]) do
+    for _,sound_id in pairs(pattern) do
+      for _,button in pairs(sound_pattern) do
+        if button==step then
+          self.sound[sound_id]:play(button)
         end
       end
     end
   end
+end
 
 
-
-
-
-
-
-
-
-
-
-
-
- 
+return Operato

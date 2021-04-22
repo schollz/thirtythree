@@ -11,6 +11,7 @@ function Sound:new(o)
   setmetatable(o,self)
   self.__index=self
   self.__tostring=function(t) return t:to_string() end
+  o.melodic=o.melodic or true
   o.index_sc=o.index_sc or 1
   o.splices={}
   for i=1,16 do
@@ -22,8 +23,7 @@ function Sound:new(o)
       rate_from_type=i/4,-- TODO calculate from scale
     }
   end
-  o.type=="melodic" or o.type
-  if o.type=="drum" then
+  if not o.melodic then
     for i=1,16 do
       o.splices[i]={
         s=(i-1)/16,
@@ -91,5 +91,8 @@ function Sound:set_start_end(i,s,e)
   self.splices[i].s=s
   self.splices[i].e=e
 end
+
+
+return Sound
 
 
