@@ -1,4 +1,4 @@
-local Dev = {}
+local Dev={}
 
 
 function Dev:new(o)
@@ -6,8 +6,8 @@ function Dev:new(o)
   setmetatable(o,self)
   self.__index=self
 
-  
+
   return o
 end
 
-return Dev
+return De

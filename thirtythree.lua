@@ -15,9 +15,9 @@ function init()
 end
 
 function updater(c)
-	if true==false then
-		graphics:update()
-	end
+  if true==false then
+    graphics:update()
+  end
 end
 
 function enc(k,d)

@@ -12,7 +12,7 @@ function Renderer:new(o)
   end
   o.in_render_function=false
   o.file_loaded=""
-  o.current_render = {}
+  o.current_render={}
   o.rendered={} -- map from filename to renders
   o:register_renderer()
   return o
@@ -20,7 +20,7 @@ end
 
 function Renderer:register_renderer()
   softcut.event_render(function(ch,start,i,s)
-    if self.current_render.filename == nil or self.rendered[self.current_render.filename]==nil then 
+    if self.current_render.filename==nil or self.rendered[self.current_render.filename]==nil then
       print("asked for render with nothing ready?")
       do return end
     end
@@ -44,19 +44,27 @@ function Renderer:register_renderer()
   end)
 end
 
+-- fit the waveform to the set points
+function Renderer:fit(filename,s,e)
+  if self.rendered[filename]~=nil then
+    self.rendered[filename].window={s,e}
+    self.rendered[filename].loop_points={s,e}
+  end
+  self:render(filename,s,e)
+end
 
 -- zoom in/out of a rendered waveform
 function Renderer:zoom(filename,zoom,i)
-  local window = self.rendered[filename].window
-  local loop_points = self.rendered[filename].loop_points
+  local window=self.rendered[filename].window
+  local loop_points=self.rendered[filename].loop_points
   local di=zoom*math.abs(loop_points[i]-window[1])
   local di2=zoom*math.abs(loop_points[i]-window[2])
   if di2>di then
     di=di2
   end
   window[1]=loop_points[i]-di
-  if window[1] < 0 then 
-    window[1] = 0
+  if window[1]<0 then
+    window[1]=0
   end
   window[2]=loop_points[i]+di
   self.rendered[filename].window=window
@@ -67,20 +75,20 @@ end
 -- window zooms to fix if you jog one side
 function Renderer:jog(filename,i,d)
   local p=self.rendered[filename].loop_points[i]
-  local window = self.rendered[filename].window
+  local window=self.rendered[filename].window
   -- if point is out of window, stretch window
-  if p > window[2] then 
-    window[2] = math.min(p,1)
+  if p>window[2] then
+    window[2]=math.min(p,1)
   end
-  if p < window[1] then 
-    window[1] = math.max(p,0)
+  if p<window[1] then
+    window[1]=math.max(p,0)
   end
   -- convert to pixels
-  p = util.linlin(window[1],window[2],1,128,p)
+  p=util.linlin(window[1],window[2],1,128,p)
   -- increase by amount d
-  p = p + d
+  p=p+d
   -- convert back to the window
-  p = util.linlin(1,128,window[1],window[2],p)
+  p=util.linlin(1,128,window[1],window[2],p)
   self.rendered[filename].window=window
   self.rendered[filename].loop_points[i]=p
   self:render(filename,window[1],window[2])
@@ -88,8 +96,8 @@ end
 
 -- draw a waveform
 function Renderer:draw(filename)
-  local window = self.rendered[filename].window
-  local loop_points = self.rendered[filename].loop_points
+  local window=self.rendered[filename].window
+  local loop_points=self.rendered[filename].loop_points
   local waveform_height=40
   local waveform_center=38
   local lp={}
@@ -125,7 +133,7 @@ function Renderer:draw(filename)
 end
 
 function Renderer:render(filename,s,e)
-  if self.in_render_function then 
+  if self.in_render_function then
     do return end
   end
   self.in_render_function=true
@@ -153,7 +161,7 @@ function Renderer:render(filename,s,e)
 
   if self.file_loaded~=filename then
     -- load file
-    softcut.buffer_read_stereo(filename, 0,0,-1)
+    softcut.buffer_read_stereo(filename,0,0,-1)
     self.file_loaded=filename
   end
 

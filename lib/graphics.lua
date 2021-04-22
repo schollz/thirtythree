@@ -1,4 +1,4 @@
-local Graphics = {}
+local Graphics={}
 
 
 function Graphics:new(o)
@@ -8,22 +8,22 @@ function Graphics:new(o)
 
   o.alert_msg=""
   o.dirty=false
-  o.fps= 15
+  o.fps=15
   clock.run(o:redraw_clock)
   return o
 end
 
 function Graphics:update()
-	self.dirty=true
+  self.dirty=true
 end
 
 function Graphics.redraw_clock()
   while true do
-  	if self.dirty then
-  		self.dirty=false
-  		redraw()
-	end
-    clock.sleep(1 / Graphics.fps)
+    if self.dirty then
+      self.dirty=false
+      redraw()
+    end
+    clock.sleep(1/Graphics.fps)
   end
 end
 
@@ -39,20 +39,20 @@ function Graphics:alert(msg)
 end
 
 function Graphics:show_alert_if_needed()
-	if self.alert_msg == nil then 
-		do return end 
-	end
-    screen.level(0)
-    local x=64
-    local y=28
-    local w=string.len(msg)*6
-    screen.rect(x-w/2,y,w,10)
-    screen.fill()
-    screen.level(15)
-    screen.rect(x-w/2,y,w,10)
-    screen.stroke()
-    screen.move(x,y+7)
-    screen.text_center(msg)
+  if self.alert_msg==nil then
+    do return end
+  end
+  screen.level(0)
+  local x=64
+  local y=28
+  local w=string.len(msg)*6
+  screen.rect(x-w/2,y,w,10)
+  screen.fill()
+  screen.level(15)
+  screen.rect(x-w/2,y,w,10)
+  screen.stroke()
+  screen.move(x,y+7)
+  screen.text_center(msg)
 end
 
 function Graphics:box_text(x,y,s,invert)
@@ -91,4 +91,4 @@ function Graphics:metro_icon(tick,x,y)
   screen.stroke()
 end
 
-return Graphics
+return Graphic
