@@ -73,4 +73,4 @@ function Operator:pattern_play(step)
 end
 
 
-return Operato
+return Operator
