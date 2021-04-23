@@ -5,6 +5,7 @@
 
 Operator={}
 
+-- button constants
 B_SOUND=1
 B_PATTERN=2
 B_BPM=3
@@ -14,6 +15,12 @@ B_WRITE=20
 B_PLAY=21
 B_FX=22
 B_RECORD=23
+
+-- adjust constants
+ADJ_NONE=1
+ADJ_TRIM=2
+ADJ_TONE=3
+ADJ_FILT=4
 
 function Operator:new(o)
   o=o or {}
@@ -66,7 +73,7 @@ end
 function Operator:pattern_initialize(ptn_id)
   -- initialize all the steps
   for ptn_step=1,16 do
-    self.pattern[ptn_id][ptn_step]={fx_id=16,snd_id=0,smpl_id=0}
+    self.pattern[ptn_id][ptn_step]={fx_id=16,snd={}}
   end
 end
 
@@ -87,9 +94,9 @@ function Operator:sound_load(i,filename)
   self.sound[i]:load(filename)
 end
 
-function Operator:sound_play(snd_id,smpl_id)
-  overwrite={}
-  if self.button[B_FX].pressed and self.effect_current>0 then
+function Operator:sound_play(snd_id,smpl_id,overwrite)
+  overwrite=overwrite or {}
+  if self.button[B_FX].pressed and self.effect_current>0 and overwrite.effect==nil then
     overwrite.effect=self.effect_current
   end
   -- TODO: check for overwriting filter/pitch
@@ -102,6 +109,15 @@ end
 
 function Operator:sound_set_fx_all_current()
   -- TODO
+end
+
+function Operator:pattern_has_sound(ptn_id)
+  for ptn_step,_ in ipairs(self.pattern[ptn_id]) do
+    if #self.pattern[ptn_id][ptn_step].snd > 0 then 
+      return true
+    end
+  end
+  return false
 end
 
 function Operator:pattern_get_sample(ptn_id,ptn_step,snd_id)
@@ -123,6 +139,7 @@ function Operator:buttons_register()
   self.mode_play=false
   self.mode_write=false
   self.mode_switchpattern=false
+  self.mode_adjust=ADJ_NONE
   self.buttons={}
   for i=1,23 do
     self.buttons[i]={pressed=false,time_press=0}
@@ -194,11 +211,11 @@ function Operator:buttons_register()
 
   -- steps "1" to "16"
   for i=B_BUTTON_FIRST,B_BUTTON_LAST do
-    b=i-B_BUTTON_FIRST+1 -- the button number [1,16]
+    local b=i-B_BUTTON_FIRST+1 -- the button number [1,16]
     self.buttons[i].off_press=function()
       if self.mode_write then
         -- toggle a step here for the current sound
-        self:pattern_toggle_sample(self.pattern_current,self.sound_current,b)
+        self:pattern_toggle_sample(self.cur_ptn_id,self.cur_snd_id,b)
       end
       if self.buttons[B_FX].pressed then
         self.effect_current=0
@@ -211,7 +228,7 @@ function Operator:buttons_register()
           -- new chain
           self:debug("switching pattern to "..i)
           self.pattern_chain={i}
-          self.pattern_current=i
+          self.cur_ptn_id=i
           self.mode_switchpattern=false
         else
           -- add to the chain
@@ -220,7 +237,7 @@ function Operator:buttons_register()
         end
       elseif self.buttons[B_SOUND].pressed then
         -- change sound
-        self.sound_current=b
+        self.cur_snd_id=b
       elseif self.buttons[B_FX].pressed and self.mode_play then
         -- update the current effect
         self.effect_current=b
@@ -229,19 +246,25 @@ function Operator:buttons_register()
           self:sound_set_fx_all_current()
         end
       elseif not self.mode_write then
-        -- TODO: play this sound
+        -- set this sample to default
+        self.cur_smpl_id=b
+        -- play this sample in sound, without effects
+        self:sound_play(self.cur_snd_id,self.cur_smpl_id,{effect=16})
         if self.mode_play and self.buttons[B_WRITE].pressed then
-          -- TODO: put current sound onto current playing step
+          -- put current sound onto current playing step
+          self.pattern[self.cur_ptn_id][self.cur_ptn_step].snd[self.cur_snd_id]=self.cur_smpl_id
+          -- TODO (stretch goal): actually, put current sound onto *closest* playing step
         end
       end
     end
+    -- lighting of the button
     self.buttons[i].light=function()
       if self.buttons[i].pressed then
         return 14
       end
       if self.buttons[B_SOUND].pressed then
         -- if sound pressed, show if this button has sound loaded / is active sound
-        if self.sound_current==b then
+        if self.cur_snd_id==b then
           -- active sound
           return 14
         elseif self.sound[b].loaded then
@@ -250,10 +273,10 @@ function Operator:buttons_register()
         end
       elseif self.buttons[B_PATTERN].pressed then
         -- if pattern pressed, show if this button has pattern / is active pattern
-        if self.pattern_current==b then
+        if self.cur_ptn_id==b then
           -- active pattern
           return 14
-        elseif #self.pattern[i]>0 then
+        elseif self:pattern_has_sound(b) then
           -- has pattern
           return 7
         end
