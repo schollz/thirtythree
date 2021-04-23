@@ -95,7 +95,7 @@ Engine_Thirtythree : CroneEngine {
             // lua is sending 1-index
             sampleBuffThirtythree[msg[1]-1].free;
             sampleBuffThirtythree[msg[1]-1] = Buffer.read(context.server,msg[2]);
-            playerAmen[msg[1]-1].set(
+            playerThirtythree[msg[1]-1].set(
                 \bufnum,sampleBuffThirtythree[msg[1]-1],
             );
         });

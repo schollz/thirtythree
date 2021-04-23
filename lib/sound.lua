@@ -17,9 +17,9 @@ function Sound:new(o)
   o.id=o.id or 1
 
   -- defaults
-  o.splices={}
+  o.sample={}
   for i=1,16 do
-    o.splices[i]={
+    o.sample[i]={
       s=0,
       e=1,
       amp=1.0,
@@ -29,7 +29,7 @@ function Sound:new(o)
   end
   if not o.melodic then
     for i=1,16 do
-      o.splices[i]={
+      o.sample[i]={
         s=(i-1)/16,
         e=i/16,
         rate_from_type=1,
@@ -63,21 +63,21 @@ function Sound:load(filename)
 end
 
 
--- Sound:press will play a sound from a button
+-- Sound:press will play a sound from a sample
 function Sound:play(i,override)
   local voice=voices:get(self.id)
-  local s=override.s or self.splices[i].s
-  local e=override.e or self.splices[i].e
+  local s=override.s or self.sample[i].s
+  local e=override.e or self.sample[i].e
   if mode_debug then
     print("playing "..self.name.." on voice "..voice.." at pos ("..s..","..e..")")
   end
   -- engine.tt_play(
   --   voice,
-  --   override.amp or self.splices[i].amp,
-  --   self.splices[i].rate_from_type,
+  --   override.amp or self.sample[i].amp,
+  --   self.sample[i].rate_from_type,
   --   s,
   --   e,
-  --   override.effect or self.splices[i].effect
+  --   override.effect or self.sample[i].effect
   -- )
 end
 
@@ -93,8 +93,8 @@ function Sound:set_start_end(i,s,e)
   if mode_debug then
     print("setting "..self.name.." to pos ("..s..","..e..")")
   end
-  self.splices[i].s=s
-  self.splices[i].e=e
+  self.sample[i].s=s
+  self.sample[i].e=e
 end
 
 
