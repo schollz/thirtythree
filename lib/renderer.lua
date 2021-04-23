@@ -19,7 +19,7 @@ function Renderer:new(o)
 end
 
 function Renderer:register_renderer()
-  if mode_debug then 
+  if mode_debug then
     print("register_renderer")
   end
   softcut.event_render(function(ch,start,i,s)
