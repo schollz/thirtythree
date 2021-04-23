@@ -8,6 +8,8 @@ Operator={}
 B_SOUND=1
 B_PATTERN=2
 B_BPM=3
+B_BUTTON_FIRST=4
+B_BUTTON_LAST=19
 B_WRITE=20
 B_PLAY=21
 B_FX=22
@@ -191,8 +193,8 @@ function Operator:buttons_register()
   end
 
   -- steps "1" to "16"
-  for i=B_BPM+1,B_WRITE-1 do
-    b=i-B_BPM -- the button number [1,16]
+  for i=B_BUTTON_FIRST,B_BUTTON_LAST do
+    b=i-B_BUTTON_FIRST+1 -- the button number [1,16]
     self.buttons[i].off_press=function()
       if self.mode_write then
         -- toggle a step here for the current sound
