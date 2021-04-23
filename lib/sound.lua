@@ -22,9 +22,13 @@ function Sound:new(o)
     o.sample[i]={
       s=0,
       e=1,
-      amp=1.0,
-      effect=0,
+      effect=16, -- effect 16 is no effect
       rate_from_type=i/4,-- TODO calculate from scale
+      rate_transpose=1,
+      amp=1.0,
+      hpf=20,
+      lpf=20000,
+      resonance=1,
     }
   end
   if not o.melodic then
@@ -62,6 +66,9 @@ function Sound:load(filename)
   end
 end
 
+function Sound:set_fx(id,fx_id)
+  self.sample[id].effect=fx_id
+end
 
 -- Sound:press will play a sound from a sample
 function Sound:play(i,override)

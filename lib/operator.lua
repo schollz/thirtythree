@@ -22,32 +22,57 @@ function Operator:new(o)
   -- parameters
   o.id=o.id or 1
 
+  return o
+end
+
+function Operator:init()
   -- defaults
-  o.sound={}
-  o.sound_current=1
+  self.sound={}
   for i=1,16 do
-    o.sound[i]=sound_:new({
-      id=(o.id-1)*16+i,
-      melodic=i<9,
-    })
+    self:sound_initialize(i)
   end
 
   -- patterns
-  o.pattern={}
-  o.pattern_step=1
-  o.pattern_current=1
-  o.pattern_chain={}
-  for i=1,16 do
-    o.pattern[i]={}
+  self.pattern={}
+  self.pattern_chain={}
+  for ptn_id=1,16 do
+    self.pattern[ptn_id]={}
+    self:pattern_initialize(ptn_id)
     -- pattern is a map of sounds that maps to samples
-    -- pattern[ptn_id][snd_id][smpl_id]=true
+    -- self.pattern[ptn_id][ptn_step]={fx_id=16,snd={}}
+    -- self.pattern[ptn_id][ptn_step].snd[snd_id]=smpl_id
   end
 
-  return o
+  -- current effect
+  self.effect_current=0
+
+  -- TODO: current pitch / amp /filter
+
+  -- currents
+  self.cur_snd_id=1
+  self.cur_smpl_id=1
+  self.cur_ptn_id=1
+  self.cur_ptn_step=1
+
+  self:debug("initialized operator")
 end
 
 function Operator:to_string()
   return self.filename
+end
+
+function Operator:pattern_initialize(ptn_id)
+  -- initialize all the steps
+  for ptn_step=1,16 do
+    self.pattern[ptn_id][ptn_step]={fx_id=16,snd_id=0,smpl_id=0}
+  end
+end
+
+function Operator:sound_initialize(i)
+  self.sound[i]=sound_:new({
+      id=(self.id-1)*16+i,
+      melodic=i<9,
+  })
 end
 
 function Operator:debug(s)
@@ -60,28 +85,39 @@ function Operator:sound_load(i,filename)
   self.sound[i]:load(filename)
 end
 
-function Operator:pattern_has_sample(ptn_id,snd_id,smpl_id)
-  if self.pattern[ptn_id][snd_id]~=nil then
-    return self.pattern[ptn_id][snd_id][smpl_id] ~= nil
+function Operator:sound_play(snd_id,smpl_id)
+  overwrite={}
+  if self.button[B_FX].pressed and self.effect_current > 0 then 
+    overwrite.effect=self.effect_current
   end
-  return false
+  -- TODO: check for overwriting filter/pitch
+  self:sound[snd_id]:play(smpl_id,overwrite)
 end
 
-function Operator:pattern_toggle_sample(ptn_id,snd_id,smpl_id)
-  if self:pattern_has_sample(ptn_id,snd_id,smpl_id) then
-    self.pattern_current[ptn_id][snd_id][smpl_id]==nil
-    if #self.pattern_current[ptn_id][snd_id]==0 then
-      self.pattern_current[ptn_id][snd_id]=nil
-    end
+function Operator:sound_set_fx(snd_id,smpl_id,fx_id)
+  self:sound[snd_id]:set_fx(smpl_id,fx_id)
+end
+
+function Operator:sound_set_fx_all_current()
+  -- TODO
+end
+
+function Operator:pattern_get_sample(ptn_id,ptn_step,snd_id)
+  return self.pattern[ptn_id][ptn_step].snd[snd_id] -- returns smpl_id or nil
+end
+
+function Operator:pattern_toggle_sample(ptn_id,ptn_step,snd_id,smpl_id)
+  if self:pattern_get_sample(ptn_id,ptn_step,snd_id)==smpl_id then
+    self:debug("pattern_toggle_sample: removing sample "..smpl_id.." from sound "..snd_id.." on pattern "..ptn_id.." step "..ptn_step)
+    self.pattern[ptn_id][ptn_step].snd[snd_id]=nil
   else
-    if self.pattern_current[ptn_id][snd_id]== nil then
-      self.pattern_current[ptn_id][snd_id]={}
-    end
-    self.pattern_current[ptn_id][snd_id][smpl_id]=true
+    self:debug("pattern_toggle_sample: adding sample "..smpl_id.." from sound "..snd_id.." on pattern "..ptn_id.." step "..ptn_step)
+    self.pattern[ptn_id][ptn_step].snd[snd_id]=smpl_id
   end
 end
 
 function Operator:buttons_register()
+  self.mode_fx=false
   self.mode_play=false
   self.mode_write=false
   self.mode_switchpattern=false
@@ -91,13 +127,13 @@ function Operator:buttons_register()
     self.buttons[i].press=function(on)
       self.buttons[i].pressed=on
       if on then 
-        self:debug("button "..i.." pressed on")
+        self:debug("buttons_register: button "..i.." pressed on")
         self.buttons[i].time_press=os.clock()
         if self.buttons[i].on_press~=nil then
           self.buttons[i].on_press()
         end
       else
-        self:debug("button "..i.." pressed off")
+        self:debug("buttons_register: button "..i.." pressed off")
         local cur_time = os.clock()
         if cur_time-self.buttons[i].time_press < 0.04 and self.buttons[i].on_short_press~=nil then
           -- long press
@@ -117,17 +153,17 @@ function Operator:buttons_register()
   self.buttons[B_WRITE].on_short_press=function()
     self.mode_write=not self.mode_write
     if self.mode_write then 
-      self:debug("write mode")
+      self:debug("on_short_press: write mode")
     else
-      self:debug("performance mode")
+      self:debug("on_short_press: performance mode")
     end
   end
   self.buttons[B_PLAY].on_press=function()
     self.mode_play=not self.mode_play
     if self.mode_play then 
-      self:debug("play activated")
+      self:debug("on_press: play activated")
     else
-      self:debug("play stopped")
+      self:debug("on_press: play stopped")
     end
   end
   self.buttons[B_SOUND].on_press=function()
@@ -144,14 +180,26 @@ function Operator:buttons_register()
   self.buttons[B_PATTERN].off_press=function()
     self.mode_switchpattern=false
   end
+  self.buttons[B_FX].on_press=function()
+    if self.mode_play then 
+      self.mode_fx=true
+      self.effect_current=0
+    end
+  end
+  self.buttons[B_FX].off_press=function()
+    self.mode_fx=false
+  end
 
   -- steps "1" to "16"
   for i=B_BPM+1,B_WRITE-1 do
     b=i-B_BPM -- the button number [1,16]
     self.buttons[i].off_press=function()
       if self.mode_write then
-        -- TODO: toggle a step here for the current sound
+        -- toggle a step here for the current sound
         self:pattern_toggle_sample(self.pattern_current,self.sound_current,b)
+      end
+      if self.buttons[B_FX].pressed then
+        self.effect_current=0
       end
     end
     self.buttons[i].on_press=function()
@@ -169,13 +217,14 @@ function Operator:buttons_register()
           table.insert(self.pattern_chain,i)
         end
       elseif self.buttons[B_SOUND].pressed then
-        -- TODO: change sound
-      elseif self.buttons[B_FX].pressed then
-        if self.mode_play then
-          -- TODO: activate effect 
-          if self.mode_write then 
-            -- TODO: save effect
-          end
+        -- change sound
+        self.sound_current=b
+      elseif self.buttons[B_FX].pressed and self.mode_play then
+        -- update the current effect
+        self.effect_current=b
+        if self.mode_write then 
+          -- save effect on current samples
+          self:sound_set_fx_all_current()
         end
       elseif not self.mode_write then 
         -- TODO: play this sound
@@ -208,8 +257,12 @@ function Operator:buttons_register()
         end
       elseif self.mode_write then
         -- if write mode, show if this button has current sound and this sample in it
-        if self:pattern_has_sample(self.pattern_current,self.sound_current,b) then 
+        local ptn_step=b
+        local ptn_smpl_id=self:pattern_get_sample(self.cur_ptn_id,ptn_step,self.cur_snd_id)
+        if ptn_smpl_id == self.cur_smpl_id then 
           return 14
+        elseif ptn_smpl_id ~=nil then 
+          return 7
         end
       elseif not self.mode_write then
         -- TODO: if performance mode, show if this button corresponds to the sound playing
