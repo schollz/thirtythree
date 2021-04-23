@@ -11,6 +11,7 @@ include("lib/utils")
 -- global state
 sel_operator=1
 sel_filename=""
+sel_looppoint=1
 ops={} -- operators
 
 -- individiaul libraries
@@ -41,6 +42,12 @@ function updater(c)
 end
 
 function enc(k,d)
+  if k==1 then
+    renderer:zoom(sel_filename,sel_looppoint,d)
+  else
+    sel_looppoint=k-1
+    renderer:jog(sel_filename,sel_looppoint,d)
+  end
 
 end
 

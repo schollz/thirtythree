@@ -10,10 +10,11 @@ function Renderer:new(o)
   for i=1,128 do
     o.zeros[i]=0
   end
-  o.in_render_function=false
+  o.in_render_function=0
   o.file_loaded=""
   o.current_render={}
   o.rendered={} -- map from filename to renders
+  o.wf_last=nil
   o:register_renderer()
   return o
 end
@@ -33,17 +34,24 @@ function Renderer:register_renderer()
         maxval=math.abs(v)
       end
     end
-    local j=0
-    for k,r in pairs(self.rendered[self.current_render.filename].renders) do
+
+    for k,r in ipairs(self.rendered[self.current_render.filename].renders) do
       if r.s==self.current_render.s and r.e==self.current_render.e then
-        j=k
+        print("loading into "..k)
+        if self.rendered[self.current_render.filename].renders[k].rendered[ch]==false then
+          self.rendered[self.current_render.filename].renders[k].rendered[ch]=true
+          for ii,v in ipairs(s) do
+            self.rendered[self.current_render.filename].renders[k].ch[ch][ii]=s[ii]/maxval
+          end
+        end
         break
       end
     end
 
-    for k,v in ipairs(s) do
-      self.rendered[self.current_render.filename].renders[j].ch[ch][k]=s[k]/maxval
+    if self.in_render_function > 0 then
+      self.in_render_function=self.in_render_function-1
     end
+
   end)
 end
 
@@ -56,28 +64,35 @@ function Renderer:fit(filename,s,e)
     self.rendered[filename].window={s,e}
     self.rendered[filename].loop_points={s,e}
   end
-  self:render(filename,s,e)
 end
 
 -- zoom in/out of a rendered waveform
-function Renderer:zoom(filename,zoom,i)
+function Renderer:zoom(filename,i,zoom)
   if filename=="" then
     do return end
   end
-  local window=self.rendered[filename].window
-  local loop_points=self.rendered[filename].loop_points
-  local di=zoom*math.abs(loop_points[i]-window[1])
-  local di2=zoom*math.abs(loop_points[i]-window[2])
-  if di2>di then
-    di=di2
+  local window={self.rendered[filename].window[1],self.rendered[filename].window[2]}
+  local p=self.rendered[filename].loop_points[i]
+  local di=math.max(p-window[1],window[2]-p)
+  if zoom >= 0 and self.rendered[filename].zoom < 15 then 
+    print("Renderer:zoom zooming in")
+    self.rendered[filename].zoom = self.rendered[filename].zoom+1
+    window={p-di/1.5,p+di/1.5}
+  elseif self.rendered[filename].zoom>0 and zoom < 0 then
+    print("Renderer:zoom zooming out")
+    self.rendered[filename].zoom = self.rendered[filename].zoom-1
+    window={p-di*2,p+di*2}    
+    if self.rendered[filename].zoom == 0 then 
+      window={0,1}
+    end
   end
-  window[1]=loop_points[i]-di
-  if window[1]<0 then
+  if window[1] < 0 then 
     window[1]=0
   end
-  window[2]=loop_points[i]+di
-  self.rendered[filename].window=window
-  self:render(filename,window[1],window[2])
+  if window[2] > 1 then 
+    window[2]=1
+  end
+  self.rendered[filename].window={window[1],window[2]}
 end
 
 -- jog back/forth translates the loop points
@@ -87,36 +102,41 @@ function Renderer:jog(filename,i,d)
     do return end
   end
   local p=self.rendered[filename].loop_points[i]
-  local window=self.rendered[filename].window
+  local window={self.rendered[filename].window[1],self.rendered[filename].window[2]}
+  -- convert d to [0,1] duration
+  p=p+(window[2]-window[1])/128*d
   -- if point is out of window, stretch window
-  if p>window[2] then
-    window[2]=math.min(p,1)
+  if i==2 and p>window[2] then
+    window[2]=p
+  if window[2] > 1 then 
+    window[2]=1
+    p=1
   end
-  if p<window[1] then
-    window[1]=math.max(p,0)
   end
-  -- convert to pixels
-  p=util.linlin(window[1],window[2],1,128,p)
-  -- increase by amount d
-  p=p+d
-  -- convert back to the window
-  p=util.linlin(1,128,window[1],window[2],p)
-  self.rendered[filename].window=window
+  if i==1 and p<window[1] then
+    window[1]=p
+  if window[1] < 0 then 
+    window[1]=0 
+    p=0
+  end
+  end
+self.rendered[filename].window={window[1],window[2]}
   self.rendered[filename].loop_points[i]=p
-  self:render(filename,window[1],window[2])
 end
 
 -- draw a waveform
 function Renderer:draw(filename)
   if filename=="" then
+    print("Renderer: no filename")
     do return end
   end
   if self.rendered[filename]==nil then
+    print("Renderer: rendering for first time")
     self:render(filename,0,1)
     do return end
   end
-  local window=self.rendered[filename].window
-  local loop_points=self.rendered[filename].loop_points
+  local window={self.rendered[filename].window[1],self.rendered[filename].window[2]}
+  local loop_points={self.rendered[filename].loop_points[1],self.rendered[filename].loop_points[2]}
   local waveform_height=40
   local waveform_center=38
   local lp={}
@@ -126,9 +146,16 @@ function Renderer:draw(filename)
     lp[2]=129
   end
   local wf=self:render(filename,window[1],window[2])
+  if wf==nil  then 
+    print("Renderer:draw no data")
+    do return end 
+  end
   if wf[1]~=nil and wf[2]~=nil then
+    self.wf_last={}
     for j=1,2 do
+      self.wf_last[j]={}
       for i,s in ipairs(wf[j]) do
+        self.wf_last[j][i]=s
         local height=util.clamp(0,waveform_height,util.round(math.abs(s)*waveform_height))
         screen.level(13)
         if i<lp[1] or i>lp[2] then
@@ -148,25 +175,31 @@ function Renderer:draw(filename)
         screen.stroke()
       end
     end
+  else
+    print("Renderer: no wf[1] or wf[2]")
   end
 end
 
 function Renderer:render(filename,s,e)
   if filename=="" then
-    do return end
+    print("render: no file name")
+    do return nil end
   end
-  if self.in_render_function then
-    do return end
+  if self.in_render_function>0 then
+    -- print("in render function")
+    do return nil end
   end
-  self.in_render_function=true
+  s=math.floor(s*1000)/1000
+  e=math.floor(e*1000)/1000
   if self.rendered[filename]~=nil then
     for i,r in ipairs(self.rendered[filename].renders) do
-      if r.s==s and r.e==e then
-        self.in_render_function=false
-        return r.ch
+      if self.rendered[filename].renders[i].s==s and self.rendered[filename].renders[i].e==e then
+        -- print("rendered "..s.." "..e.." "..i)
+        do return self.rendered[filename].renders[i].ch end
       end
     end
   else
+    print("render: registering new file")
     -- register a new file
     self.rendered[filename]={
       filename=filename,
@@ -177,9 +210,11 @@ function Renderer:render(filename,s,e)
     }
     self.rendered[filename].ch,self.rendered[filename].samples,self.rendered[filename].sample_rate=audio.file_info(filename)
     self.rendered[filename].duration=self.rendered[filename].samples/48000.0
-    self.rendered[filename].window={0,self.rendered[filename].duration}
-    self.rendered[filename].loop_points={0,self.rendered[filename].duration}
+    self.rendered[filename].window={s,e}
+    self.rendered[filename].loop_points={s,e}
+    self.rendered[filename].zoom=0
   end
+  self.in_render_function=2
 
   if self.file_loaded~=filename then
     -- load file
@@ -200,9 +235,9 @@ function Renderer:render(filename,s,e)
   end
 
   -- register the new render (full of zeros)
-  table.insert(self.rendered[filename].renders,{s=s,e=e,ch={self.zeros,self.zeros}})
-  self.in_render_function=false
-  return {self.zeros,self.zeros}
+  print("registering new render at ("..s..","..e..")")
+  table.insert(self.rendered[filename].renders,{s=s,e=e,ch={{},{}},rendered={false,false}})
+  return self.wf_last
 end
 
 
