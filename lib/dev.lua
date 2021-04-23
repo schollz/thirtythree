@@ -7,9 +7,9 @@ function Dev:new(o)
   self.__index=self
 
 
-  sel_filename="/home/we/dust/audio/tehn/something.wav"
+  sel_filename="/home/we/dust/audio/amen/amenbreak_bpm136.wav"
 
   return o
 end
 
-return De
+return Dev

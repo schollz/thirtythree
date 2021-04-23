@@ -19,6 +19,9 @@ function Renderer:new(o)
 end
 
 function Renderer:register_renderer()
+  if mode_debug then 
+    print("register_renderer")
+  end
   softcut.event_render(function(ch,start,i,s)
     if self.current_render.filename==nil or self.rendered[self.current_render.filename]==nil then
       print("asked for render with nothing ready?")
@@ -39,7 +42,7 @@ function Renderer:register_renderer()
     end
 
     for k,v in ipairs(s) do
-      self.rendered[self.current_render.filename].renders[j].ch[ch]=s[k]/maxval
+      self.rendered[self.current_render.filename].renders[j].ch[ch][k]=s[k]/maxval
     end
   end)
 end
@@ -131,15 +134,15 @@ function Renderer:draw(filename)
         if i<lp[1] or i>lp[2] then
           screen.level(4)
         end
-        if math.abs(pos-i)<2 then
-          if j==1 then
-            screen.level(5)
-            screen.move(i,14)
-            screen.line(i,59)
-            screen.stroke()
-          end
-          screen.level(15)
-        end
+        -- if math.abs(pos-i)<2 then
+        --   if j==1 then
+        --     screen.level(5)
+        --     screen.move(i,14)
+        --     screen.line(i,59)
+        --     screen.stroke()
+        --   end
+        --   screen.level(15)
+        -- end
         screen.move(i,waveform_center)
         screen.line_rel(0,(j*2-3)*height/2)
         screen.stroke()

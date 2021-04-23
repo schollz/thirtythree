@@ -9,7 +9,15 @@ function Graphics:new(o)
   o.alert_msg=""
   o.dirty=false
   o.fps=15
-  clock.run(o:redraw_clock)
+  clock.run(function()
+    while true do
+      if o.dirty then
+        o.dirty=false
+        redraw()
+      end
+      clock.sleep(1/o.fps)
+    end
+  end)
   return o
 end
 
@@ -18,13 +26,7 @@ function Graphics:update()
 end
 
 function Graphics.redraw_clock()
-  while true do
-    if self.dirty then
-      self.dirty=false
-      redraw()
-    end
-    clock.sleep(1/Graphics.fps)
-  end
+
 end
 
 -- alert shows an alert for 2 seconds
@@ -45,14 +47,14 @@ function Graphics:show_alert_if_needed()
   screen.level(0)
   local x=64
   local y=28
-  local w=string.len(msg)*6
+  local w=string.len(self.alert_msg)*6
   screen.rect(x-w/2,y,w,10)
   screen.fill()
   screen.level(15)
   screen.rect(x-w/2,y,w,10)
   screen.stroke()
   screen.move(x,y+7)
-  screen.text_center(msg)
+  screen.text_center(self.alert_msg)
 end
 
 function Graphics:box_text(x,y,s,invert)
@@ -91,4 +93,4 @@ function Graphics:metro_icon(tick,x,y)
   screen.stroke()
 end
 
-return Graphic
+return Graphics
