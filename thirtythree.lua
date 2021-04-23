@@ -19,15 +19,14 @@ graphics_=include("lib/graphics")
 graphics=graphics_:new()
 renderer_=include("lib/renderer")
 renderer=renderer_:new()
-dev_=include("lib/dev")
-dev=dev_:new()
--- voices_=include("lib/voices")
--- voices=voices_:new()
--- sound_=include("lib/sound")
--- operator_=include("lib/operator")
+voices_=include("lib/voices")
+voices=voices_:new()
+sound_=include("lib/sound")
+operator_=include("lib/operator")
 
 function init()
   -- TODO: initialize operators
+  ops[1]=operator_:new()
 
   -- start updater
   runner=metro.init()
@@ -35,6 +34,9 @@ function init()
   runner.count=-1
   runner.event=updater
   runner:start()
+
+  dev_=include("lib/dev")
+  dev=dev_:new()
 end
 
 function updater(c)

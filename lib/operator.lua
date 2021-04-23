@@ -20,7 +20,7 @@ function Operator:new(o)
   o.sound_button=1
   for i=1,16 do
     o.sound[i]=sound_:new({
-      id=(o.id-1)*16+i
+      id=(o.id-1)*16+i,
       melodic=i<9,
     })
   end
@@ -38,12 +38,12 @@ function Operator:to_string()
 end
 
 function Operator:sound_load(i,filename)
-  o.sound[i]:load(filename)
+  self.sound[i]:load(filename)
 end
 
 function Operator:press_button(button)
   -- TODO: check mode first
-  o.sound[o.sound_current]:play(button)
+  self.sound[self.sound_current]:play(button)
 end
 
 -- pattern_update will toggle the position of the

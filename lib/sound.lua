@@ -50,15 +50,15 @@ function Sound:load(filename)
   -- loads sample
   self.name=filename:match("^.+/(.+).wav$")
   self.ch,self.samples,self.sample_rate=audio.file_info(filename)
-  self.duration=samples/48000.0
+  self.duration=self.samples/48000.0
   self.filename=filename
 
   -- load it into supercollider
-  engine.tt_load(self.index_sc,self.filename)
+  -- engine.tt_load(self.index_sc,self.filename)
   self.loaded=true
 
   if mode_debug then
-    print("loaded "..filename.." into sc slot "..self.index_sc)
+    print("loaded "..filename.." into with id "..self.id)
   end
 end
 
@@ -71,14 +71,14 @@ function Sound:play(i,override)
   if mode_debug then
     print("playing "..self.name.." on voice "..voice.." at pos ("..s..","..e..")")
   end
-  engine.tt_play(
-    voice,
-    override.amp or self.splices[i].amp,
-    self.splices[i].rate_from_type,
-    s,
-    e,
-    override.effect or self.splices[i].effect,
-  )
+  -- engine.tt_play(
+  --   voice,
+  --   override.amp or self.splices[i].amp,
+  --   self.splices[i].rate_from_type,
+  --   s,
+  --   e,
+  --   override.effect or self.splices[i].effect
+  -- )
 end
 
 -- Sound:get_start_end converts from 0,1 to the actual duration
