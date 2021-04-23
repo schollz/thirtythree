@@ -22,7 +22,7 @@ function Sound:new(o)
     o.sample[i]={
       s=0,
       e=1,
-      effect=16, -- effect 16 is no effect
+      effect=16,-- effect 16 is no effect
       rate_from_type=i/4,-- TODO calculate from scale
       rate_transpose=1,
       amp=1.0,

@@ -70,13 +70,13 @@ end
 
 function Operator:sound_initialize(i)
   self.sound[i]=sound_:new({
-      id=(self.id-1)*16+i,
-      melodic=i<9,
+    id=(self.id-1)*16+i,
+    melodic=i<9,
   })
 end
 
 function Operator:debug(s)
-  if mode_debug then 
+  if mode_debug then
     print("operator"..self.id..": "..s)
   end
 end
@@ -87,7 +87,7 @@ end
 
 function Operator:sound_play(snd_id,smpl_id)
   overwrite={}
-  if self.button[B_FX].pressed and self.effect_current > 0 then 
+  if self.button[B_FX].pressed and self.effect_current>0 then
     overwrite.effect=self.effect_current
   end
   -- TODO: check for overwriting filter/pitch
@@ -126,7 +126,7 @@ function Operator:buttons_register()
     self.buttons[i]={pressed=false,time_press=0}
     self.buttons[i].press=function(on)
       self.buttons[i].pressed=on
-      if on then 
+      if on then
         self:debug("buttons_register: button "..i.." pressed on")
         self.buttons[i].time_press=os.clock()
         if self.buttons[i].on_press~=nil then
@@ -134,17 +134,17 @@ function Operator:buttons_register()
         end
       else
         self:debug("buttons_register: button "..i.." pressed off")
-        local cur_time = os.clock()
-        if cur_time-self.buttons[i].time_press < 0.04 and self.buttons[i].on_short_press~=nil then
+        local cur_time=os.clock()
+        if cur_time-self.buttons[i].time_press<0.04 and self.buttons[i].on_short_press~=nil then
           -- long press
           self.buttons[i].on_short_press()
-        elseif self.buttons[i].off_press~=nil then 
+        elseif self.buttons[i].off_press~=nil then
           self.buttons[i].off_press()
         end
       end
     end
     self.buttons[i].light=function()
-      if self.buttons[i].pressed then 
+      if self.buttons[i].pressed then
         return 14
       end
     end
@@ -152,7 +152,7 @@ function Operator:buttons_register()
 
   self.buttons[B_WRITE].on_short_press=function()
     self.mode_write=not self.mode_write
-    if self.mode_write then 
+    if self.mode_write then
       self:debug("on_short_press: write mode")
     else
       self:debug("on_short_press: performance mode")
@@ -160,7 +160,7 @@ function Operator:buttons_register()
   end
   self.buttons[B_PLAY].on_press=function()
     self.mode_play=not self.mode_play
-    if self.mode_play then 
+    if self.mode_play then
       self:debug("on_press: play activated")
     else
       self:debug("on_press: play stopped")
@@ -181,7 +181,7 @@ function Operator:buttons_register()
     self.mode_switchpattern=false
   end
   self.buttons[B_FX].on_press=function()
-    if self.mode_play then 
+    if self.mode_play then
       self.mode_fx=true
       self.effect_current=0
     end
@@ -222,19 +222,19 @@ function Operator:buttons_register()
       elseif self.buttons[B_FX].pressed and self.mode_play then
         -- update the current effect
         self.effect_current=b
-        if self.mode_write then 
+        if self.mode_write then
           -- save effect on current samples
           self:sound_set_fx_all_current()
         end
-      elseif not self.mode_write then 
+      elseif not self.mode_write then
         -- TODO: play this sound
-        if self.mode_play and self.buttons[B_WRITE].pressed then 
+        if self.mode_play and self.buttons[B_WRITE].pressed then
           -- TODO: put current sound onto current playing step
         end
       end
     end
     self.buttons[i].light=function()
-      if self.buttons[i].pressed then 
+      if self.buttons[i].pressed then
         return 14
       end
       if self.buttons[B_SOUND].pressed then
@@ -242,7 +242,7 @@ function Operator:buttons_register()
         if self.sound_current==b then
           -- active sound
           return 14
-        elseif self.sound[b].loaded then 
+        elseif self.sound[b].loaded then
           -- has sound
           return 7
         end
@@ -251,7 +251,7 @@ function Operator:buttons_register()
         if self.pattern_current==b then
           -- active pattern
           return 14
-        elseif #self.pattern[i]>0 then 
+        elseif #self.pattern[i]>0 then
           -- has pattern
           return 7
         end
@@ -259,9 +259,9 @@ function Operator:buttons_register()
         -- if write mode, show if this button has current sound and this sample in it
         local ptn_step=b
         local ptn_smpl_id=self:pattern_get_sample(self.cur_ptn_id,ptn_step,self.cur_snd_id)
-        if ptn_smpl_id == self.cur_smpl_id then 
+        if ptn_smpl_id==self.cur_smpl_id then
           return 14
-        elseif ptn_smpl_id ~=nil then 
+        elseif ptn_smpl_id~=nil then
           return 7
         end
       elseif not self.mode_write then

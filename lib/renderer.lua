@@ -48,7 +48,7 @@ function Renderer:register_renderer()
       end
     end
 
-    if self.in_render_function > 0 then
+    if self.in_render_function>0 then
       self.in_render_function=self.in_render_function-1
     end
 
@@ -74,22 +74,22 @@ function Renderer:zoom(filename,i,zoom)
   local window={self.rendered[filename].window[1],self.rendered[filename].window[2]}
   local p=self.rendered[filename].loop_points[i]
   local di=math.max(p-window[1],window[2]-p)
-  if zoom >= 0 and self.rendered[filename].zoom < 15 then 
+  if zoom>=0 and self.rendered[filename].zoom<15 then
     print("Renderer:zoom zooming in")
-    self.rendered[filename].zoom = self.rendered[filename].zoom+1
+    self.rendered[filename].zoom=self.rendered[filename].zoom+1
     window={p-di/1.5,p+di/1.5}
-  elseif self.rendered[filename].zoom>0 and zoom < 0 then
+  elseif self.rendered[filename].zoom>0 and zoom<0 then
     print("Renderer:zoom zooming out")
-    self.rendered[filename].zoom = self.rendered[filename].zoom-1
-    window={p-di*2,p+di*2}    
-    if self.rendered[filename].zoom == 0 then 
+    self.rendered[filename].zoom=self.rendered[filename].zoom-1
+    window={p-di*2,p+di*2}
+    if self.rendered[filename].zoom==0 then
       window={0,1}
     end
   end
-  if window[1] < 0 then 
+  if window[1]<0 then
     window[1]=0
   end
-  if window[2] > 1 then 
+  if window[2]>1 then
     window[2]=1
   end
   self.rendered[filename].window={window[1],window[2]}
@@ -108,19 +108,19 @@ function Renderer:jog(filename,i,d)
   -- if point is out of window, stretch window
   if i==2 and p>window[2] then
     window[2]=p
-  if window[2] > 1 then 
-    window[2]=1
-    p=1
-  end
+    if window[2]>1 then
+      window[2]=1
+      p=1
+    end
   end
   if i==1 and p<window[1] then
     window[1]=p
-  if window[1] < 0 then 
-    window[1]=0 
-    p=0
+    if window[1]<0 then
+      window[1]=0
+      p=0
+    end
   end
-  end
-self.rendered[filename].window={window[1],window[2]}
+  self.rendered[filename].window={window[1],window[2]}
   self.rendered[filename].loop_points[i]=p
 end
 
@@ -146,9 +146,9 @@ function Renderer:draw(filename)
     lp[2]=129
   end
   local wf=self:render(filename,window[1],window[2])
-  if wf==nil  then 
+  if wf==nil then
     print("Renderer:draw no data")
-    do return end 
+    do return end
   end
   if wf[1]~=nil and wf[2]~=nil then
     self.wf_last={}
