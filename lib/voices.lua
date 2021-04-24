@@ -21,7 +21,7 @@ function Voices:get(id)
   local longest_duration
 
   -- get the current voice used already, or the oldest voice
-  for i=1,16 do
+  for i=2,16 do -- voice 1 is reserved
     if self.played[i].id==0 or self.played[i].id==id then
       voice=i
       break
@@ -41,5 +41,8 @@ function Voices:get(id)
   self.played[voice]={id=id,last_played=os.clock()}
   return voice
 end
+
+
+-- TODO: collect position information from supercollider
 
 return Voices

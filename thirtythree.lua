@@ -6,7 +6,8 @@
 mode_debug=true
 
 
--- global functoins
+-- globals
+include("lib/constants")
 include("lib/utils")
 -- global state
 sel_operator=1
@@ -23,13 +24,15 @@ voices_=include("lib/voices")
 voices=voices_:new()
 wav_=include("lib/wav")
 wav=wav_:new()
-
+interface_=include("lib/interface")
+interface=interface_:new()
 sound=include("lib/sound")
 operator=include("lib/operator")
 
 function init()
   -- TODO: initialize operators
   ops[1]=operator:new()
+  ops[1]:init()
 
   -- start updater
   runner=metro.init()

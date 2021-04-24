@@ -81,6 +81,7 @@ Engine_Thirtythree : CroneEngine {
                     level:Lag.kr(amp,0.2)*Lag.kr(amp_crossfade,0.2)
                 );
 
+                // TODO: send position message for player #1
                 Out.ar(0,snd)
             }).add; 
         });

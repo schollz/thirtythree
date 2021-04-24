@@ -5,22 +5,7 @@
 
 Operator={}
 
--- button constants
-B_SOUND=1
-B_PATTERN=2
-B_BPM=3
-B_BUTTON_FIRST=4
-B_BUTTON_LAST=19
-B_WRITE=20
-B_PLAY=21
-B_FX=22
-B_RECORD=23
 
--- adjust constants
-ADJ_NONE=1
-ADJ_TRIM=2
-ADJ_TONE=3
-ADJ_FILT=4
 
 function Operator:new(o)
   o=o or {}
@@ -53,27 +38,21 @@ function Operator:init()
     -- self.pattern[ptn_id][ptn_step].snd[snd_id]=<sound>
   end
 
-  -- current effect
-  self.effect_current=0
-
-  -- params WORK make this work
-  self.param={}
-  for snd_id=1,16 do
-    self.param[snd_id]={
-      amp=0.5,
-      lpf=20,
-      hpf=20000,
-      resonance=1.0,
-      rate=1,
-    }
-  end
-
+  -- params
+  self.s=0
+  self.e=1
+  self.amp=0.5
+  self.lpf=20
+  self.hpf=20000
+  self.resonance=1.0
+  self.rate=1
   
   -- currents
   self.cur_snd_id=1
   self.cur_smpl_id=1
   self.cur_ptn_id=1
   self.cur_ptn_step=1
+  self.cur_fx_id=0
 
 
   self:debug("initialized operator")
@@ -95,7 +74,7 @@ end
 --
 
 function Operator:sound_initialize(snd_id)
-  self.sound[b]={}
+  self.sound[snd_id]={}
   for smpl_id=1,16 do
     self.sound[snd_id][smpl_id]=sound:new({
       id=smpl_id,
@@ -116,13 +95,21 @@ function Operator:sound_load(snd_id,filename)
   end
 end
 
-function Operator:sound_play(snd_id,smpl_id,overwrite)
+function Operator:sound_play_from_pattern(ptn_id,ptn_step,snd_id,smpl_id,overwrite)
   overwrite=overwrite or {}
-  if self.button[B_FX].pressed and self.effect_current>0 and overwrite.effect==nil then
-    overwrite.effect=self.effect_current
+  if self.button[B_FX].pressed and self.cur_fx_id>0 and overwrite.effect==nil then
+    -- perform effect
+    overwrite.effect=self.cur_fx_id
+  else
+    -- get effect from the pattern
+    overwrite.effect=self.pattern[ptn_id][ptn_step].fx_id
   end
-  -- TODO: check for overwriting filter/pitch
-  self:sound[snd_id]:play(smpl_id,overwrite)
+  self.sound[snd_id][smpl_id]:play(smpl_id,overwrite)
+end
+
+function Operator:sound_play_from_press(snd_id,smpl_id,overwrite)
+  overwrite=overwrite or {}
+  self.sound[snd_id][smpl_id]:play(smpl_id,overwrite)
 end
 
 
@@ -141,7 +128,17 @@ end
 -- parameters
 --
 
-function Operator:set_amp()
+function Operator:set_amp(v)
+  self.amp=v 
+  -- set on current sample
+  self.sound[self.cur_snd_id][self.cur_smpl_id].amp=v
+  -- set on current pattern if writing
+  if self.mode_play and self.buttons[B_WRITE].pressed then
+    for o,_ in pairs(self.pattern[self.cur_ptn_id][self.cur_ptn_step].snd) do
+      o.amp=v -- TODO: check that this works
+    end
+  end
+end
 
 function Operator:set_trim(s,e)
   local i1=1 
@@ -152,8 +149,8 @@ function Operator:set_trim(s,e)
     i2=self.cur_smpl_id
   end
   for i=i1,i2 do 
-    self:sound[self.cur_snd_id][i].s=s
-    self:sound[self.cur_snd_id][i].s=e
+    self.sound[self.cur_snd_id][i].s=s
+    self.sound[self.cur_snd_id][i].s=e
   end
 end
 
@@ -235,6 +232,26 @@ function Operator:buttons_register()
     end
   end
 
+  --
+  -- button positions
+  --
+  for i=1,3 do
+    self.buttons[i].pos=function()
+      return 3,i
+    end
+  end
+  for i=B_WRITE,B_RECORD do
+    self.buttons[i].pos=function()
+      return 8,i-B_WRITE+1
+    end
+  end  
+  for i=B_BUTTON_FIRST,B_BUTTON_LAST do
+    local b=i-B_BUTTON_FIRST+1
+    self.buttons[i].pos=function()
+      return math.ceil(b/4.0)+3,(b-1)%4+1
+    end
+  end      
+
   self.buttons[B_WRITE].on_short_press=function()
     self.mode_write=not self.mode_write
     if self.mode_write then
@@ -270,7 +287,7 @@ function Operator:buttons_register()
   self.buttons[B_FX].on_press=function()
     if self.mode_play then
       self.mode_fx=true
-      self.effect_current=0
+      self.cur_fx_id=0
     end
   end
   self.buttons[B_FX].off_press=function()
@@ -291,7 +308,7 @@ function Operator:buttons_register()
         self:pattern_toggle_sample(self.cur_ptn_id,self.cur_snd_id,b)
       end
       if self.buttons[B_FX].pressed then
-        self.effect_current=0
+        self.cur_fx_id=0
       end
     end
     --
@@ -318,7 +335,7 @@ function Operator:buttons_register()
         self.cur_snd_id=b
       elseif self.buttons[B_FX].pressed and self.mode_play then
         -- update the current effect
-        self.effect_current=b
+        self.cur_fx_id=b
         if self.mode_write then
           -- save effect on current samples
           self:sound_set_fx_all_current()

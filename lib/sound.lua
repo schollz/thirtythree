@@ -48,7 +48,10 @@ end
 
 -- Sound:press will play a sound from a sample
 function Sound:play(i,override)
-  local voice=voices:get(self.group)
+  local voice = override.voice
+  if voice==nil then
+    voice=voices:get(self.group)
+  end
   local s=override.s or self.s
   local e=override.e or self.e
   if mode_debug then

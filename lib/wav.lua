@@ -25,8 +25,8 @@ function Wav:get(filename)
     self.files[filename].filename=filename
     self.files[filename].sc_index=self.sc_index
 
-    -- load it into supercollider
-    engine.tt_load(self.index_sc,filename)
+    -- TODO: load it into supercollider
+    -- engine.tt_load(self.index_sc,filename)
 
     if mode_debug then
       print("loaded "..filename.." into with sc index "..self.sc_index)
