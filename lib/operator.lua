@@ -128,7 +128,7 @@ function Operator:sound_clone(snd_id,smpl_id)
 end
 
 --
--- drawing
+-- parameters
 --
 function Operator:trim_select()
   local snd=self.sound[self.cur_snd_id][self.cur_smpl_id]
@@ -157,38 +157,32 @@ function Operator:trim_jog(sel_looppoint,d)
     do return end
   end
   local se=renderer:jog(self.sound[self.cur_snd_id][self.cur_smpl_id].wav.filename,sel_looppoint,d)
-  self.sound[self.cur_snd_id][self.cur_smpl_id].s=se[1]
-  self.sound[self.cur_snd_id][self.cur_smpl_id].e=se[2]
-end
+  
 
-
---
--- parameters
---
-
-function Operator:set_trim(s,e)
-  -- set current playing
   if self.mode_play and self.buttons[B_WRITE].pressed and self.cur_ptn_step>0 then
+    -- set current playing
     for o,_ in pairs(self.pattern[self.cur_ptn_id][self.cur_ptn_step].snd) do
       o.s=s -- TODO: check that this works
       o.e=e
     end
-    do return end
+  else
+    -- set the trim on the current sound
+    if self.cur_snd_id<9 then
+      -- if melodic, set the trim for *all* sounds
+      for i=1,16 do
+        self.sound[self.cur_snd_id][i].s=se[1]
+        self.sound[self.cur_snd_id][i].e=se[2]
+      end
+    else
+      -- set current sound
+      self.sound[self.cur_snd_id][self.cur_smpl_id].s=se[1]
+      self.sound[self.cur_snd_id][self.cur_smpl_id].e=se[2]
+    end
   end
 
-  -- set current selected sound
-  local i1=1
-  local i2=16
-  if self.cur_snd_id>8 then
-    -- only change this sound
-    i1=self.cur_smpl_id
-    i2=self.cur_smpl_id
-  end
-  for i=i1,i2 do
-    self.sound[self.cur_snd_id][i].s=s
-    self.sound[self.cur_snd_id][i].s=e
-  end
 end
+
+
 
 --
 -- pattern functions

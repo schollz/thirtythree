@@ -6,7 +6,7 @@ function Timekeeper:new(o)
   o=o or {}
   setmetatable(o,self)
   self.__index=self
-
+  o:init()
   return o
 end
 
@@ -41,8 +41,8 @@ function Timekeeper:tick()
 end
 
 function Timekeeper:emit_note(division,t)
-  for _, op in pairs(ops) do
-    if op.division==division do 
+  for _,op in pairs(ops) do
+    if op.division==division do
       op:pattern_step()
     end
   end
@@ -50,7 +50,7 @@ end
 
 function Timekeeper:reset()
   self.lattice:hard_restart()
-  for _, op in pairs(ops) do
+  for _,op in pairs(ops) do
     op:pattern_reset()
   end
 end

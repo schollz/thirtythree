@@ -20,6 +20,7 @@ ops={} -- operators
 engine.name="Thirtythree"
 
 -- individual libraries
+pitch=include("lib/pitch")
 graphics_=include("lib/graphics")
 graphics=graphics_:new()
 renderer_=include("lib/renderer")
@@ -28,6 +29,8 @@ voices_=include("lib/voices")
 voices=voices_:new()
 wav_=include("lib/wav")
 wav=wav_:new()
+timekeeper_=include("lib/timekeeper")
+timekeeper=timekeeper_:new()
 gridd_=include("lib/gridd")
 gridd=gridd_:new()
 sound=include("lib/sound")
