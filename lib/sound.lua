@@ -10,91 +10,53 @@ function Sound:new(o)
   o=o or {}
   setmetatable(o,self)
   self.__index=self
-  self.__tostring=function(t) return t:to_string() end
 
   -- parameters
   o.melodic=o.melodic or true
-  o.id=o.id or 1
+  o.id = o.id or 1
+  o.group=o.group or 1
+  o.s =o.s or 1
+  o.e = o.e or 1
+  o.rate = o.rate or 1 
+  o.amp = o.amp or 1 
+  o.lpf = o.lpf or 20000
+  o.hpf = o.hpf or 20
+  o.res = o.res or 1
+  o.wav=nil
 
-  -- defaults
-  o.sample={}
-  for i=1,16 do
-    o.sample[i]={
-      s=0,
-      e=1,
-      rate_from_type=i/4,-- TODO calculate from scale
-      rate_pitch=1,
-      amp=1.0,
-      hpf=20,
-      lpf=20000,
-      resonance=1,
-    }
-  end
-  if not o.melodic then
-    for i=1,16 do
-      o.sample[i]={
-        s=(i-1)/16,
-        e=i/16,
-        rate_from_type=1,
-      }
-    end
-  end
-
-  o.loaded=false
   return o
 end
 
-function Sound:to_string()
-  return self.filename
-end
-
--- Sound:load gets audio info and loads into supercollider
 function Sound:load(filename)
-  -- loads sample
-  self.name=filename:match("^.+/(.+).wav$")
-  self.ch,self.samples,self.sample_rate=audio.file_info(filename)
-  self.duration=self.samples/48000.0
-  self.filename=filename
-
-  -- load it into supercollider
-  -- engine.tt_load(self.index_sc,self.filename)
-  self.loaded=true
-
-  if mode_debug then
-    print("loaded "..filename.." into with id "..self.id)
-  end
+  self.wav = wav:get(filename)
 end
 
-function Sound:set_amp(id,amp)
-  self.sample[id].amp=amp
-end
-
-function Sound:set_lpf(id,val)
-  self.sample[id].lpf=lpf
-end
-
-function Sound:set_hpf(id,val)
-  self.sample[id].hpf=val
-end
-
-function Sound:set_resonance(id,val)
-  self.sample[id].resonance=val
-end
-
-function Sound:set_pitch(id,pitch)
-  self.sample[id].rate_pitch=pitch -- TODO: figure this out
+function Sound:dump()
+  return {
+    id=self.id,
+    group=self.group,
+    s=self.s,
+    e=self.e,
+    rate=self.rate,
+    amp=self.amp,
+    lpf=self.lpf,
+    hpf=self.hpf,
+    res=self.res,
+    wav=self.wav,
+  }
 end
 
 -- Sound:press will play a sound from a sample
 function Sound:play(i,override)
-  local voice=voices:get(self.id)
-  local s=override.s or self.sample[i].s
-  local e=override.e or self.sample[i].e
+  local voice=voices:get(self.group)
+  local s=override.s or self.s
+  local e=override.e or self.e
   if mode_debug then
-    print("playing "..self.name.." on voice "..voice.." at pos ("..s..","..e..")")
+    print("playing "..self.wav.name.." on voice "..voice.." at pos ("..s..","..e..")")
   end
   -- engine.tt_play(
-  --   voice,
+  --   voice, -- which sampler player
+  --   self.wav.sc_index, -- buffer number
   --   override.amp or self.sample[i].amp,
   --   self.sample[i].rate_from_type,
   --   s,
@@ -103,22 +65,11 @@ function Sound:play(i,override)
   -- )
 end
 
--- Sound:get_start_end converts from 0,1 to the actual duration
--- and returns converted s,e and duration
 function Sound:get_start_end(s,e)
-  s=util.linlin(0,1,0,self.duration,s)
-  e=util.linlin(0,1,0,self.duration,e)
+  local s=util.linlin(0,1,0,self.wav.duration,s)
+  local e=util.linlin(0,1,0,self.wav.duration,e)
   return s,e
 end
-
-function Sound:set_start_end(i,s,e)
-  if mode_debug then
-    print("setting "..self.name.." to pos ("..s..","..e..")")
-  end
-  self.sample[i].s=s
-  self.sample[i].e=e
-end
-
 
 return Sound
 

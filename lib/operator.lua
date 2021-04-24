@@ -37,9 +37,10 @@ end
 function Operator:init()
   -- defaults
   self.sound={}
-  for i=1,16 do
-    self:sound_initialize(i)
+  for snd_id=1,16 do
+    self:sound_initialize(snd_id)
   end
+  -- self.sound[snd_id][smpl_id] => is sound object
 
   -- patterns
   self.pattern={}
@@ -49,19 +50,31 @@ function Operator:init()
     self:pattern_initialize(ptn_id)
     -- pattern is a map of sounds that maps to samples
     -- self.pattern[ptn_id][ptn_step]={fx_id=16,snd={}}
-    -- self.pattern[ptn_id][ptn_step].snd[snd_id]=smpl_id
+    -- self.pattern[ptn_id][ptn_step].snd[snd_id]=<sound>
   end
 
   -- current effect
   self.effect_current=0
 
-  -- TODO: current pitch / amp /filter
+  -- params WORK make this work
+  self.param={}
+  for snd_id=1,16 do
+    self.param[snd_id]={
+      amp=0.5,
+      lpf=20,
+      hpf=20000,
+      resonance=1.0,
+      rate=1,
+    }
+  end
 
+  
   -- currents
   self.cur_snd_id=1
   self.cur_smpl_id=1
   self.cur_ptn_id=1
   self.cur_ptn_step=1
+
 
   self:debug("initialized operator")
 end
@@ -70,28 +83,37 @@ function Operator:to_string()
   return self.filename
 end
 
-function Operator:pattern_initialize(ptn_id)
-  -- initialize all the steps
-  for ptn_step=1,16 do
-    self.pattern[ptn_id][ptn_step]={fx_id=16,snd={}}
-  end
-end
-
-function Operator:sound_initialize(i)
-  self.sound[i]=sound:new({
-    id=(self.id-1)*16+i,
-    melodic=i<9,
-  })
-end
-
 function Operator:debug(s)
   if mode_debug then
     print("operator"..self.id..": "..s)
   end
 end
 
-function Operator:sound_load(i,filename)
-  self.sound[i]:load(filename)
+
+--
+-- sound functions
+--
+
+function Operator:sound_initialize(snd_id)
+  self.sound[b]={}
+  for smpl_id=1,16 do
+    self.sound[snd_id][smpl_id]=sound:new({
+      id=smpl_id,
+      group=(self.id-1)*16+snd_id,
+      melodic=snd_id<9,
+      amp=self.amp,
+      rate=self.rate,
+      lpf=self.lpf,
+      hpf=self.hpf,
+      res=self.res,      
+    })
+  end
+end
+
+function Operator:sound_load(snd_id,filename)
+  for smpl_id=1,16 do
+    self.sound[snd_id][smpl_id]:load(filename)
+  end
 end
 
 function Operator:sound_play(snd_id,smpl_id,overwrite)
@@ -103,13 +125,41 @@ function Operator:sound_play(snd_id,smpl_id,overwrite)
   self:sound[snd_id]:play(smpl_id,overwrite)
 end
 
-function Operator:sound_set_fx(snd_id,smpl_id,fx_id)
-  self:sound[snd_id]:set_fx(smpl_id,fx_id)
+
+function Operator:sound_clone(snd_id,smpl_id) 
+  local o=self.sound[snd_id][smpl_id].dump()
+  -- overwrite with the current parameters
+  o.amp=self.amp
+  o.rate=self.rate
+  o.lpf=self.lpf
+  o.hpf=self.hpf
+  o.res=self.res
+  return sound:new(o)
 end
 
-function Operator:sound_set_fx_all_current()
-  -- TODO
+--
+-- parameters
+--
+
+function Operator:set_amp()
+
+function Operator:set_trim(s,e)
+  local i1=1 
+  local i2=16
+  if snd_id > 8then
+    -- only change this sound
+    i1=self.cur_smpl_id 
+    i2=self.cur_smpl_id
+  end
+  for i=i1,i2 do 
+    self:sound[self.cur_snd_id][i].s=s
+    self:sound[self.cur_snd_id][i].s=e
+  end
 end
+
+--
+-- pattern functions
+--
 
 function Operator:pattern_has_sound(ptn_id)
   for ptn_step,_ in ipairs(self.pattern[ptn_id]) do
@@ -120,19 +170,35 @@ function Operator:pattern_has_sound(ptn_id)
   return false
 end
 
-function Operator:pattern_get_sample(ptn_id,ptn_step,snd_id)
-  return self.pattern[ptn_id][ptn_step].snd[snd_id] -- returns smpl_id or nil
+function Operator:pattern_get_sample_id(ptn_id,ptn_step,snd_id)
+  if self.pattern[ptn_id][ptn_step].snd[snd_id] ~= nil then
+    return self.pattern[ptn_id][ptn_step].snd[snd_id].id -- returns smpl_id or nil
+  else
+    return nil
+  end
+end
+
+
+function Operator:pattern_initialize(ptn_id)
+  -- initialize all the steps
+  for ptn_step=1,16 do
+    self.pattern[ptn_id][ptn_step]={fx_id=16,snd={}}
+  end
 end
 
 function Operator:pattern_toggle_sample(ptn_id,ptn_step,snd_id,smpl_id)
-  if self:pattern_get_sample(ptn_id,ptn_step,snd_id)==smpl_id then
+  if self:pattern_get_sample_id(ptn_id,ptn_step,snd_id)==smpl_id then
     self:debug("pattern_toggle_sample: removing sample "..smpl_id.." from sound "..snd_id.." on pattern "..ptn_id.." step "..ptn_step)
     self.pattern[ptn_id][ptn_step].snd[snd_id]=nil
   else
     self:debug("pattern_toggle_sample: adding sample "..smpl_id.." from sound "..snd_id.." on pattern "..ptn_id.." step "..ptn_step)
-    self.pattern[ptn_id][ptn_step].snd[snd_id]=smpl_id
+    self.pattern[ptn_id][ptn_step].snd[snd_id]=self:sound_clone(snd_id,smpl_id)
   end
 end
+
+--
+-- button logic
+-- 
 
 function Operator:buttons_register()
   self.mode_fx=false
@@ -264,7 +330,7 @@ function Operator:buttons_register()
         self:sound_play(self.cur_snd_id,self.cur_smpl_id,{effect=16})
         if self.mode_play and self.buttons[B_WRITE].pressed then
           -- put current sound onto current playing step
-          self.pattern[self.cur_ptn_id][self.cur_ptn_step].snd[self.cur_snd_id]=self.cur_smpl_id
+          self.pattern[self.cur_ptn_id][self.cur_ptn_step].snd[self.cur_snd_id]=self:sound_clone(self.cur_snd_id,self.cur_smpl_id)
           -- TODO (stretch goal): actually, put current sound onto *closest* playing step
         end
       end
@@ -311,7 +377,7 @@ function Operator:buttons_register()
           return 14
         end
         -- show if this button corresponds to the sample of the current sound while playing
-        if self.mode_play and self.pattern[self.cur_ptn_id][b].snd[self.cur_snd_id]==b then
+        if self.mode_play and self:pattern_get_sample_id(self.cur_ptn_id,b,self.cur_snd_id)==b then
           return 7
         end
         -- TODO (stretch goal): (also, not po-33 but) show dim light if this sound is part of current pattern

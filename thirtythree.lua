@@ -21,6 +21,9 @@ renderer_=include("lib/renderer")
 renderer=renderer_:new()
 voices_=include("lib/voices")
 voices=voices_:new()
+wav_=include("lib/wav")
+wav=wav_:new()
+
 sound=include("lib/sound")
 operator=include("lib/operator")
 
