@@ -29,6 +29,7 @@ function Timekeeper:init()
   self.lattice:new_pattern{
     action=function(t)
       self.metronome_tick=not self.metronome_tick
+      graphics:update()
     end,
     division=1/4
   }

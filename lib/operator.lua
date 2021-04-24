@@ -84,17 +84,22 @@ function Operator:sound_initialize(snd_id)
       s=(smpl_id-1)/16
       e=smpl_id/16
     end
+    local rate = 1
+    if smpl_id<=8 then
+      rate = pitch.transpose_rate(smpl_id-5)
+    end
     self.sound[snd_id][smpl_id]=sound:new({
       id=smpl_id,
       group=(self.id-1)*16+snd_id,
       s=s,
       e=e,
       melodic=snd_id<9,
-      amp=self.amp,
-      rate=self.rate,
-      lpf=self.lpf,
-      hpf=self.hpf,
-      res=self.res,
+      rate=rate,
+      -- amp=self.amp,
+      -- rate=self.rate,
+      -- lpf=self.lpf,
+      -- hpf=self.hpf,
+      -- res=self.res,
     })
   end
 end

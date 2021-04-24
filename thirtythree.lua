@@ -91,7 +91,7 @@ function redraw()
   end
 
   -- metronome icon
-  graphics:metro_icon(true,-2,3)
+  graphics:metro_icon(timekeeper:tick(),-2,3)
 
   -- show alert atop everything if needed
   graphics:show_alert_if_needed()
