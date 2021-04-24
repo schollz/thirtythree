@@ -21,16 +21,38 @@ Engine_Thirtythree : CroneEngine {
 
         (0..16).do({arg i; 
             SynthDef("playerThirtythree"++i,{ 
-                arg bufnum, amp=0, t_trig=0,t_trigtime=0, amp_crossfade=0,
+                arg bufnum, amp=0, t_trig=0,t_trigtime=0,fadeout=0.05,
                 sampleStart=0,sampleEnd=1,samplePos=0,
                 rate=0,rateSlew=0,bpm_sample=1,bpm_target=1,
                 bitcrush=0,bitcrush_bits=24,bitcrush_rate=44100,
-                scratch=0,strobe=0,vinyl=0,
+                scratch=0,strobe=0,vinyl=0,loop=0,
                 timestretch=0,timestretchSlowDown=1,timestretchWindowBeats=1,
                 pan=0,lpf=20000,lpflag=0,hpf=10,hpflag=0;
     
                 // vars
-                var snd,pos,timestretchPos,timestretchWindow;
+                var snd,pos,timestretchPos,timestretchWindow,env;
+
+                // (
+                // {
+                //     EnvGen.ar(
+                //         Env.new(
+                //             levels: [0,1,1,0], 
+                //             times: [0,0.5,0.05],
+                //             curve:\sine,
+                //         ), 
+                //         gate: 1
+                //     );
+                // }.plot(duration: 1);
+                // )
+                env=EnvGen.ar(
+                    Env.new(
+                        levels: [0,1,1,0], 
+                        times: [0,(sampleEnd-sampleStart)*(BufDur.kr(bufnum)-fadeout),fadeout],
+                        curve:\sine,
+                    ), 
+                    gate: t_trig,
+                );
+
                 rate = Lag.kr(rate,rateSlew);
                 // scratch effect
                 rate = (scratch<1*rate) + (scratch>0*LFTri.kr(bpm_target/60*2));
@@ -58,13 +80,13 @@ Engine_Thirtythree : CroneEngine {
                 );
 
                 snd=BufRd.ar(2,bufnum,pos,
-                    loop:1,
+                    loop:0,
                     interpolation:1
                 );
                 timestretch=Lag.kr(timestretch,2);
                 snd=((1-timestretch)*snd)+(timestretch*BufRd.ar(2,bufnum,
                     timestretchWindow,
-                    loop:1,
+                    loop:0,
                     interpolation:1
                 ));
 
@@ -79,7 +101,7 @@ Engine_Thirtythree : CroneEngine {
                 // manual panning
                 snd = Balance2.ar(snd[0],snd[1],
                     pan+SinOsc.kr(60/bpm_target*16,mul:strobe*0.5),
-                    level:Lag.kr(amp,0.2)*Lag.kr(amp_crossfade,0.2)
+                    level:amp*env,
                 );
 
                 // send position message for player 1 only
@@ -106,6 +128,20 @@ Engine_Thirtythree : CroneEngine {
             // lua is sending 1-index
             sampleBuffThirtythree[msg[1]-1].free;
             sampleBuffThirtythree[msg[1]-1] = Buffer.read(context.server,msg[2]);
+        });
+
+        this.addCommand("tt_play","iiiffff", { arg msg;
+            // lua is sending 1-index
+            playerThirtythree[msg[1]-1].set(
+                \t_trig,1,
+                \bufnum,sampleBuffThirtythree[msg[2]-1],
+                \amp,msg[4],
+                \rate,msg[5],
+                \samplePos,msg[6],
+                \sampleStart,msg[6],
+                \sampleEnd,msg[7],
+            );
+            // TODO: use effect information
         });
 
 

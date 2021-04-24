@@ -1,6 +1,9 @@
 local Graphics={}
 
 
+local FilterGraph = require "filtergraph"
+
+
 function Graphics:new(o)
   o=o or {}
   setmetatable(o,self)
@@ -23,10 +26,6 @@ end
 
 function Graphics:update()
   self.dirty=true
-end
-
-function Graphics.redraw_clock()
-
 end
 
 -- alert shows an alert for 2 seconds
@@ -91,6 +90,11 @@ function Graphics:metro_icon(tick,x,y)
   screen.move(x+7,y+3)
   screen.line(tick and (x+4) or (x+10),y)
   screen.stroke()
+end
+
+function Graphics:lpf()
+  local filter_graph = FilterGraph.new(20,20000,-60,30,"lowpass",12,2000,0)
+  filter_graph:set_position_and_size(4, 22, 56, 38)
 end
 
 return Graphics

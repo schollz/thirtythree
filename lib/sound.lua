@@ -60,18 +60,27 @@ function Sound:play(i,override)
   end
   local s=override.s or self.s
   local e=override.e or self.e
+  local effect = override.effect or 0
+  local amp = override.amp or self.amp
   if mode_debug then
     print("playing "..self.wav.name.." on voice "..voice.." at pos ("..s..","..e..")")
+    print(voice, -- which sampler player
+    self.wav.sc_index, -- buffer number
+    effect,
+    amp,
+    self.rate,
+    s,
+    e)
   end
-  -- engine.tt_play(
-  --   voice, -- which sampler player
-  --   self.wav.sc_index, -- buffer number
-  --   override.amp or self.sample[i].amp,
-  --   self.sample[i].rate_from_type,
-  --   s,
-  --   e,
-  --   override.effect or self.sample[i].effect
-  -- )
+  engine.tt_play(
+    voice, -- which sampler player
+    self.wav.sc_index, -- buffer number
+    effect,
+    amp,
+    self.rate,
+    s,
+    e
+  )
 end
 
 function Sound:get_start_end(s,e)

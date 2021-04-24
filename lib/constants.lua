@@ -12,6 +12,8 @@ B_FX=22
 B_RECORD=23
 
 -- adjust constants
+ADJ_FIRST=1
+ADJ_LAST=2
 ADJ_NONE=1
 ADJ_TRIM=2
 ADJ_TONE=3

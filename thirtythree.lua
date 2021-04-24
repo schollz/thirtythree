@@ -13,6 +13,7 @@ include("lib/utils")
 sel_operator=1
 sel_filename=""
 sel_looppoint=1
+sel_adj=ADJ_NONE
 ops={} -- operators
 
 -- engine
@@ -49,28 +50,42 @@ function init()
 end
 
 function updater(c)
-  graphics:update()
 end
 
 function enc(k,d)
-  if k==1 then
-    renderer:zoom(sel_filename,sel_looppoint,d)
-  else
-    sel_looppoint=k-1
-    renderer:jog(sel_filename,sel_looppoint,d)
+  if ADJ_TRIM then
+    if k==1 then
+      ops[sel_operator]:zoom(sel_looppoint,d)
+    else
+      sel_looppoint=k-1
+      ops[sel_operator]:trim_jog(sel_looppoint,d)
+    end
   end
-
+  graphics:update()
 end
 
 function key(k,z)
-
+  if k>1 and z==1 then
+    local v = k*2-5
+    sel_adj = sel_adj + v
+    if sel_adj < ADJ_FIRST then
+      sel_adj=ADJ_LAST
+    elseif sel_adj > ADJ_LAST then
+      sel_adj=ADJ_FIRST
+    end
+    if sel_adj==ADJ_TRIM then
+      renderer:fit()
+    end
+  end
+  graphics:update()
 end
 
 function redraw()
   screen.clear()
 
-  -- draw current file if its there
-  renderer:draw(sel_filename)
+  if ADJ_TRIM then
+    ops[sel_operator]:draw_trim()
+  end
 
   -- metronome icon
   graphics:metro_icon(true,-2,3)

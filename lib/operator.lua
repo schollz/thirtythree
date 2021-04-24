@@ -115,11 +115,13 @@ function Operator:sound_play_from_pattern(ptn_id,ptn_step,snd_id,smpl_id,overwri
   self.sound[snd_id][smpl_id]:play(smpl_id,overwrite)
 end
 
-function Operator:sound_play_from_press(snd_id,smpl_id,overwrite)
+function Operator:sound_play_from_press(overwrite)
   overwrite=overwrite or {}
-  self.sound[snd_id][smpl_id]:play(smpl_id,overwrite)
+  overwrite.voice=1
+  -- show sound
+  renderer:expand(snd.wav.filename,snd.s,snd.e)
+  self.sound[self.cur_snd_id][self.cur_smpl_id]:play(overwrite)
 end
-
 
 function Operator:sound_clone(snd_id,smpl_id) 
   local o=self.sound[snd_id][smpl_id].dump()
@@ -132,26 +134,51 @@ function Operator:sound_clone(snd_id,smpl_id)
   return sound:new(o)
 end
 
+-- 
+-- drawing
+--
+function Operator:trim_draw()
+  if not self.sound[self.cur_snd_id][self.cur_smpl_id].loaded then
+    do return end
+  end
+  renderer:draw(self.sound[self.cur_snd_id][self.cur_smpl_id].wav.filename)
+end
+
+function Operator:trim_zoom(sel_looppoint,d)
+  if not self.sound[self.cur_snd_id][self.cur_smpl_id].loaded then
+    do return end
+  end
+  renderer:zoom(self.sound[self.cur_snd_id][self.cur_smpl_id].wav.filename,sel_looppoint,d)
+end
+
+function Operator:trim_jog(sel_looppoint,d)
+  if not self.sound[self.cur_snd_id][self.cur_smpl_id].loaded then
+    do return end
+  end
+  local se = renderer:jog(self.sound[self.cur_snd_id][self.cur_smpl_id].wav.filename,sel_looppoint,d)
+  self.sound[self.cur_snd_id][self.cur_smpl_id].s=se[1]
+  self.sound[self.cur_snd_id][self.cur_smpl_id].e=se[2]
+end
+
+
 --
 -- parameters
 --
 
-function Operator:set_amp(v)
-  self.amp=v 
-  -- set on current sample
-  self.sound[self.cur_snd_id][self.cur_smpl_id].amp=v
-  -- set on current pattern if writing
+function Operator:set_trim(s,e)
+  -- set current playing
   if self.mode_play and self.buttons[B_WRITE].pressed then
     for o,_ in pairs(self.pattern[self.cur_ptn_id][self.cur_ptn_step].snd) do
-      o.amp=v -- TODO: check that this works
+      o.s=s -- TODO: check that this works
+      o.e=e
     end
+    do return end
   end
-end
 
-function Operator:set_trim(s,e)
+  -- set current selected sound
   local i1=1 
   local i2=16
-  if snd_id > 8then
+  if self.cur_snd_id > 8 then
     -- only change this sound
     i1=self.cur_smpl_id 
     i2=self.cur_smpl_id
@@ -352,7 +379,7 @@ function Operator:buttons_register()
         -- set this sample to default
         self.cur_smpl_id=b
         -- play this sample in sound, without effects
-        self:sound_play_from_press(self.cur_snd_id,self.cur_smpl_id)
+        self:sound_play_from_press()
         if self.mode_play and self.buttons[B_WRITE].pressed then
           -- put current sound onto current playing step
           self.pattern[self.cur_ptn_id][self.cur_ptn_step].snd[self.cur_snd_id]=self:sound_clone(self.cur_snd_id,self.cur_smpl_id)
