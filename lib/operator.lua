@@ -119,11 +119,11 @@ end
 function Operator:sound_clone(snd_id,smpl_id)
   local o=self.sound[snd_id][smpl_id].dump()
   -- overwrite with the current parameters
-  o.amp=self.amp
-  o.rate=self.rate
-  o.lpf=self.lpf
-  o.hpf=self.hpf
-  o.res=self.res
+  -- o.amp=self.amp
+  -- o.rate=self.rate
+  -- o.lpf=self.lpf
+  -- o.hpf=self.hpf
+  -- o.res=self.res
   return sound:new(o)
 end
 
