@@ -82,6 +82,7 @@ function Gridd:get_visual()
     end
   end
 
+
   for _,op in pairs(ops) do
     for i=B_FIRST,B_LAST do
       local r,c=op.buttons[i].pos()

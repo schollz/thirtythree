@@ -14,6 +14,7 @@ function Operator:new(o)
 
   -- parameters
   o.id=o.id or 1
+  o.buttons={}
 
   return o
 end
@@ -80,12 +81,12 @@ function Operator:sound_initialize(snd_id)
   for smpl_id=1,16 do
     local s=0
     local e=1
-    if smpl_id>8 then
+    if snd_id>8 then
       s=(smpl_id-1)/16
       e=smpl_id/16
     end
     local rate = 1
-    if smpl_id<=8 then
+    if snd_id<=8 then
       rate = pitch.transpose_rate(smpl_id-5)
     end
     self.sound[snd_id][smpl_id]=sound:new({
@@ -162,7 +163,9 @@ function Operator:trim_jog(sel_looppoint,d)
     do return end
   end
   local se=renderer:jog(self.sound[self.cur_snd_id][self.cur_smpl_id].wav.filename,sel_looppoint,d)
-  
+  if se==nil then
+    do return end 
+  end  
 
   if self.mode_play and self.buttons[B_WRITE].pressed and self.cur_ptn_step>0 then
     -- set current playing
@@ -175,13 +178,19 @@ function Operator:trim_jog(sel_looppoint,d)
     if self.cur_snd_id<9 then
       -- if melodic, set the trim for *all* sounds
       for i=1,16 do
-        self.sound[self.cur_snd_id][i].s=se[1]
-        self.sound[self.cur_snd_id][i].e=se[2]
+        if sel_looppoint==1 then
+          self.sound[self.cur_snd_id][i].s=se
+        else
+          self.sound[self.cur_snd_id][i].e=se
+        end
       end
     else
       -- set current sound
-      self.sound[self.cur_snd_id][self.cur_smpl_id].s=se[1]
-      self.sound[self.cur_snd_id][self.cur_smpl_id].e=se[2]
+        if sel_looppoint==1 then
+          self.sound[self.cur_snd_id][self.cur_smpl_id].s=se
+        else
+          self.sound[self.cur_snd_id][self.cur_smpl_id].e=se
+        end
     end
   end
 
@@ -193,6 +202,9 @@ end
 -- pattern functions
 --
 function Operator:pattern_step()
+  if not self.mode_play then 
+    do return end
+  end
   -- increase step
   self.cur_ptn_step=self.cur_ptn_step+1
 

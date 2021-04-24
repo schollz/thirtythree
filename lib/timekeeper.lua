@@ -43,7 +43,7 @@ end
 
 function Timekeeper:emit_note(division,t)
   for _,op in pairs(ops) do
-    if op.division==division do
+    if op.division==division then
       op:pattern_step()
     end
   end

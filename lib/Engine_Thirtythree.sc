@@ -21,7 +21,7 @@ Engine_Thirtythree : CroneEngine {
 
         (0..16).do({arg i; 
             SynthDef("playerThirtythree"++i,{ 
-                arg bufnum, amp=0, t_trig=0,t_trigtime=0,fadeout=0.05,
+                arg bufnum, amp=0, t_trig=0,t_trigtime=0,fadeout=0,
                 sampleStart=0,sampleEnd=1,samplePos=0,
                 rate=0,rateSlew=0,bpm_sample=1,bpm_target=1,
                 bitcrush=0,bitcrush_bits=24,bitcrush_rate=44100,

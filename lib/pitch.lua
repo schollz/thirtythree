@@ -25,4 +25,4 @@ assert(Pitch.transpose_rate(12)==2)
 assert(Pitch.transpose_rate(-12)==1/2)
 assert(Pitch.transpose_rate(-1)==15/8/2)
 
-return Pitc
+return Pitch
