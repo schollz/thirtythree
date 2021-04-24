@@ -21,12 +21,12 @@ renderer_=include("lib/renderer")
 renderer=renderer_:new()
 voices_=include("lib/voices")
 voices=voices_:new()
-sound_=include("lib/sound")
-operator_=include("lib/operator")
+sound=include("lib/sound")
+operator=include("lib/operator")
 
 function init()
   -- TODO: initialize operators
-  ops[1]=operator_:new()
+  ops[1]=operator:new()
 
   -- start updater
   runner=metro.init()

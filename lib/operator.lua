@@ -78,7 +78,7 @@ function Operator:pattern_initialize(ptn_id)
 end
 
 function Operator:sound_initialize(i)
-  self.sound[i]=sound_:new({
+  self.sound[i]=sound:new({
     id=(self.id-1)*16+i,
     melodic=i<9,
   })
@@ -187,13 +187,15 @@ function Operator:buttons_register()
   end
   self.buttons[B_SOUND].on_press=function()
     if self.buttons[B_RECORD].pressed then
-      -- TODO: delete current sound
+      -- delete current sound
+      self:sound_initialize(self.cur_snd_id)
     end
   end
   self.buttons[B_PATTERN].on_press=function()
     self.mode_switchpattern=true
     if self.buttons[B_RECORD].pressed then
-      -- TODO: clear current pattern
+      -- clear current pattern
+      self:pattern_initialize(self.cur_ptn_id)
     end
   end
   self.buttons[B_PATTERN].off_press=function()
@@ -212,6 +214,11 @@ function Operator:buttons_register()
   -- steps "1" to "16"
   for i=B_BUTTON_FIRST,B_BUTTON_LAST do
     local b=i-B_BUTTON_FIRST+1 -- the button number [1,16]
+    --
+    --
+    -- button off
+    --
+    --
     self.buttons[i].off_press=function()
       if self.mode_write then
         -- toggle a step here for the current sound
@@ -221,6 +228,11 @@ function Operator:buttons_register()
         self.effect_current=0
       end
     end
+    --
+    --
+    -- button presses
+    --
+    --
     self.buttons[i].on_press=function()
       if self.buttons[B_PATTERN].pressed then
         -- chain pattern
@@ -257,7 +269,11 @@ function Operator:buttons_register()
         end
       end
     end
+    --
+    --
     -- lighting of the button
+    --
+    --
     self.buttons[i].light=function()
       if self.buttons[i].pressed then
         return 14
@@ -290,8 +306,15 @@ function Operator:buttons_register()
           return 7
         end
       elseif not self.mode_write then
-        -- TODO: if performance mode, show if this button corresponds to the sound playing
-        -- TODO: (also, not po-33 but) show dim light if this sound is part of current pattern
+        -- if playing, show indicator of the beat
+        if self.mode_play and self.cur_ptn_step==b then 
+          return 14
+        end
+        -- show if this button corresponds to the sample of the current sound while playing
+        if self.mode_play and self.pattern[self.cur_ptn_id][b].snd[self.cur_snd_id]==b then
+          return 7
+        end
+        -- TODO (stretch goal): (also, not po-33 but) show dim light if this sound is part of current pattern
       end
     end
   end

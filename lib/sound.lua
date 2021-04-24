@@ -22,9 +22,8 @@ function Sound:new(o)
     o.sample[i]={
       s=0,
       e=1,
-      effect=16,-- effect 16 is no effect
       rate_from_type=i/4,-- TODO calculate from scale
-      rate_transpose=1,
+      rate_pitch=1,
       amp=1.0,
       hpf=20,
       lpf=20000,
@@ -66,8 +65,24 @@ function Sound:load(filename)
   end
 end
 
-function Sound:set_fx(id,fx_id)
-  self.sample[id].effect=fx_id
+function Sound:set_amp(id,amp)
+  self.sample[id].amp=amp
+end
+
+function Sound:set_lpf(id,val)
+  self.sample[id].lpf=lpf
+end
+
+function Sound:set_hpf(id,val)
+  self.sample[id].hpf=val
+end
+
+function Sound:set_resonance(id,val)
+  self.sample[id].resonance=val
+end
+
+function Sound:set_pitch(id,pitch)
+  self.sample[id].rate_pitch=pitch -- TODO: figure this out
 end
 
 -- Sound:press will play a sound from a sample
