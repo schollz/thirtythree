@@ -263,6 +263,8 @@ function Operator:buttons_register()
     self.buttons[i].light=function()
       if self.buttons[i].pressed then
         return 14
+      else
+        return 5
       end
     end
   end
