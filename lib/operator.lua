@@ -119,8 +119,11 @@ function Operator:sound_play_from_press(overwrite)
   overwrite=overwrite or {}
   overwrite.voice=1
   -- show sound
-  renderer:expand(snd.wav.filename,snd.s,snd.e)
-  self.sound[self.cur_snd_id][self.cur_smpl_id]:play(overwrite)
+  local snd=self.sound[self.cur_snd_id][self.cur_smpl_id]
+  if snd.loaded then
+    renderer:expand(snd.wav.filename,snd.s,snd.e)
+    snd:play(overwrite)
+  end
 end
 
 function Operator:sound_clone(snd_id,smpl_id)
@@ -137,6 +140,14 @@ end
 --
 -- drawing
 --
+function Operator:trim_select()
+  local snd=self.sound[self.cur_snd_id][self.cur_smpl_id]
+  if not snd.loaded then
+    do return end
+  end
+  renderer:expand(snd.wav.filename,snd.s,snd.e)
+end
+
 function Operator:trim_draw()
   if not self.sound[self.cur_snd_id][self.cur_smpl_id].loaded then
     do return end

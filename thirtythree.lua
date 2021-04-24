@@ -55,7 +55,7 @@ end
 function enc(k,d)
   if ADJ_TRIM then
     if k==1 then
-      ops[sel_operator]:zoom(sel_looppoint,d)
+      ops[sel_operator]:trim_zoom(sel_looppoint,d)
     else
       sel_looppoint=k-1
       ops[sel_operator]:trim_jog(sel_looppoint,d)
@@ -74,7 +74,7 @@ function key(k,z)
       sel_adj=ADJ_FIRST
     end
     if sel_adj==ADJ_TRIM then
-      renderer:fit()
+      ops[sel_operator]:trim_select()
     end
   end
   graphics:update()
@@ -84,7 +84,7 @@ function redraw()
   screen.clear()
 
   if ADJ_TRIM then
-    ops[sel_operator]:draw_trim()
+    ops[sel_operator]:trim_draw()
   end
 
   -- metronome icon
