@@ -10,7 +10,22 @@ function Voices:new(o)
   for i=1,16 do
     o.played[i]={id=0,last_played=os.clock()}
   end
+  o.pos=0
+
+  -- collect position information from supercollider
+  -- osc input
+  osc.event=function(path,args,from)
+    if path=="tt_pos" then
+      o.pos=args[2]
+    end
+  end
+
   return o
+end
+
+-- pos returns the position of the index-1 voice
+function Voices:pos()
+  return self.pos 
 end
 
 -- get returns the best voice for id
@@ -42,7 +57,5 @@ function Voices:get(id)
   return voice
 end
 
-
--- TODO: collect position information from supercollider
 
 return Voices

@@ -6,7 +6,6 @@
 Operator={}
 
 
-
 function Operator:new(o)
   o=o or {}
   setmetatable(o,self)
@@ -54,6 +53,7 @@ function Operator:init()
   self.cur_ptn_step=1
   self.cur_fx_id=0
 
+  self:buttons_register()
 
   self:debug("initialized operator")
 end
@@ -76,9 +76,17 @@ end
 function Operator:sound_initialize(snd_id)
   self.sound[snd_id]={}
   for smpl_id=1,16 do
+    local s = 0
+    local e = 1
+    if smpl_id>8 then
+      s=(smpl_id-1)/16
+      e=smpl_id/16
+    end
     self.sound[snd_id][smpl_id]=sound:new({
       id=smpl_id,
       group=(self.id-1)*16+snd_id,
+      s=s,
+      e=e,
       melodic=snd_id<9,
       amp=self.amp,
       rate=self.rate,
@@ -344,7 +352,7 @@ function Operator:buttons_register()
         -- set this sample to default
         self.cur_smpl_id=b
         -- play this sample in sound, without effects
-        self:sound_play(self.cur_snd_id,self.cur_smpl_id,{effect=16})
+        self:sound_play_from_press(self.cur_snd_id,self.cur_smpl_id)
         if self.mode_play and self.buttons[B_WRITE].pressed then
           -- put current sound onto current playing step
           self.pattern[self.cur_ptn_id][self.cur_ptn_step].snd[self.cur_snd_id]=self:sound_clone(self.cur_snd_id,self.cur_smpl_id)

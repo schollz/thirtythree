@@ -1,16 +1,17 @@
 --
--- Interface keeps track of the grid
+-- Gridd keeps track of the grid
 --
 
-local Interface={}
+local Gridd={}
 
-function Interface:new(o)
+function Gridd:new(o)
   m=m or {}
   setmetatable(m,self)
   self.__index=self
 
 
   -- initiate the grid
+  m.grid_on=true
   m.g=grid.connect()
   m.g.key=function(x,y,z)
     if m.grid_on then
@@ -40,17 +41,27 @@ function Interface:new(o)
   end
   m.grid_refresh:start()
 
+  print("loaded grid")
   return m
 end
 
-function Interface:grid_key(x,y,z)
+
+function Gridd:debug(s)
+  if mode_debug then
+    print("interface: "..s)
+  end
+end
+
+
+function Gridd:grid_key(x,y,z)
   self:key_press(y,x,z==1)
   self:grid_redraw()
 end
 
-function Interface:key_press(row,col,on)
+function Gridd:key_press(row,col,on)
+  self:debug("row="..row.." col="..col)
   for _,op in pairs(ops) do
-    for i=B_FIRST,B_LIST do 
+    for i=B_FIRST,B_LAST do 
       local r,c = op.buttons[i].pos()
       if r==row and c==col then 
         op.buttons[i].press(on)
@@ -60,7 +71,7 @@ function Interface:key_press(row,col,on)
   end
 end
 
-function Interface:get_visual()
+function Gridd:get_visual()
   -- clear visual
   for row=1,8 do
     for col=1,self.grid_width do
@@ -72,7 +83,7 @@ function Interface:get_visual()
   end
 
   for _,op in pairs(ops) do
-    for i=B_FIRST,B_LIST do 
+    for i=B_FIRST,B_LAST do 
       local r,c = op.buttons[i].pos()
       local l=op.buttons[i].light()
       if l~=nil then
@@ -84,7 +95,7 @@ function Interface:get_visual()
   return self.visual
 end
 
-function Interface:grid_redraw()
+function Gridd:grid_redraw()
   self.g:all(0)
   local gd=self:get_visual()
   local s=1
@@ -100,4 +111,4 @@ function Interface:grid_redraw()
   self.g:refresh()
 end
 
-return Interface
+return Gridd

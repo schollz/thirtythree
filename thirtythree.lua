@@ -15,7 +15,10 @@ sel_filename=""
 sel_looppoint=1
 ops={} -- operators
 
--- individiaul libraries
+-- engine
+engine.name="Thirtythree"
+
+-- individual libraries
 graphics_=include("lib/graphics")
 graphics=graphics_:new()
 renderer_=include("lib/renderer")
@@ -24,8 +27,8 @@ voices_=include("lib/voices")
 voices=voices_:new()
 wav_=include("lib/wav")
 wav=wav_:new()
-interface_=include("lib/interface")
-interface=interface_:new()
+gridd_=include("lib/gridd")
+gridd=gridd_:new()
 sound=include("lib/sound")
 operator=include("lib/operator")
 

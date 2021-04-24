@@ -23,12 +23,14 @@ function Sound:new(o)
   o.hpf = o.hpf or 20
   o.res = o.res or 1
   o.wav=nil
+  o.loaded=false
 
   return o
 end
 
 function Sound:load(filename)
   self.wav = wav:get(filename)
+  self.loaded=true
 end
 
 function Sound:dump()
@@ -43,11 +45,15 @@ function Sound:dump()
     hpf=self.hpf,
     res=self.res,
     wav=self.wav,
+    loaded=self.loaded,
   }
 end
 
 -- Sound:press will play a sound from a sample
 function Sound:play(i,override)
+  if not self.loaded then 
+    do return end
+  end
   local voice = override.voice
   if voice==nil then
     voice=voices:get(self.group)

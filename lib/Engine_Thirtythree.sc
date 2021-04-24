@@ -6,6 +6,7 @@ Engine_Thirtythree : CroneEngine {
     // Thirtythree specific v0.1.0
     var sampleBuffThirtythree;
     var playerThirtythree;
+    var osfunThirtyThree;
     // Thirtythree ^
 
     *new { arg context, doneCallback;
@@ -22,7 +23,7 @@ Engine_Thirtythree : CroneEngine {
             SynthDef("playerThirtythree"++i,{ 
                 arg bufnum, amp=0, t_trig=0,t_trigtime=0, amp_crossfade=0,
                 sampleStart=0,sampleEnd=1,samplePos=0,
-                rate=1,rateSlew=0,bpm_sample=1,bpm_target=1,
+                rate=0,rateSlew=0,bpm_sample=1,bpm_target=1,
                 bitcrush=0,bitcrush_bits=24,bitcrush_rate=44100,
                 scratch=0,strobe=0,vinyl=0,
                 timestretch=0,timestretchSlowDown=1,timestretchWindowBeats=1,
@@ -81,11 +82,20 @@ Engine_Thirtythree : CroneEngine {
                     level:Lag.kr(amp,0.2)*Lag.kr(amp_crossfade,0.2)
                 );
 
-                // TODO: send position message for player #1
+                // send position message for player 1 only
+                if (i==1,{
+                    SendTrig.kr(Impulse.kr(15),i,A2K.kr(((1-timestretch)*pos)+(timestretch*timestretchPos))/BufFrames.kr(bufnum)/BufRateScale.kr(bufnum));                        
+                },{});
+
                 Out.ar(0,snd)
             }).add; 
         });
 
+        osfunThirtyThree = OSCFunc({ 
+            arg msg, time; 
+                // [time, msg].postln;
+            NetAddr("127.0.0.1", 10111).sendMsg("tt_pos",1,msg[3]);  
+        },'/tr', context.server.addr);
 
         playerThirtythree = Array.fill(16,{arg i;
             Synth("playerThirtythree"++i, target:context.xg);
@@ -96,9 +106,6 @@ Engine_Thirtythree : CroneEngine {
             // lua is sending 1-index
             sampleBuffThirtythree[msg[1]-1].free;
             sampleBuffThirtythree[msg[1]-1] = Buffer.read(context.server,msg[2]);
-            playerThirtythree[msg[1]-1].set(
-                \bufnum,sampleBuffThirtythree[msg[1]-1],
-            );
         });
 
 
@@ -110,6 +117,7 @@ Engine_Thirtythree : CroneEngine {
         // Thirtythree Specific v0.0.1
         (0..16).do({arg i; sampleBuffThirtythree[i].free});
         (0..16).do({arg i; playerThirtythree[i].free});
+        osfunThirtyThree.free;
         // ^ Thirtythree specific
     }
 }

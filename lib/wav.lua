@@ -25,8 +25,8 @@ function Wav:get(filename)
     self.files[filename].filename=filename
     self.files[filename].sc_index=self.sc_index
 
-    -- TODO: load it into supercollider
-    -- engine.tt_load(self.index_sc,filename)
+    -- load it into supercollider
+    engine.tt_load(self.sc_index,filename)
 
     if mode_debug then
       print("loaded "..filename.." into with sc index "..self.sc_index)
@@ -38,6 +38,7 @@ function Wav:get(filename)
 
   -- return the wav
   return {
+    name=self.files[filename].name,
     filename=filename,
     ch=self.files[filename].ch,
     samples=self.files[filename].samples,
