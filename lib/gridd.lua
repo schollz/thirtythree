@@ -75,7 +75,7 @@ function Gridd:get_visual()
   -- clear visual
   for row=1,8 do
     for col=1,self.grid_width do
-      self.visual[row][col]=self.visual[row][col]-1
+      self.visual[row][col]=self.visual[row][col]-4
       if self.visual[row][col]<0 then
         self.visual[row][col]=0
       end

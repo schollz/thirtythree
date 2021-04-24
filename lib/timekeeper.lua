@@ -17,7 +17,7 @@ function Timekeeper:init()
     ppqn=64
   })
   self.timers={}
-  self.divisions={1/4}
+  self.divisions={1/16,1/8,1/4}
   for _,division in ipairs(self.divisions) do
     self.timers[division]={}
     self.timers[division].lattice=self.lattice:new_pattern{

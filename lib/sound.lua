@@ -22,8 +22,8 @@ function Sound:new(o)
   o.lpf=o.lpf or 20000
   o.hpf=o.hpf or 20
   o.res=o.res or 1
-  o.wav=nil
-  o.loaded=false
+  o.wav=o.wav or nil
+  o.loaded=o.loaded or false
 
   return o
 end
@@ -35,6 +35,7 @@ end
 
 function Sound:dump()
   return {
+    melodic=self.melodic,
     id=self.id,
     group=self.group,
     s=self.s,
@@ -52,6 +53,7 @@ end
 -- Sound:press will play a sound from a sample
 function Sound:play(i,override)
   if not self.loaded then
+    print("sound not loaded")
     do return end
   end
   local voice=nil 
