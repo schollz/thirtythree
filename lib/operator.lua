@@ -29,6 +29,7 @@ function Operator:init()
   -- patterns
   self.pattern={}
   self.pattern_chain={}
+  self.pattern_chain_index=1
   for ptn_id=1,16 do
     self.pattern[ptn_id]={}
     self:pattern_initialize(ptn_id)
@@ -38,6 +39,7 @@ function Operator:init()
   end
 
   -- params
+  self.division=1/4
   self.s=0
   self.e=1
   self.amp=0.5
@@ -50,7 +52,7 @@ function Operator:init()
   self.cur_snd_id=1
   self.cur_smpl_id=1
   self.cur_ptn_id=1
-  self.cur_ptn_step=1
+  self.cur_ptn_step=0
   self.cur_fx_id=0
 
   self:buttons_register()
@@ -101,18 +103,6 @@ function Operator:sound_load(snd_id,filename)
   for smpl_id=1,16 do
     self.sound[snd_id][smpl_id]:load(filename)
   end
-end
-
-function Operator:sound_play_from_pattern(ptn_id,ptn_step,snd_id,smpl_id,overwrite)
-  overwrite=overwrite or {}
-  if self.button[B_FX].pressed and self.cur_fx_id>0 and overwrite.effect==nil then
-    -- perform effect
-    overwrite.effect=self.cur_fx_id
-  else
-    -- get effect from the pattern
-    overwrite.effect=self.pattern[ptn_id][ptn_step].fx_id
-  end
-  self.sound[snd_id][smpl_id]:play(smpl_id,overwrite)
 end
 
 function Operator:sound_play_from_press(overwrite)
@@ -178,7 +168,7 @@ end
 
 function Operator:set_trim(s,e)
   -- set current playing
-  if self.mode_play and self.buttons[B_WRITE].pressed then
+  if self.mode_play and self.buttons[B_WRITE].pressed and self.cur_ptn_step>0 then
     for o,_ in pairs(self.pattern[self.cur_ptn_id][self.cur_ptn_step].snd) do
       o.s=s -- TODO: check that this works
       o.e=e
@@ -203,6 +193,37 @@ end
 --
 -- pattern functions
 --
+function Operator:pattern_step()
+  -- increase step
+  self.cur_ptn_step=self.cur_ptn_step+1
+
+  if self.cur_ptn_step>16 then
+    -- goto next pattern
+    self.pattern_chain_index=self.pattern_chain_index+1
+    if self.pattern_chain_index>#self.pattern_chain then
+      self.pattern_chain_index=1
+    end
+    self.cur_ptn_id=self.pattern_chain[self.pattern_chain_index]
+    self.cur_ptn_step=1
+  end
+
+  -- play sounds associated with step
+  for _,snd in pairs(self.pattern[self.cur_ptn_id][self.cur_ptn_step].snd) do
+    local overwrite=overwrite or {}
+    if self.button[B_FX].pressed and self.cur_fx_id>0 and overwrite.effect==nil then
+      -- perform effect
+      overwrite.effect=self.cur_fx_id
+    else
+      -- get effect from the pattern
+      overwrite.effect=self.pattern[self.cur_ptn_id][self.cur_ptn_step].fx_id
+    end
+    snd:play(overwrite)
+  end
+end
+
+function Operator:pattern_reset()
+  self.cur_ptn_step=0
+end
 
 function Operator:pattern_has_sound(ptn_id)
   for ptn_step,_ in ipairs(self.pattern[ptn_id]) do
@@ -312,6 +333,7 @@ function Operator:buttons_register()
     self.mode_play=not self.mode_play
     if self.mode_play then
       self:debug("on_press: play activated")
+      self:pattern_reset()
     else
       self:debug("on_press: play stopped")
     end
@@ -371,6 +393,7 @@ function Operator:buttons_register()
           -- new chain
           self:debug("switching pattern to "..i)
           self.pattern_chain={i}
+          self.pattern_chain_index=1
           self.cur_ptn_id=i
           self.mode_switchpattern=false
         else
@@ -393,7 +416,7 @@ function Operator:buttons_register()
         self.cur_smpl_id=b
         -- play this sample in sound, without effects
         self:sound_play_from_press()
-        if self.mode_play and self.buttons[B_WRITE].pressed then
+        if self.mode_play and self.buttons[B_WRITE].pressed and self.cur_ptn_step>0 then
           -- put current sound onto current playing step
           self.pattern[self.cur_ptn_id][self.cur_ptn_step].snd[self.cur_snd_id]=self:sound_clone(self.cur_snd_id,self.cur_smpl_id)
           -- TODO (stretch goal): actually, put current sound onto *closest* playing step
