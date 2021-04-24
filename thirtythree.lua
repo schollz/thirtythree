@@ -79,6 +79,7 @@ function key(k,z)
     if sel_adj==ADJ_TRIM then
       ops[sel_operator]:trim_select()
     end
+    print("adj_mode: "..sel_adj)
   end
   graphics:update()
 end
@@ -86,7 +87,7 @@ end
 function redraw()
   screen.clear()
 
-  if ADJ_TRIM then
+  if sel_adj==ADJ_TRIM then
     ops[sel_operator]:trim_draw()
   end
 

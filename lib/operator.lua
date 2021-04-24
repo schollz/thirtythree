@@ -87,7 +87,7 @@ function Operator:sound_initialize(snd_id)
     end
     local rate = 1
     if snd_id<=8 then
-      rate = pitch.transpose_rate(smpl_id-5)
+      rate = pitch.transpose_rate(INVERTED_KEYBOARD[smpl_id]-9)
     end
     self.sound[snd_id][smpl_id]=sound:new({
       id=smpl_id,

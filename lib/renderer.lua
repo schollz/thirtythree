@@ -115,7 +115,6 @@ function Renderer:jog(filename,i,d)
   if filename=="" then
     do return end
   end
-  print("jog",i,d)
   local p=self.rendered[filename].loop_points[i]
   local window={self.rendered[filename].window[1],self.rendered[filename].window[2]}
   -- convert d to [0,1] duration
