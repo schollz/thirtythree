@@ -1,7 +1,7 @@
 local Graphics={}
 
 
-local FilterGraph = require "filtergraph"
+local FilterGraph=require "filtergraph"
 
 
 function Graphics:new(o)
@@ -93,8 +93,8 @@ function Graphics:metro_icon(tick,x,y)
 end
 
 function Graphics:lpf()
-  local filter_graph = FilterGraph.new(20,20000,-60,30,"lowpass",12,2000,0)
-  filter_graph:set_position_and_size(4, 22, 56, 38)
+  local filter_graph=FilterGraph.new(20,20000,-60,30,"lowpass",12,2000,0)
+  filter_graph:set_position_and_size(4,22,56,38)
 end
 
 return Graphics

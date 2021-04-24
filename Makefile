@@ -7,6 +7,8 @@ format: lua-format.py
 	python3 lua-format.py lib/sound.lua
 	python3 lua-format.py lib/operator.lua
 	python3 lua-format.py lib/renderer.lua
+	python3 lua-format.py lib/gridd.lua
+	python3 lua-format.py lib/constants.lua
 	python3 lua-format.py lib/voices.lua
 
 lua-format.py:

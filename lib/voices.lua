@@ -25,7 +25,7 @@ end
 
 -- pos returns the position of the index-1 voice
 function Voices:pos()
-  return self.pos 
+  return self.pos
 end
 
 -- get returns the best voice for id

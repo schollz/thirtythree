@@ -61,9 +61,9 @@ end
 function Gridd:key_press(row,col,on)
   self:debug("row="..row.." col="..col)
   for _,op in pairs(ops) do
-    for i=B_FIRST,B_LAST do 
-      local r,c = op.buttons[i].pos()
-      if r==row and c==col then 
+    for i=B_FIRST,B_LAST do
+      local r,c=op.buttons[i].pos()
+      if r==row and c==col then
         op.buttons[i].press(on)
         do return end
       end
@@ -83,8 +83,8 @@ function Gridd:get_visual()
   end
 
   for _,op in pairs(ops) do
-    for i=B_FIRST,B_LAST do 
-      local r,c = op.buttons[i].pos()
+    for i=B_FIRST,B_LAST do
+      local r,c=op.buttons[i].pos()
       local l=op.buttons[i].light()
       if l~=nil then
         self.visual[r][c]=l

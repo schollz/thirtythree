@@ -45,7 +45,7 @@ function Operator:init()
   self.hpf=20000
   self.resonance=1.0
   self.rate=1
-  
+
   -- currents
   self.cur_snd_id=1
   self.cur_smpl_id=1
@@ -76,8 +76,8 @@ end
 function Operator:sound_initialize(snd_id)
   self.sound[snd_id]={}
   for smpl_id=1,16 do
-    local s = 0
-    local e = 1
+    local s=0
+    local e=1
     if smpl_id>8 then
       s=(smpl_id-1)/16
       e=smpl_id/16
@@ -92,7 +92,7 @@ function Operator:sound_initialize(snd_id)
       rate=self.rate,
       lpf=self.lpf,
       hpf=self.hpf,
-      res=self.res,      
+      res=self.res,
     })
   end
 end
@@ -123,7 +123,7 @@ function Operator:sound_play_from_press(overwrite)
   self.sound[self.cur_snd_id][self.cur_smpl_id]:play(overwrite)
 end
 
-function Operator:sound_clone(snd_id,smpl_id) 
+function Operator:sound_clone(snd_id,smpl_id)
   local o=self.sound[snd_id][smpl_id].dump()
   -- overwrite with the current parameters
   o.amp=self.amp
@@ -134,7 +134,7 @@ function Operator:sound_clone(snd_id,smpl_id)
   return sound:new(o)
 end
 
--- 
+--
 -- drawing
 --
 function Operator:trim_draw()
@@ -155,7 +155,7 @@ function Operator:trim_jog(sel_looppoint,d)
   if not self.sound[self.cur_snd_id][self.cur_smpl_id].loaded then
     do return end
   end
-  local se = renderer:jog(self.sound[self.cur_snd_id][self.cur_smpl_id].wav.filename,sel_looppoint,d)
+  local se=renderer:jog(self.sound[self.cur_snd_id][self.cur_smpl_id].wav.filename,sel_looppoint,d)
   self.sound[self.cur_snd_id][self.cur_smpl_id].s=se[1]
   self.sound[self.cur_snd_id][self.cur_smpl_id].e=se[2]
 end
@@ -176,14 +176,14 @@ function Operator:set_trim(s,e)
   end
 
   -- set current selected sound
-  local i1=1 
+  local i1=1
   local i2=16
-  if self.cur_snd_id > 8 then
+  if self.cur_snd_id>8 then
     -- only change this sound
-    i1=self.cur_smpl_id 
+    i1=self.cur_smpl_id
     i2=self.cur_smpl_id
   end
-  for i=i1,i2 do 
+  for i=i1,i2 do
     self.sound[self.cur_snd_id][i].s=s
     self.sound[self.cur_snd_id][i].s=e
   end
@@ -195,7 +195,7 @@ end
 
 function Operator:pattern_has_sound(ptn_id)
   for ptn_step,_ in ipairs(self.pattern[ptn_id]) do
-    if #self.pattern[ptn_id][ptn_step].snd > 0 then 
+    if #self.pattern[ptn_id][ptn_step].snd>0 then
       return true
     end
   end
@@ -203,7 +203,7 @@ function Operator:pattern_has_sound(ptn_id)
 end
 
 function Operator:pattern_get_sample_id(ptn_id,ptn_step,snd_id)
-  if self.pattern[ptn_id][ptn_step].snd[snd_id] ~= nil then
+  if self.pattern[ptn_id][ptn_step].snd[snd_id]~=nil then
     return self.pattern[ptn_id][ptn_step].snd[snd_id].id -- returns smpl_id or nil
   else
     return nil
@@ -230,7 +230,7 @@ end
 
 --
 -- button logic
--- 
+--
 
 function Operator:buttons_register()
   self.mode_fx=false
@@ -279,13 +279,13 @@ function Operator:buttons_register()
     self.buttons[i].pos=function()
       return 8,i-B_WRITE+1
     end
-  end  
+  end
   for i=B_BUTTON_FIRST,B_BUTTON_LAST do
     local b=i-B_BUTTON_FIRST+1
     self.buttons[i].pos=function()
       return math.ceil(b/4.0)+3,(b-1)%4+1
     end
-  end      
+  end
 
   self.buttons[B_WRITE].on_short_press=function()
     self.mode_write=not self.mode_write
@@ -425,7 +425,7 @@ function Operator:buttons_register()
         end
       elseif not self.mode_write then
         -- if playing, show indicator of the beat
-        if self.mode_play and self.cur_ptn_step==b then 
+        if self.mode_play and self.cur_ptn_step==b then
           return 14
         end
         -- show if this button corresponds to the sample of the current sound while playing

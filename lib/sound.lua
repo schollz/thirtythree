@@ -13,15 +13,15 @@ function Sound:new(o)
 
   -- parameters
   o.melodic=o.melodic or true
-  o.id = o.id or 1
+  o.id=o.id or 1
   o.group=o.group or 1
-  o.s =o.s or 1
-  o.e = o.e or 1
-  o.rate = o.rate or 1 
-  o.amp = o.amp or 1 
-  o.lpf = o.lpf or 20000
-  o.hpf = o.hpf or 20
-  o.res = o.res or 1
+  o.s=o.s or 1
+  o.e=o.e or 1
+  o.rate=o.rate or 1
+  o.amp=o.amp or 1
+  o.lpf=o.lpf or 20000
+  o.hpf=o.hpf or 20
+  o.res=o.res or 1
   o.wav=nil
   o.loaded=false
 
@@ -29,7 +29,7 @@ function Sound:new(o)
 end
 
 function Sound:load(filename)
-  self.wav = wav:get(filename)
+  self.wav=wav:get(filename)
   self.loaded=true
 end
 
@@ -51,30 +51,30 @@ end
 
 -- Sound:press will play a sound from a sample
 function Sound:play(i,override)
-  if not self.loaded then 
+  if not self.loaded then
     do return end
   end
-  local voice = override.voice
+  local voice=override.voice
   if voice==nil then
     voice=voices:get(self.group)
   end
   local s=override.s or self.s
   local e=override.e or self.e
-  local effect = override.effect or 0
-  local amp = override.amp or self.amp
+  local effect=override.effect or 0
+  local amp=override.amp or self.amp
   if mode_debug then
     print("playing "..self.wav.name.." on voice "..voice.." at pos ("..s..","..e..")")
-    print(voice, -- which sampler player
-    self.wav.sc_index, -- buffer number
-    effect,
-    amp,
-    self.rate,
-    s,
+    print(voice,-- which sampler player
+      self.wav.sc_index,-- buffer number
+      effect,
+      amp,
+      self.rate,
+      s,
     e)
   end
   engine.tt_play(
-    voice, -- which sampler player
-    self.wav.sc_index, -- buffer number
+    voice,-- which sampler player
+    self.wav.sc_index,-- buffer number
     effect,
     amp,
     self.rate,

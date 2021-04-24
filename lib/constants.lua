@@ -1,5 +1,5 @@
 -- button constants
-B_FIRST=1 
+B_FIRST=1
 B_LAST=23
 B_SOUND=1
 B_PATTERN=2

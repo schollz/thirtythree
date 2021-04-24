@@ -66,11 +66,11 @@ end
 
 function key(k,z)
   if k>1 and z==1 then
-    local v = k*2-5
-    sel_adj = sel_adj + v
-    if sel_adj < ADJ_FIRST then
+    local v=k*2-5
+    sel_adj=sel_adj+v
+    if sel_adj<ADJ_FIRST then
       sel_adj=ADJ_LAST
-    elseif sel_adj > ADJ_LAST then
+    elseif sel_adj>ADJ_LAST then
       sel_adj=ADJ_FIRST
     end
     if sel_adj==ADJ_TRIM then
