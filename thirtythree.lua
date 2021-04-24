@@ -20,6 +20,7 @@ ops={} -- operators
 engine.name="Thirtythree"
 
 -- individual libraries
+pitch=include("lib/pitch")
 graphics_=include("lib/graphics")
 graphics=graphics_:new()
 renderer_=include("lib/renderer")
@@ -28,6 +29,8 @@ voices_=include("lib/voices")
 voices=voices_:new()
 wav_=include("lib/wav")
 wav=wav_:new()
+timekeeper_=include("lib/timekeeper")
+timekeeper=timekeeper_:new()
 gridd_=include("lib/gridd")
 gridd=gridd_:new()
 sound=include("lib/sound")
@@ -55,7 +58,7 @@ end
 function enc(k,d)
   if ADJ_TRIM then
     if k==1 then
-      ops[sel_operator]:zoom(sel_looppoint,d)
+      ops[sel_operator]:trim_zoom(sel_looppoint,d)
     else
       sel_looppoint=k-1
       ops[sel_operator]:trim_jog(sel_looppoint,d)
@@ -74,8 +77,9 @@ function key(k,z)
       sel_adj=ADJ_FIRST
     end
     if sel_adj==ADJ_TRIM then
-      renderer:fit()
+      ops[sel_operator]:trim_select()
     end
+    print("adj_mode: "..sel_adj)
   end
   graphics:update()
 end
@@ -83,12 +87,12 @@ end
 function redraw()
   screen.clear()
 
-  if ADJ_TRIM then
-    ops[sel_operator]:draw_trim()
+  if sel_adj==ADJ_TRIM then
+    ops[sel_operator]:trim_draw()
   end
 
   -- metronome icon
-  graphics:metro_icon(true,-2,3)
+  graphics:metro_icon(timekeeper:tick(),-2,3)
 
   -- show alert atop everything if needed
   graphics:show_alert_if_needed()

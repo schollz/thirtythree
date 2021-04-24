@@ -40,7 +40,7 @@ function Graphics:alert(msg)
 end
 
 function Graphics:show_alert_if_needed()
-  if self.alert_msg==nil then
+  if self.alert_msg==nil or self.alert_msg=="" then
     do return end
   end
   screen.level(0)

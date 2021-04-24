@@ -22,8 +22,8 @@ function Sound:new(o)
   o.lpf=o.lpf or 20000
   o.hpf=o.hpf or 20
   o.res=o.res or 1
-  o.wav=nil
-  o.loaded=false
+  o.wav=o.wav or nil
+  o.loaded=o.loaded or false
 
   return o
 end
@@ -35,6 +35,7 @@ end
 
 function Sound:dump()
   return {
+    melodic=self.melodic,
     id=self.id,
     group=self.group,
     s=self.s,
@@ -52,16 +53,24 @@ end
 -- Sound:press will play a sound from a sample
 function Sound:play(i,override)
   if not self.loaded then
+    print("sound not loaded")
     do return end
   end
-  local voice=override.voice
+  local voice=nil 
+  local s=self.s
+  local e=self.e
+  local effect=0
+  local amp=self.amp
+  if override~=nil then
+    voice = override.voice
+    s=override.s or s
+    e=override.e or e
+    effect=override.effect or 0
+    amp=override.amp or amp
+  end
   if voice==nil then
     voice=voices:get(self.group)
   end
-  local s=override.s or self.s
-  local e=override.e or self.e
-  local effect=override.effect or 0
-  local amp=override.amp or self.amp
   if mode_debug then
     print("playing "..self.wav.name.." on voice "..voice.." at pos ("..s..","..e..")")
     print(voice,-- which sampler player
