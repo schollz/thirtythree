@@ -33,9 +33,9 @@ end
 function Sound:load(filename)
   self.wav=wav:get(filename)
   -- partition transients
-  if (not self.melodic) and self.wav.onsets[self.id] ~= nil then 
-        self.s=self.wav.onsets[self.id][1]
-        self.e=self.wav.onsets[self.id][2]
+  if (not self.melodic) and self.wav.onsets[self.id]~=nil then
+    self.s=self.wav.onsets[self.id][1]
+    self.e=self.wav.onsets[self.id][2]
   end
 
   self.loaded=true
@@ -65,13 +65,13 @@ function Sound:play(i,override)
     print("sound not loaded")
     do return end
   end
-  local voice=nil 
+  local voice=nil
   local s=self.s
   local e=self.e
   local effect=0
   local amp=self.amp
   if override~=nil then
-    voice = override.voice
+    voice=override.voice
     s=override.s or s
     e=override.e or e
     effect=override.effect or 0

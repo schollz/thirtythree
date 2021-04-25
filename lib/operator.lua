@@ -59,7 +59,7 @@ function Operator:init()
   self.cur_ptn_id=1
   self.cur_ptn_step=0
   self.cur_fx_id=0
-  
+
   -- filter
   self.cur_filter_number=51 -- [1,101]
   self.pitch=0 -- global pitch
@@ -93,9 +93,9 @@ function Operator:sound_initialize(snd_id)
       s=(smpl_id-1)/16
       e=smpl_id/16
     end
-    local rate = 1
+    local rate=1
     if snd_id<=8 then
-      rate = pitch.transpose_rate(INVERTED_KEYBOARD[smpl_id]-9)
+      rate=pitch.transpose_rate(INVERTED_KEYBOARD[smpl_id]-9)
     end
     self.sound[snd_id][smpl_id]=sound:new({
       id=smpl_id,
@@ -173,7 +173,7 @@ function Operator:resonance_set(d)
 end
 
 function Operator:filter_set(d)
-  self.cur_filter_number = util.clamp(1,101,self.cur_filter_number+d)
+  self.cur_filter_number=util.clamp(1,101,self.cur_filter_number+d)
   if self.cur_filter_number>50 then
     self.hpf=util.linexp(51,101,20,20000,self.cur_filter_number)
     self.is_lpf=false
@@ -212,8 +212,8 @@ function Operator:trim_jog(sel_looppoint,d)
   end
   local se=renderer:jog(self.sound[self.cur_snd_id][self.cur_smpl_id].wav.filename,sel_looppoint,d)
   if se==nil then
-    do return end 
-  end  
+    do return end
+  end
 
   if self.mode_play and self.buttons[B_WRITE].pressed and self.cur_ptn_step>0 then
     -- set current playing
@@ -238,11 +238,11 @@ function Operator:trim_jog(sel_looppoint,d)
       end
     else
       -- set current sound
-        if sel_looppoint==1 then
-          self.sound[self.cur_snd_id][self.cur_smpl_id].s=se
-        else
-          self.sound[self.cur_snd_id][self.cur_smpl_id].e=se
-        end
+      if sel_looppoint==1 then
+        self.sound[self.cur_snd_id][self.cur_smpl_id].s=se
+      else
+        self.sound[self.cur_snd_id][self.cur_smpl_id].e=se
+      end
     end
   end
 
@@ -254,7 +254,7 @@ end
 -- pattern functions
 --
 function Operator:pattern_step()
-  if not self.mode_play then 
+  if not self.mode_play then
     do return end
   end
   -- increase step
@@ -314,8 +314,8 @@ end
 
 function Operator:pattern_has_sample(ptn_id,snd_id,smpl_id)
   for ptn_step,_ in pairs(self.pattern[ptn_id]) do
-    for snd_id2,snd in pairs(self.pattern[ptn_id][ptn_step].snd) do 
-      if snd_id2==snd_id and snd.id==smpl_id then 
+    for snd_id2,snd in pairs(self.pattern[ptn_id][ptn_step].snd) do
+      if snd_id2==snd_id and snd.id==smpl_id then
         do return true end
       end
     end
@@ -358,8 +358,8 @@ function Operator:buttons_register()
       self.buttons[i].pressed=on
       if on then
         -- if recording, ignore all on presses!
-        if recorder.is_recording then 
-          do return end 
+        if recorder.is_recording then
+          do return end
         end
         self:debug("buttons_register: button "..i.." pressed on")
         self.buttons[i].time_press=os.clock()
@@ -385,8 +385,8 @@ function Operator:buttons_register()
       end
     end
     self.buttons[i].pos=function()
-      local startrow = PO33_LAYOUT[self.layout][24][1]
-      local startcol= PO33_LAYOUT[self.layout][24][2]*(self.id-1)+1
+      local startrow=PO33_LAYOUT[self.layout][24][1]
+      local startcol=PO33_LAYOUT[self.layout][24][2]*(self.id-1)+1
       return PO33_LAYOUT[self.layout][i][1]+startrow,PO33_LAYOUT[self.layout][i][2]+startcol
     end
   end
@@ -402,7 +402,7 @@ function Operator:buttons_register()
   self.buttons[B_WRITE].light=function()
     if self.mode_write then
       return 10
-    else 
+    else
       return 5
     end
   end
@@ -418,7 +418,7 @@ function Operator:buttons_register()
   self.buttons[B_PLAY].light=function()
     if self.mode_play then
       return 10
-    else 
+    else
       return 5
     end
   end
@@ -449,8 +449,8 @@ function Operator:buttons_register()
   end
   self.buttons[B_RECORD].off_press=function()
     recorder:record_stop()
-    local fname = recorder:recorded_file()
-    if fname ~= nil then 
+    local fname=recorder:recorded_file()
+    if fname~=nil then
       -- there was a recording, load it into the currenet sound
       self:sound_load(self.cur_snd_id,fname)
     end
@@ -468,13 +468,13 @@ function Operator:buttons_register()
       if self.mode_write then
         -- preventing setting write buttons while doing other stuff
         for j=B_FIRST,B_BUTTON_FIRST-1 do
-          if self.buttons[j].pressed then 
-            do return end 
+          if self.buttons[j].pressed then
+            do return end
           end
         end
         for j=B_BUTTON_LAST+1,B_LAST do
-          if self.buttons[j].pressed then 
-            do return end 
+          if self.buttons[j].pressed then
+            do return end
           end
         end
         -- toggle a step here for the current sound
@@ -560,7 +560,7 @@ function Operator:buttons_register()
         end
       elseif self.mode_play and self.cur_ptn_step==b then
         -- if playing, show indicator of the beat
-          return 15
+        return 15
       elseif self.mode_write then
         -- if write mode, show if this button has current sound and this sample in it
         local ptn_step=b
@@ -572,7 +572,7 @@ function Operator:buttons_register()
         end
       elseif self:pattern_has_sample(self.cur_ptn_id,self.cur_snd_id,b) then
         -- show if this button corresponds to the sample of the current sound while playing
-          -- return 1
+        -- return 1
         -- TODO (stretch goal): (also, not po-33 but) show dim light if this sound is part of current pattern
       end
     end

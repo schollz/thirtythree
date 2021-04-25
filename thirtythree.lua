@@ -40,7 +40,7 @@ operator=include("lib/operator")
 
 function init()
   check_and_install_aubioonset()
-  
+
   -- TODO: initialize operators
   ops[1]=operator:new()
   ops[1]:init()

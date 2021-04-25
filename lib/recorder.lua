@@ -17,26 +17,26 @@ function Recorder:new(o)
 end
 
 function Recorder:draw()
-    if not self.is_recording then 
-      do return end 
-    end
-    print(self.level)
-    graphics:show_level(self.level)
-    -- TODO: draw time left
+  if not self.is_recording then
+    do return end
+  end
+  print(self.level)
+  graphics:show_level(self.level)
+  -- TODO: draw time left
 end
 
 function Recorder:recorded_file()
-  local fname = self.file
-  self.file = nil 
+  local fname=self.file
+  self.file=nil
   return fname
 end
 
 function Recorder:record_start()
-  if self.is_recording then 
-    do return end 
+  if self.is_recording then
+    do return end
   end
   self.is_recording=true
-  _norns.vu = function(in1,in2,out,out2)
+  _norns.vu=function(in1,in2,out,out2)
     self.level=util.linlin(0,127,0,1,in1+in2)
     graphics:update()
   end
@@ -51,9 +51,9 @@ function Recorder:record_start()
   clock.run(function()
     self.time_left=61
     for i=1,60 do
-      self.time_left = self.time_left - 1
+      self.time_left=self.time_left-1
       clock.sleep(1)
-      if not self.is_recording then 
+      if not self.is_recording then
         break
       end
     end
@@ -62,10 +62,10 @@ function Recorder:record_start()
 end
 
 function Recorder:record_stop()
-  if not self.is_recording then 
-    do return end 
+  if not self.is_recording then
+    do return end
   end
-  _norns.vu = norns.none
+  _norns.vu=norns.none
   self.is_recording=false
   audio.tape_record_stop()
 end

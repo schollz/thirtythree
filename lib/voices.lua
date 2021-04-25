@@ -37,12 +37,12 @@ function Voices:get(id)
 
   -- fade it out if its playing
   for i=2,16 do
-    if self.played[i].id==id and current_time-self.played[i].last_played < 1 then
+    if self.played[i].id==id and current_time-self.played[i].last_played<1 then
       -- turn this voice down
       engine.tt_amp(i,0,0.1)
     end
   end
-  
+
   -- get the current voice used already, or the oldest voice
   for i=2,16 do -- voice 1 is reserved
     if current_time-self.played[i].last_played>longest_duration then
