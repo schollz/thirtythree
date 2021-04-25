@@ -18,7 +18,7 @@ function Dev:new(o)
 
 
   -- ops[1].cur_snd_id=9
-  -- sel_adj=ADJ_TRIM
+  sel_adj=ADJ_TONE
   return o
 end
 

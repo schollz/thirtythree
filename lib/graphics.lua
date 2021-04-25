@@ -2,7 +2,7 @@ local Graphics={}
 
 
 local FilterGraph=require "filtergraph"
-
+local UI=require "ui"
 
 function Graphics:new(o)
   o=o or {}
@@ -98,6 +98,31 @@ function Graphics:filter(filter_type,freq,resonance)
   local filter_graph=FilterGraph.new(20,20000,-60,30,filter_type,12,freq,resonance)
   filter_graph:set_position_and_size(4,22,120,38)
   filter_graph:redraw()
+end
+
+function Graphics:volume(vol)
+  screen.font_size(12)
+  screen.level(15)
+  screen.move(4,33)
+  screen.text("Vol")
+  local slider = UI.Slider.new(28,24,90,10,vol,0,1,{0,0.5,1},'right')
+  slider:redraw()
+end
+
+function Graphics:pitch(pitch)
+  screen.level(15)
+  screen.move(4,55)
+  screen.text("Ptc")
+  -- pitch=-12
+  local slider = UI.Slider.new(28,55-9,90,10,0,0,1,{0,0.5,1},'right')
+  slider:redraw()
+  if pitch>0 then 
+    local slider2 = UI.Slider.new(74,55-9,44,10,pitch,0,12,{},'right')
+    slider2:redraw()
+  elseif pitch<0 then
+    local slider2 = UI.Slider.new(74-45-1,55-9,45,10,math.abs(pitch),0,12,{},'left')
+    slider2:redraw()
+  end
 end
 
 return Graphics

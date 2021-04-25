@@ -63,11 +63,17 @@ function enc(k,d)
       sel_looppoint=k-1
       ops[sel_operator]:trim_jog(sel_looppoint,d)
     end
-  else
+  elseif sel_adj==ADJ_FILT then
     if k==2 then
       ops[sel_operator]:filter_set(d)
     elseif k==3 then
       ops[sel_operator]:resonance_set(d)
+    end
+  elseif sel_adj==ADJ_TONE then
+    if k==2 then
+      ops[sel_operator]:pitch_set(d)
+    elseif k==3 then
+      ops[sel_operator]:volume_set(d)
     end
   end
   graphics:update()
@@ -97,13 +103,17 @@ function redraw()
 
   if sel_adj==ADJ_TRIM then
     ops[sel_operator]:trim_draw()
-  else
+  elseif sel_adj==ADJ_FILT then
     ops[sel_operator]:filter_draw()
-    -- screen.display_png(_path.code.."thirtythree/img/a"..ani1..".png",20,20)
-    -- ani1 = ani1 + 1 
-    -- if ani1 > 4 then 
-    --   ani1 = 1
-    -- end
+  elseif sel_adj==ADJ_TONE then
+    ops[sel_operator]:volume_draw()
+    ops[sel_operator]:pitch_draw()
+  else
+    screen.display_png(_path.code.."thirtythree/img/a"..ani1..".png",20,20)
+    ani1 = ani1 + 1 
+    if ani1 > 4 then 
+      ani1 = 1
+    end
   end
 
   -- metronome icon

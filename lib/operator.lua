@@ -62,6 +62,7 @@ function Operator:init()
   
   -- filter
   self.cur_filter_number=51 -- [1,101]
+  self.pitch=0 -- global pitch
 
   self:buttons_register()
 
@@ -143,6 +144,22 @@ end
 --
 -- parameters
 --
+function Operator:volume_draw()
+  graphics:volume(self.amp)
+end
+
+function Operator:volume_set(d)
+  self.amp=util.clamp(0,1,self.amp+d/100)
+end
+
+function Operator:pitch_draw()
+  graphics:pitch(self.pitch)
+end
+
+function Operator:pitch_set(d)
+  self.pitch=util.clamp(-12,12,self.pitch+math.sign(d))
+end
+
 function Operator:filter_draw()
   if self.is_lpf then
     graphics:filter("lowpass",self.lpf,self.resonance)
