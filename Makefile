@@ -12,6 +12,7 @@ format: lua-format.py
 	python3 lua-format.py lib/voices.lua
 	python3 lua-format.py lib/pitch.lua
 	python3 lua-format.py lib/timekeeper.lua
+	python3 lua-format.py lib/recorder.lua
 
 lua-format.py:
 	wget https://raw.githubusercontent.com/schollz/LuaFormat/master/lua-format.py
