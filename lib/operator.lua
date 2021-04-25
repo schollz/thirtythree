@@ -21,7 +21,7 @@ end
 
 function Operator:init()
   -- layout
-  self.layout=1
+  self.layout=1s
 
   -- defaults
   self.sound={}
@@ -70,6 +70,45 @@ function Operator:init()
   self:buttons_register()
 
   self:debug("initialized operator")
+end
+
+function Operator:dump()
+  local t1=clock.get_beat_sec()*clock.get_beats()
+  -- TODO: automatically generate the save name
+  local filename=_path.data.."thirtythree/save.json"
+  print("saving to ")
+  file=io.open(filename,"w+")
+  local data = {}
+  for k,v in pairs(self) do
+    data[k]=json.encode(v)
+  end
+  io.write(json.encode(data))
+  io.close
+  print("saved in "..(clock.get_beat_sec()*clock.get_beats()-t1).." seconds")
+end
+
+function Operator:load()
+  local t1=clock.get_beat_sec()*clock.get_beats()
+  -- TODO: get the last save point
+  local filename=_path.data.."thirtythree/save.json"
+  if not util.file_exists(filename) then
+    print("no save file to load")
+    do return end 
+  end
+
+  local f = io.open(filename,"rb")
+  local content=f:read("*all")
+  f:close()
+
+  local data = json.decode(content)
+  if data == nil then 
+    print("no data found in save file")
+    do return end 
+  end
+  for k,v in pairs(data) do
+    self[k]=json.decode(v)
+  end
+  print("loaded in "..(clock.get_beat_sec()*clock.get_beats()-t1).." seconds")
 end
 
 function Operator:to_string()
