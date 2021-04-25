@@ -15,7 +15,7 @@ Engine_Thirtythree : CroneEngine {
 
     alloc {
         // Thirtythree specific v0.0.1
-        sampleBuffThirtythree = Array.fill(16, { arg i; 
+        sampleBuffThirtythree = Array.fill(64, { arg i; 
             Buffer.new(context.server);
         });
 
@@ -159,7 +159,7 @@ Engine_Thirtythree : CroneEngine {
 
     free {
         // Thirtythree Specific v0.0.1
-        (0..16).do({arg i; sampleBuffThirtythree[i].free});
+        (0..64).do({arg i; sampleBuffThirtythree[i].free});
         (0..16).do({arg i; playerThirtythree[i].free});
         osfunThirtyThree.free;
         // ^ Thirtythree specific

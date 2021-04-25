@@ -21,6 +21,7 @@ engine.name="Thirtythree"
 
 -- individual libraries
 pitch=include("lib/pitch")
+lock=include("lib/lock")
 graphics_=include("lib/graphics")
 graphics=graphics_:new()
 renderer_=include("lib/renderer")

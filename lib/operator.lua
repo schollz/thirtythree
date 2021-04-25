@@ -38,8 +38,9 @@ function Operator:init()
     self.pattern[ptn_id]={}
     self:pattern_initialize(ptn_id)
     -- pattern is a map of sounds that maps to samples
-    -- self.pattern[ptn_id][ptn_step]={fx_id=16,snd={}}
+    -- self.pattern[ptn_id][ptn_step]={fx_id=16,snd={},parm={}}
     -- self.pattern[ptn_id][ptn_step].snd[snd_id]=<sound>
+    -- self.pattern[ptn_id][ptn_step].lock[snd_id]=<param> -- used for parameter locking
   end
 
   -- params
@@ -51,7 +52,7 @@ function Operator:init()
   self.lpf=20000
   self.hpf=20
   self.resonance=0.0
-  self.rate=1
+  self.pitch=0
 
   -- currents
   self.cur_snd_id=1
@@ -62,7 +63,6 @@ function Operator:init()
 
   -- filter
   self.cur_filter_number=51 -- [1,101]
-  self.pitch=0 -- global pitch
 
   self:buttons_register()
 
@@ -99,16 +99,11 @@ function Operator:sound_initialize(snd_id)
     end
     self.sound[snd_id][smpl_id]=sound:new({
       id=smpl_id,
-      group=(self.id-1)*16+snd_id,
+      snd_id=snd_id,
       s=s,
       e=e,
       melodic=snd_id<9,
       rate=rate,
-      -- amp=self.amp,
-      -- rate=self.rate,
-      -- lpf=self.lpf,
-      -- hpf=self.hpf,
-      -- res=self.res,
     })
   end
 end
@@ -132,12 +127,6 @@ end
 
 function Operator:sound_clone(snd_id,smpl_id)
   local o=self.sound[snd_id][smpl_id]:dump()
-  -- overwrite with the current parameters
-  -- o.amp=self.amp
-  -- o.rate=self.rate
-  -- o.lpf=self.lpf
-  -- o.hpf=self.hpf
-  -- o.res=self.res
   return sound:new(o)
 end
 
@@ -150,6 +139,12 @@ end
 
 function Operator:volume_set(d)
   self.amp=util.clamp(0,1,self.amp+d/100)
+  if self.buttons[B_WRITE].pressed and self.mode_play then
+    -- add parameter lock for volume
+    self.pattern[self.cur_ptn_id][self.cur_ptn_step].lock[self.cur_snd_id]:set("amp",self.amp)
+  else
+    self.sound[self.cur_snd_id][self.cur_smpl_id].amp=self.amp
+  end
 end
 
 function Operator:pitch_draw()
@@ -194,6 +189,7 @@ end
 
 function Operator:trim_draw()
   if not self.sound[self.cur_snd_id][self.cur_smpl_id].loaded then
+    graphics:text_center("no sound loaded")
     do return end
   end
   renderer:draw(self.sound[self.cur_snd_id][self.cur_smpl_id].wav.filename)
@@ -283,10 +279,17 @@ function Operator:pattern_step()
       overwrite.effect=self.pattern[self.cur_ptn_id][self.cur_ptn_step].fx_id
     end
     if snd.loaded then
+      -- overwrite with parameter locks
+      for k,v in self.pattern[self.cur_ptn_id][self.cur_ptn_step].lock[snd.snd_id].modified do
+        overwrite[k]=v
+      end
       snd:play(overwrite)
       if self.cur_snd_id==snd_id and (not self.buttons[B_WRITE].pressed) then
         renderer:expand(snd.wav.filename,snd.s,snd.e)
       end
+    else
+      -- update sound with parameter locks
+      self.pattern[self.cur_ptn_id][self.cur_ptn_step].lock[snd.snd_id]:play_if_locked()
     end
   end
 end
@@ -327,7 +330,10 @@ end
 function Operator:pattern_initialize(ptn_id)
   -- initialize all the steps
   for ptn_step=1,16 do
-    self.pattern[ptn_id][ptn_step]={fx_id=16,snd={}}
+    self.pattern[ptn_id][ptn_step]={fx_id=16,snd={},lock={}}
+    for snd_id=1,16 do
+      self.pattern[ptn_id][ptn_step].lock[snd_id]=lock:new()
+    end
   end
 end
 
@@ -338,6 +344,24 @@ function Operator:pattern_toggle_sample(ptn_id,ptn_step,snd_id,smpl_id)
   else
     self:debug("pattern_toggle_sample: adding sample "..smpl_id.." from sound "..snd_id.." on pattern "..ptn_id.." step "..ptn_step)
     self.pattern[ptn_id][ptn_step].snd[snd_id]=self:sound_clone(snd_id,smpl_id)
+  end
+  self:pattern_remove_locks(ptn_id,ptn_step,snd_id)
+end
+
+
+-- pattern_remove_locks removes locks from
+-- ptn_step until next step with a slice from snd_id
+function Operator:pattern_remove_locks(ptn_id,ptn_step,snd_id)
+  for i=1,16 do
+    local step=((ptn_step+i-2)%16)+1
+    -- always remove first one
+    if i==1 then
+      self.pattern[ptn_id][step].lock[snd_id]=lock:new()
+    elseif self.pattern[ptn_id][step].snd[snd_id]~=nil then
+      break
+    else
+      self.pattern[ptn_id][step].lock[snd_id]=lock:new()
+    end
   end
 end
 
@@ -391,6 +415,15 @@ function Operator:buttons_register()
     end
   end
 
+  self.buttons[B_FX].on_short_press=function()
+    sel_adj=sel_adj+1
+    if sel_adj<ADJ_FIRST then
+      sel_adj=ADJ_LAST
+    elseif sel_adj>ADJ_LAST then
+      sel_adj=ADJ_FIRST
+    end
+    graphics:update()
+  end
   self.buttons[B_WRITE].on_short_press=function()
     self.mode_write=not self.mode_write
     if self.mode_write then
@@ -527,6 +560,7 @@ function Operator:buttons_register()
         if self.mode_play and self.buttons[B_WRITE].pressed and self.cur_ptn_step>0 then
           -- put current sound onto current playing step
           self.pattern[self.cur_ptn_id][self.cur_ptn_step].snd[self.cur_snd_id]=self:sound_clone(self.cur_snd_id,self.cur_smpl_id)
+          self:pattern_remove_locks(self.cur_ptn_id,self.cur_ptn_step,self.cur_snd_id)
           -- TODO (stretch goal): actually, put current sound onto *closest* playing step
         end
       end

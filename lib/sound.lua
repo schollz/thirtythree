@@ -16,14 +16,14 @@ function Sound:new(o)
     o.melodic=true
   end
   o.id=o.id or 1
-  o.group=o.group or 1
+  o.snd_id=o.snd_id or 1
   o.s=o.s or 0
   o.e=o.e or 1
-  o.rate=o.rate or 1
+  o.pitch=o.pitch or 0
   o.amp=o.amp or 1
   o.lpf=o.lpf or 20000
   o.hpf=o.hpf or 20
-  o.res=o.res or 1
+  o.resonance=o.resonance or 1
   o.wav=o.wav or nil
   o.loaded=o.loaded or false
 
@@ -46,14 +46,14 @@ function Sound:dump()
   return {
     melodic=self.melodic,
     id=self.id,
-    group=self.group,
+    snd_id=self.snd_id,
     s=self.s,
     e=self.e,
-    rate=self.rate,
     amp=self.amp,
     lpf=self.lpf,
     hpf=self.hpf,
-    res=self.res,
+    resonance=self.resonance,
+    pitch=self.pitch,
     wav=self.wav,
     loaded=self.loaded,
   }
@@ -78,7 +78,7 @@ function Sound:play(i,override)
     amp=override.amp or amp
   end
   if voice==nil then
-    voice=voices:get(self.group)
+    voice=voices:new_voice(self.snd_id)
   end
   if mode_debug then
     print("playing "..self.wav.name.." on voice "..voice.." at pos ("..s..","..e..")")
@@ -86,7 +86,7 @@ function Sound:play(i,override)
       self.wav.sc_index,-- buffer number
       effect,
       amp,
-      self.rate,
+      pitch.transpose_rate(self.pitch),
       s,
     e)
   end
@@ -95,7 +95,7 @@ function Sound:play(i,override)
     self.wav.sc_index,-- buffer number
     effect,
     amp,
-    self.rate,
+    pitch.transpose_rate(self.pitch),
     s,
     e
   )

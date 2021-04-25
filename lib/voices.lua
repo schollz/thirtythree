@@ -8,7 +8,7 @@ function Voices:new(o)
   o.max=16
   o.played={}
   for i=1,16 do
-    o.played[i]={id=0,last_played=os.clock()}
+    o.played[i]={snd_id=0,last_played=os.clock()}
   end
   o.pos=0
 
@@ -28,8 +28,18 @@ function Voices:pos()
   return self.pos
 end
 
--- get returns the best voice for id
-function Voices:get(id)
+-- get_voice returns the voice currently being used for a sound
+function Voices:get_voice(snd_id)
+  for i=2,16 do
+    if self.played[i].snd_id==snd_id then
+      return i
+    end
+  end
+  return nil
+end
+
+-- new_voice will make a new voice for a sound, fading out previous sound
+function Voices:new_voice(snd_id)
   local current_time=os.clock()
   local voice=0
   local voice_oldest=1
@@ -37,9 +47,10 @@ function Voices:get(id)
 
   -- fade it out if its playing
   for i=2,16 do
-    if self.played[i].id==id and current_time-self.played[i].last_played<1 then
+    if self.played[i].snd_id==snd_id and current_time-self.played[i].last_played<1 then
       -- turn this voice down
       engine.tt_amp(i,0,0.1)
+      self.played[i].snd_id=0 -- reset it
     end
   end
 
@@ -56,7 +67,7 @@ function Voices:get(id)
     voice=voice_oldest
   end
 
-  self.played[voice]={id=id,last_played=os.clock()}
+  self.played[voice]={snd_id=snd_id,last_played=os.clock()}
   return voice
 end
 

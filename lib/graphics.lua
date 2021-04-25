@@ -39,6 +39,13 @@ function Graphics:alert(msg)
   end)
 end
 
+function Graphics:text_center(s)
+  screen.font_size(8)
+  screen.level(15)
+  screen.move(64,35)
+  screen.text_center(s)
+end
+
 function Graphics:show_alert_if_needed()
   if self.alert_msg==nil or self.alert_msg=="" then
     do return end
