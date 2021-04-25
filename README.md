@@ -56,3 +56,18 @@ A po-33 clone for norns+grid
 - [ ] 6/8 quantize
 - [ ] retrigger pattern
 - [ ] reverse
+
+## new effects
+
+many effects can be done simultaneously. effects apply to sounds, not to whole pattern.
+
+- [ ] retrigger pattern
+- [ ] reverse
+- [ ] scratch
+- [ ] stutter
+- [ ] pingpong pan slow
+- [ ] pingpong pan fast
+- [ ] octave down
+- [ ] octave up
+- [ ] loop 16
+- [ ] loop 12
