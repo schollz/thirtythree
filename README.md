@@ -25,7 +25,7 @@ A po-33 clone for norns+grid
 - [ ] add effects with <kbd>fx</kbd>+<kbd>1-16</kbd> (see below for progress)
 - [ ] change swing with <kbd>bpm</kbd>+<kbd>K2</kbd>
 - [x] change tempo tapping <kbd>bpm</kbd>
-- [ ] change tempo with <kbd>bpm</kbd>+<kbd>K3</kbd>
+- [x] change tempo with <kbd>bpm</kbd>+<kbd>K3</kbd>
 - [x] change master volume with <kbd>bpm</kbd>+<kbd>1-16</kbd>
 - [ ] parameter locking with <kbd>write</kbd>+(<kbd>K2</kbd> or <kbd>K3</kbd>) (see below for progress)
 - [x] chain pattern with <kbd>pattern</kbd>+<kbd>1-16</kbd>

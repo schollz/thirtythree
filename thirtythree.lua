@@ -68,6 +68,14 @@ function updater(c)
 end
 
 function enc(k,d)
+  if k==3 then
+    for i,op in ipairs(ops) do
+      if op.buttons[B_BPM].pressed then 
+        -- change tempo
+        params:delta("clock_tempo",d)
+      end
+    end
+  end
   if sel_adj==ADJ_TRIM then
     if k==1 then
       ops[sel_operator]:trim_zoom(sel_looppoint,d)
