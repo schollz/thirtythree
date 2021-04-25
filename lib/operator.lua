@@ -72,7 +72,8 @@ function Operator:init()
   self:debug("initialized operator")
 end
 
-function Operator:dump()
+function Operator:backup()
+  self:debug("saving")
   local t1=clock.get_beat_sec()*clock.get_beats()
   -- TODO: automatically generate the save name
   local filename=_path.data.."thirtythree/save.json"
@@ -87,7 +88,8 @@ function Operator:dump()
   print("saved in "..(clock.get_beat_sec()*clock.get_beats()-t1).." seconds")
 end
 
-function Operator:load()
+function Operator:restore()
+  self:debug("loading")
   local t1=clock.get_beat_sec()*clock.get_beats()
   -- TODO: get the last save point
   local filename=_path.data.."thirtythree/save.json"
@@ -502,6 +504,10 @@ function Operator:buttons_register()
     end
   end
   self.buttons[B_PLAY].on_press=function()
+    if self.buttons[B_WRITE].pressed and self.buttons[B_SOUND].pressed then 
+      self:backup()
+      do return end
+    end
     self.mode_play=not self.mode_play
     if self.mode_play then
       self:debug("on_press: play activated")
@@ -542,12 +548,19 @@ function Operator:buttons_register()
   self.buttons[B_FX].off_press=function()
     self.mode_fx=false
   end
+  self.buttons[B_RECORD].on_press=function()
+    if self.buttons[B_WRITE].pressed and self.buttons[B_SOUND].pressed then
+      self:restore()
+    end
+  end
   self.buttons[B_RECORD].off_press=function()
-    recorder:record_stop()
-    local fname=recorder:recorded_file()
-    if fname~=nil then
-      -- there was a recording, load it into the currenet sound
-      self:sound_load(self.cur_snd_id,fname)
+    if recorder.is_recording then
+      recorder:record_stop()
+      local fname=recorder:recorded_file()
+      if fname~=nil then
+        -- there was a recording, load it into the currenet sound
+        self:sound_load(self.cur_snd_id,fname)
+      end
     end
   end
 

@@ -31,7 +31,8 @@ A po-33 clone for norns+grid
 - [x] chain pattern with <kbd>pattern</kbd>+<kbd>1-16</kbd>
 - [ ] copy pattern with <kbd>write</kbd>+<kbd>pattern</kbd>+<kbd>1-16</kbd>
 - [ ] clear pattern with <kbd>record</kbd>+<kbd>pattern</kbd>
-- [ ] save with <kbd>write</kbd>+<kbd>sound</kbd>+<kbd>play</kbd>
+- [x] backup data with <kbd>write</kbd>+<kbd>sound</kbd>+<kbd>play</kbd>
+- [x] restore data with <kbd>write</kbd>+<kbd>sound</kbd>+<kbd>record</kbd>
 
 ## parameter locking
 
