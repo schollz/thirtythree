@@ -21,7 +21,7 @@ end
 
 function Operator:init()
   -- layout
-  self.layout=1s
+  self.layout=1
 
   -- defaults
   self.sound={}
@@ -38,7 +38,7 @@ function Operator:init()
     self.pattern[ptn_id]={}
     self:pattern_initialize(ptn_id)
     -- pattern is a map of sounds that maps to samples
-    -- self.pattern[ptn_id][ptn_step]={fx_id=16,snd={},parm={}}
+    -- self.pattern[ptn_id][ptn_step]={snd={},plock={},flock={}}
     -- self.pattern[ptn_id][ptn_step].snd[snd_id]=<sound>
     -- self.pattern[ptn_id][ptn_step].plock[snd_id]=<param> -- used for parameter locking
     -- self.pattern[ptn_id][ptn_step].flock[snd_id]=<param> -- used for fx locking
@@ -73,46 +73,77 @@ function Operator:init()
   self:debug("initialized operator")
 end
 
-function Operator:backup()
-  self:debug("saving")
-  local t1=clock.get_beat_sec()*clock.get_beats()
-  -- TODO: automatically generate the save name
-  local filename=_path.data.."thirtythree/save.json"
-  print("saving to ")
-  file=io.open(filename,"w+")
-  local data={}
+function Operator:marshal()
+  local data = {}
   for k,v in pairs(self) do
-    data[k]=json.encode(v)
+    print(k,v)
+    if k~="buttons" and k~="pattern" and k~="sound" then
+      self:debug("encoding "..k)
+      data[k]=json.encode(v)
+    end
   end
-  io.write(json.encode(data))
-  io.close
-  print("saved in "..(clock.get_beat_sec()*clock.get_beats()-t1).." seconds")
+  data.pattern={}
+  for ptn_id,_ in ipairs(self.pattern) do
+    for ptn_step,_ in ipairs(self.pattern[ptn_id]) do
+      for snd_id,snd in pairs(self.pattern[ptn_id][ptn_step].snd) do
+        table.insert(data.pattern,{"snd",ptn_id,ptn_step,snd_id,snd:marshal()})
+      end
+      for snd_id,plock in pairs(self.pattern[ptn_id][ptn_step].plock) do
+        table.insert(data.pattern,{"plock",ptn_id,ptn_step,snd_id,plock:marshal()})
+      end
+      for snd_id,flock in pairs(self.pattern[ptn_id][ptn_step].flock) do
+        table.insert(data.pattern,{"flock",ptn_id,ptn_step,snd_id,flock:marshal()})
+      end
+    end
+  end
+  data.sound={}
+  for snd_id,_ in ipairs(self.sound) do
+    for smpl_id,snd in ipairs(self.sound[snd_id]) do
+      table.insert(data.sound,{snd_id,smpl_id,snd:marshal()})
+    end
+  end
+  return json.encode(data)
 end
 
-function Operator:restore()
-  self:debug("loading")
-  local t1=clock.get_beat_sec()*clock.get_beats()
-  -- TODO: get the last save point
-  local filename=_path.data.."thirtythree/save.json"
-  if not util.file_exists(filename) then
-    print("no save file to load")
-    do return end
-  end
-
-  local f=io.open(filename,"rb")
-  local content=f:read("*all")
-  f:close()
-
+function Operator:unmarshal(content)
   local data=json.decode(content)
   if data==nil then
     print("no data found in save file")
     do return end
   end
+  
+  -- reinitialize
+  self:init()
+
   for k,v in pairs(data) do
-    self[k]=json.decode(v)
+    if k~="buttons" and k~="pattern" and k~="sound" then
+      self[k]=json.decode(v)
+    end
   end
-  print("loaded in "..(clock.get_beat_sec()*clock.get_beats()-t1).." seconds")
+
+  for _,p in ipairs(data.pattern) do
+    ptn_id=p[2]
+    ptn_step=p[3]
+    snd_id=p[4]
+    if p[1]=="snd" then
+      self.pattern[ptn_id][ptn_step].snd[snd_id]=sound:new()
+      self.pattern[ptn_id][ptn_step].snd[snd_id]:unmarshal(p[5])
+    elseif p[1]=="plock" then
+      -- self.pattern[ptn_id][ptn_step].plock[snd_id]=lock:new()
+      self.pattern[ptn_id][ptn_step].plock[snd_id]:unmarshal(p[5])
+    elseif p[1]=="flock" then
+      -- self.pattern[ptn_id][ptn_step].flock[snd_id]=lock:new()
+      self.pattern[ptn_id][ptn_step].flock[snd_id]:unmarshal(p[5])
+    end
+  end
+
+  for _,p in ipairs(data.sound) do
+    snd_id=p[1]
+    smpl_id=p[2]
+    self.sound[snd_id][smpl_id]:unmarshal(p[3])
+  end
 end
+
 
 function Operator:to_string()
   return self.filename
@@ -189,7 +220,7 @@ function Operator:volume_set(d)
     -- add parameter lock for volume
     self:debug("updating lock for amp on snd_id "..self.cur_snd_id.." to "..self.amp)
     local next_step=(self.cur_ptn_step-1+1)%16+1
-    self.pattern[self.cur_ptn_id][next_step].lock[self.cur_snd_id]:set("amp",self.amp)
+    self.pattern[self.cur_ptn_id][next_step].plock[self.cur_snd_id]:set("amp",self.amp)
   else
     for i=1,16 do
       self.sound[self.cur_snd_id][i].amp=self.amp
@@ -334,7 +365,7 @@ function Operator:pattern_step()
     end
     if snd.loaded then
       -- override with parameter locks
-      for k,v in pairs(self.pattern[self.cur_ptn_id][self.cur_ptn_step].lock[snd_id].modified) do
+      for k,v in pairs(self.pattern[self.cur_ptn_id][self.cur_ptn_step].plock[snd_id].modified) do
         self:debug("override with parameter lock "..k..": "..v)
         override[k]=v
       end
@@ -349,7 +380,7 @@ function Operator:pattern_step()
   tab.print(snd_list)
   for snd_id,_ in pairs(snd_list) do
     print(snd_id,"in pattern")
-    self.pattern[self.cur_ptn_id][self.cur_ptn_step].lock[snd_id]:play_if_locked()
+    self.pattern[self.cur_ptn_id][self.cur_ptn_step].plock[snd_id]:play_if_locked()
   end
 end
 
@@ -399,7 +430,7 @@ end
 function Operator:pattern_initialize(ptn_id)
   -- initialize all the steps
   for ptn_step=1,16 do
-    self.pattern[ptn_id][ptn_step]={snd={},lock={}}
+    self.pattern[ptn_id][ptn_step]={snd={},plock={},flock={}}
     for snd_id=1,16 do
       self.pattern[ptn_id][ptn_step].plock[snd_id]=lock:new({snd_id=snd_id})
       self.pattern[ptn_id][ptn_step].flock[snd_id]=lock:new({snd_id=snd_id})
@@ -573,9 +604,9 @@ function Operator:buttons_register()
     --update the bpm to next closest
     if params:get("clock_tempo") >= 140 then 
       params:set("clock_tempo",80)
-    elseif arams:get("clock_tempo") >= 120
+    elseif params:get("clock_tempo") >= 120 then
       params:set("clock_tempo",140)
-    elseif sarams:get("clock_tempo")>=80 then
+    elseif params:get("clock_tempo")>=80 then
       params:set("clock_tempo",120)
     end
   end

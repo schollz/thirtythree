@@ -14,6 +14,39 @@ function Wav:new(o)
   return o
 end
 
+function Wav:marshal()
+  local data = {}
+  for k,v in pairs(self) do
+    data[k]=json.encode(v)
+  end
+  return json.encode(data)
+end
+
+function Wav:unmarshal(content)
+  local data=json.decode(content)
+  if data==nil then
+    print("no data found in save file")
+    do return end
+  end
+  for k,v in pairs(data) do
+    self[k]=json.decode(v)
+  end
+
+  -- reload the files into supercollider
+  for filename,_ in pairs(self.files) do
+    self:load(filename)
+  end
+end
+
+
+
+function Wav:load(filename)
+  if self.files[filename] ~= nil then
+    engine.tt_load(self.files[filename].sc_index,filename)
+  end
+end
+
+
 -- get returns the best voice for id
 function Wav:get(filename)
   if self.files[filename] == nil then
@@ -49,8 +82,7 @@ function Wav:get(filename)
       end
     end
 
-    -- load it into supercollider
-    engine.tt_load(self.sc_index,filename)
+    self:load(filename)
 
     if mode_debug then
       print("loaded "..filename.." into with sc index "..self.sc_index)

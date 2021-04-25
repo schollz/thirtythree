@@ -16,9 +16,6 @@ function Sound:new(o)
     o.melodic=true
   end
   o.op_id=o.op_id
-  if o.op_id==nil then
-    print("ERROR THERE IS NO OP ID IN THIS SOUND")
-  end
   o.id=o.id or 1
   o.snd_id=o.snd_id or 1
   o.s=o.s or 0
@@ -37,6 +34,26 @@ function Sound:new(o)
   return o
 end
 
+
+function Sound:marshal()
+  local data = {}
+  for k,v in pairs(self) do
+    data[k]=json.encode(v)
+  end
+  return json.encode(data)
+end
+
+function Sound:unmarshal(content)
+  local data=json.decode(content)
+  if data==nil then
+    print("no data found in save file")
+    do return end
+  end
+  for k,v in pairs(data) do
+    self[k]=json.decode(v)
+  end
+end
+
 function Sound:load(filename)
   self.wav=wav:get(filename)
   -- partition transients
@@ -46,7 +63,6 @@ function Sound:load(filename)
   end
 
   self.loaded=true
-
 end
 
 function Sound:dump()

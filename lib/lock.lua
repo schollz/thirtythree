@@ -12,6 +12,25 @@ function Lock:new(o)
   return o
 end
 
+function Lock:marshal()
+  local data = {}
+  for k,v in pairs(self) do
+    data[k]=json.encode(v)
+  end
+  return json.encode(data)
+end
+
+function Lock:unmarshal(content)
+  local data=json.decode(content)
+  if data==nil then
+    print("no data found in save file")
+    do return end
+  end
+  for k,v in pairs(data) do
+    self[k]=json.decode(v)
+  end
+end
+
 function Lock:debug(s)
   if mode_debug then
     print("lock ("..self.snd_id.."): "..s)

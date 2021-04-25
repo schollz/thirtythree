@@ -45,6 +45,8 @@ gridd_=include("lib/gridd")
 gridd=gridd_:new()
 sound=include("lib/sound")
 operator=include("lib/operator")
+snapshot_=include("lib/snapshot")
+snapshot=snapshot_:new()
 
 function init()
   check_and_install_aubioonset()
