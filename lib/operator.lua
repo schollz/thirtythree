@@ -66,7 +66,6 @@ function Operator:init()
 
   -- operator "global" parameters
   self.amp_global=1.0
-  self.bpm=clock.get_tempo()
 
   self:buttons_register()
 
@@ -302,6 +301,10 @@ end
 function Operator:pattern_step()
   if clock.get_tempo()~=self.bpm then 
     self.bpm=clock.get_tempo()
+    -- update engine (only first operator does this)
+    if self.id==1 then
+      engine.tt_bpm(self.bpm)
+    end
   end
   if not self.mode_play then
     do return end
@@ -565,6 +568,16 @@ function Operator:buttons_register()
         -- there was a recording, load it into the currenet sound
         self:sound_load(self.cur_snd_id,fname)
       end
+    end
+  end
+  self.buttons[B_BPM].on_short_press=function()
+    --update the bpm to next closest
+    if params:get("clock_tempo") >= 140 then 
+      params:set("clock_tempo",80)
+    elseif arams:get("clock_tempo") >= 120
+      params:set("clock_tempo",140)
+    elseif sarams:get("clock_tempo")>=80 then
+      params:set("clock_tempo",120)
     end
   end
 

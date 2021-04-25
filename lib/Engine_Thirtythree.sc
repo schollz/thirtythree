@@ -152,6 +152,13 @@ Engine_Thirtythree : CroneEngine {
             );
         });
 
+        this.addCommand("tt_bpm","f", { arg msg; 
+            (0..16).do({arg i; 
+                playerThirtythree[i].set(
+                    \bpm_target,msg[1],
+                );
+            }); 
+        });
 
         // ^ Thirtythree specific
 
