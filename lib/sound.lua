@@ -28,6 +28,9 @@ function Sound:new(o)
   o.lpf=o.lpf or 20000
   o.hpf=o.hpf or 20
   o.resonance=o.resonance or 1
+  if o.is_lpf == nil then 
+    o.is_lpf=true
+  end
   o.wav=o.wav or nil
   o.loaded=o.loaded or false
 
@@ -58,6 +61,7 @@ function Sound:dump()
     lpf=self.lpf,
     hpf=self.hpf,
     resonance=self.resonance,
+    is_lpf=self.is_lpf,
     pitch=self.pitch,
     wav=self.wav,
     loaded=self.loaded,
@@ -75,15 +79,30 @@ function Sound:play(override)
   local e=self.e
   local effect=0
   local amp=self.amp
+  local lpf=self.lpf
+  local hpf=self.hpf 
+  local lpf_resonance=self.resonance
+  local hpf_resonance=self.resonance
+  local is_lpf=self.is_lpf
   if override~=nil then
     voice=override.voice
     s=override.s or s
     e=override.e or e
     effect=override.effect or 0
     amp=override.amp or amp
+    if override.is_lpf ~= nil then 
+      is_lpf=override.is_lpf
+    end
   end
   if voice==nil then
     voice=voices:new_voice(self.snd_id)
+  end
+  if is_lpf then
+    hpf_resonance=1 
+    hpf=20
+  else
+    lpf_resonance=1 
+    lpf=20000
   end
   if mode_debug then
     print("playing "..self.wav.name.." on voice "..voice.." at pos ("..s..","..e..")")
@@ -102,7 +121,11 @@ function Sound:play(override)
     amp*ops[self.op_id].amp_global,
     pitch.transpose_rate(self.pitch),
     s,
-    e
+    e,
+    lpf,
+    lpf_resonance,
+    hpf,
+    hpf_resonance
   )
 end
 

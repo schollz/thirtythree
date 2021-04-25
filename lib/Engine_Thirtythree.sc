@@ -27,7 +27,7 @@ Engine_Thirtythree : CroneEngine {
                 bitcrush=0,bitcrush_bits=8,bitcrush_rate=23000,
                 scratch=0,strobe=0,vinyl=0,loop=0,
                 timestretch=0,timestretchSlowDown=1,timestretchWindowBeats=1,
-                pan=0,lpf=20000,lpflag=0,hpf=10,hpflag=0,is_lpf=1;
+                pan=0,lpf=20000,lpflag=0,hpf=10,hpflag=0,lpf_resonance=1,hpf_resonance=1;
     
                 // vars
                 var snd,pos,timestretchPos,timestretchWindow,env;
@@ -90,12 +90,9 @@ Engine_Thirtythree : CroneEngine {
                     interpolation:1
                 ));
 
-                if (is_lpf==1,{
-                    snd = LPF.ar(snd,Lag.kr(lpf,lpflag));
-                },{
-                    snd = HPF.ar(snd,Lag.kr(hpf,hpflag));
-                });
-                
+                snd = RLPF.ar(snd,Lag.kr(lpf,lpflag),lpf_resonance);
+                snd = RHPF.ar(snd,Lag.kr(hpf,hpflag),hpf_resonance);
+
                 // strobe
                 snd = ((strobe<1)*snd)+((strobe>0)*snd*LFPulse.ar(60/bpm_target*16));
                 // bitcrush
@@ -134,7 +131,7 @@ Engine_Thirtythree : CroneEngine {
             sampleBuffThirtythree[msg[1]-1] = Buffer.read(context.server,msg[2]);
         });
 
-        this.addCommand("tt_play","iiiffff", { arg msg;
+        this.addCommand("tt_play","iiiffffffff", { arg msg;
             // lua is sending 1-index
             playerThirtythree[msg[1]-1].set(
                 \t_trig,1,
@@ -144,6 +141,12 @@ Engine_Thirtythree : CroneEngine {
                 \samplePos,msg[6],
                 \sampleStart,msg[6],
                 \sampleEnd,msg[7],
+                \lpf,msg[8],
+                \lpf_resonance,msg[9],
+                \lpflag,0,
+                \hpf,msg[10],
+                \hpf_resonance,msg[11],
+                \hpflag,0,
             );
             // TODO: use effect information
         });
@@ -162,6 +165,31 @@ Engine_Thirtythree : CroneEngine {
                     \bpm_target,msg[1],
                 );
             }); 
+        });
+
+
+        this.addCommand("tt_lpf","ifff", { arg msg;
+            // lua is sending 1-index
+            playerThirtythree[msg[1]-1].set(
+                \lpf,msg[2],
+                \lpf_resonance,msg[3],
+                \lpflag,msg[4],
+                \hpf,20,
+                \hpf_resonance,1.0,
+                \hpflag,msg[4],
+            );
+        });
+
+        this.addCommand("tt_hpf","ifff", { arg msg;
+            // lua is sending 1-index
+            playerThirtythree[msg[1]-1].set(
+                \hpf,msg[2],
+                \hpf_resonance,msg[3],
+                \hpflag,msg[4],
+                \lpf,20000,
+                \lpf_resonance,1.0,
+                \lpflag,msg[4],
+            );
         });
 
         // ^ Thirtythree specific
