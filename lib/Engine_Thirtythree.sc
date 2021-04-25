@@ -27,7 +27,7 @@ Engine_Thirtythree : CroneEngine {
                 bitcrush=0,bitcrush_bits=8,bitcrush_rate=23000,
                 scratch=0,strobe=0,vinyl=0,loop=0,
                 timestretch=0,timestretchSlowDown=1,timestretchWindowBeats=1,
-                pan=0,lpf=20000,lpflag=0,hpf=10,hpflag=0;
+                pan=0,lpf=20000,lpflag=0,hpf=10,hpflag=0,is_lpf=1;
     
                 // vars
                 var snd,pos,timestretchPos,timestretchWindow,env;
@@ -90,8 +90,12 @@ Engine_Thirtythree : CroneEngine {
                     interpolation:1
                 ));
 
-                snd = LPF.ar(snd,Lag.kr(lpf,lpflag));
-                snd = HPF.ar(snd,Lag.kr(hpf,hpflag));
+                if (is_lpf==1,{
+                    snd = LPF.ar(snd,Lag.kr(lpf,lpflag));
+                },{
+                    snd = HPF.ar(snd,Lag.kr(hpf,hpflag));
+                });
+                
                 // strobe
                 snd = ((strobe<1)*snd)+((strobe>0)*snd*LFPulse.ar(60/bpm_target*16));
                 // bitcrush
