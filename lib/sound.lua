@@ -15,8 +15,8 @@ function Sound:new(o)
   if o.melodic==nil then
     o.melodic=true
   end
-  o.op_id=o.op_id 
-  if o.op_id == nil then 
+  o.op_id=o.op_id
+  if o.op_id==nil then
     print("ERROR THERE IS NO OP ID IN THIS SOUND")
   end
   o.id=o.id or 1

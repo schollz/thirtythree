@@ -79,7 +79,7 @@ function Operator:backup()
   local filename=_path.data.."thirtythree/save.json"
   print("saving to ")
   file=io.open(filename,"w+")
-  local data = {}
+  local data={}
   for k,v in pairs(self) do
     data[k]=json.encode(v)
   end
@@ -95,17 +95,17 @@ function Operator:restore()
   local filename=_path.data.."thirtythree/save.json"
   if not util.file_exists(filename) then
     print("no save file to load")
-    do return end 
+    do return end
   end
 
-  local f = io.open(filename,"rb")
+  local f=io.open(filename,"rb")
   local content=f:read("*all")
   f:close()
 
-  local data = json.decode(content)
-  if data == nil then 
+  local data=json.decode(content)
+  if data==nil then
     print("no data found in save file")
-    do return end 
+    do return end
   end
   for k,v in pairs(data) do
     self[k]=json.decode(v)
@@ -187,7 +187,7 @@ function Operator:volume_set(d)
   if self.buttons[B_WRITE].pressed and self.mode_play then
     -- add parameter lock for volume
     self:debug("updating lock for amp on snd_id "..self.cur_snd_id.." to "..self.amp)
-    local next_step = (self.cur_ptn_step-1+1) % 16+1
+    local next_step=(self.cur_ptn_step-1+1)%16+1
     self.pattern[self.cur_ptn_id][next_step].lock[self.cur_snd_id]:set("amp",self.amp)
   else
     for i=1,16 do
@@ -340,11 +340,11 @@ function Operator:pattern_step()
     end
   end
   -- update sound with parameter locks for any sound thats doing stuff in the pattern
-  local snd_list = self:pattern_sound_list(self.cur_ptn_id)
+  local snd_list=self:pattern_sound_list(self.cur_ptn_id)
   tab.print(snd_list)
   for snd_id,_ in pairs(snd_list) do
-      print(snd_id,"in pattern")
-      self.pattern[self.cur_ptn_id][self.cur_ptn_step].lock[snd_id]:play_if_locked()
+    print(snd_id,"in pattern")
+    self.pattern[self.cur_ptn_id][self.cur_ptn_step].lock[snd_id]:play_if_locked()
   end
 end
 
@@ -353,7 +353,7 @@ function Operator:pattern_reset()
 end
 
 function Operator:pattern_sound_list(ptn_id)
-  local snd_list = {}
+  local snd_list={}
   for ptn_step,_ in ipairs(self.pattern[ptn_id]) do
     for snd_id,_ in pairs(self.pattern[ptn_id][ptn_step].snd) do
       snd_list[snd_id]=true
@@ -504,7 +504,7 @@ function Operator:buttons_register()
     end
   end
   self.buttons[B_PLAY].on_press=function()
-    if self.buttons[B_WRITE].pressed and self.buttons[B_SOUND].pressed then 
+    if self.buttons[B_WRITE].pressed and self.buttons[B_SOUND].pressed then
       self:backup()
       do return end
     end
@@ -619,7 +619,7 @@ function Operator:buttons_register()
         end
       elseif self.buttons[B_BPM].pressed then
         -- change the global amp volume
-        self.amp_global = util.linlin(1,16,0,2,b)
+        self.amp_global=util.linlin(1,16,0,2,b)
       elseif self.buttons[B_SOUND].pressed then
         -- change sound
         self.cur_snd_id=b
@@ -667,9 +667,9 @@ function Operator:buttons_register()
           return 4
         end
       elseif self.buttons[B_BPM].pressed then
-        local val = util.linlin(0,2,1,16,self.amp_global)
-        if b <= val then 
-          return 14 
+        local val=util.linlin(0,2,1,16,self.amp_global)
+        if b<=val then
+          return 14
         end
       elseif self.buttons[B_PATTERN].pressed then
         -- if pattern pressed, show if this button has pattern / is active pattern
