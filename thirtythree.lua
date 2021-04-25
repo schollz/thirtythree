@@ -56,12 +56,18 @@ function updater(c)
 end
 
 function enc(k,d)
-  if ADJ_TRIM then
+  if sel_adj==ADJ_TRIM then
     if k==1 then
       ops[sel_operator]:trim_zoom(sel_looppoint,d)
     else
       sel_looppoint=k-1
       ops[sel_operator]:trim_jog(sel_looppoint,d)
+    end
+  else
+    if k==2 then
+      ops[sel_operator]:filter_set(d)
+    elseif k==3 then
+      ops[sel_operator]:resonance_set(d)
     end
   end
   graphics:update()
@@ -84,11 +90,20 @@ function key(k,z)
   graphics:update()
 end
 
+local ani1=1
+
 function redraw()
   screen.clear()
 
   if sel_adj==ADJ_TRIM then
     ops[sel_operator]:trim_draw()
+  else
+    ops[sel_operator]:filter_draw()
+    -- screen.display_png(_path.code.."thirtythree/img/a"..ani1..".png",20,20)
+    -- ani1 = ani1 + 1 
+    -- if ani1 > 4 then 
+    --   ani1 = 1
+    -- end
   end
 
   -- metronome icon

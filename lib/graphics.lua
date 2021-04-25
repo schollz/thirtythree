@@ -82,6 +82,7 @@ function Graphics:box_text(x,y,s,invert)
 end
 
 function Graphics:metro_icon(tick,x,y)
+  screen.level(15)
   screen.move(x+2,y+5)
   screen.line(x+7,y)
   screen.line(x+12,y+5)
@@ -92,9 +93,11 @@ function Graphics:metro_icon(tick,x,y)
   screen.stroke()
 end
 
-function Graphics:lpf()
-  local filter_graph=FilterGraph.new(20,20000,-60,30,"lowpass",12,2000,0)
-  filter_graph:set_position_and_size(4,22,56,38)
+function Graphics:filter(filter_type,freq,resonance)
+  screen.level(15)
+  local filter_graph=FilterGraph.new(20,20000,-60,30,filter_type,12,freq,resonance)
+  filter_graph:set_position_and_size(4,22,120,38)
+  filter_graph:redraw()
 end
 
 return Graphics

@@ -47,9 +47,10 @@ function Operator:init()
   self.s=0
   self.e=1
   self.amp=0.5
-  self.lpf=20
-  self.hpf=20000
-  self.resonance=1.0
+  self.is_lpf=true
+  self.lpf=20000
+  self.hpf=20
+  self.resonance=0.0
   self.rate=1
 
   -- currents
@@ -58,6 +59,9 @@ function Operator:init()
   self.cur_ptn_id=1
   self.cur_ptn_step=0
   self.cur_fx_id=0
+  
+  -- filter
+  self.cur_filter_number=51 -- [1,101]
 
   self:buttons_register()
 
@@ -139,6 +143,30 @@ end
 --
 -- parameters
 --
+function Operator:filter_draw()
+  if self.is_lpf then
+    graphics:filter("lowpass",self.lpf,self.resonance)
+  else
+    graphics:filter("highpass",self.hpf,self.resonance)
+  end
+end
+
+function Operator:resonance_set(d)
+  self.resonance=util.clamp(0,1,self.resonance+d/100)
+end
+
+function Operator:filter_set(d)
+  self.cur_filter_number = util.clamp(1,101,self.cur_filter_number+d)
+  if self.cur_filter_number>50 then
+    self.hpf=util.linexp(51,101,20,20000,self.cur_filter_number)
+    self.is_lpf=false
+  else
+    self.lpf=util.linexp(1,50,20,20000,self.cur_filter_number)
+    self.is_lpf=true
+  end
+  graphics:update()
+end
+
 function Operator:trim_select()
   local snd=self.sound[self.cur_snd_id][self.cur_smpl_id]
   if not snd.loaded then
