@@ -10,7 +10,7 @@ A po-33 clone for norns+grid
 - [x] write mode activated with <kb>write</kbd>
 - [x] select pattern with <kbd>pattern</kbd>+<kbd>1-16</kbd>
 - [x] play pattern with <kbd>play</kbd>
-- [ ] toggle parameters with <kbd>fx</kbd>
+- [x] toggle parameters with <kbd>fx</kbd>
 - [ ] adjust tone (pitch+volume) with <kbd>E2</kbd> and <kbd>E3</kbd>
 - [ ] adjust filter (lp+hp) with <kbd>E2</kbd> and <kbd>E3</kbd>
 - [ ] adjust trim (start+end) with <kbd>E2</kbd> and <kbd>E3</kbd>
@@ -23,7 +23,7 @@ A po-33 clone for norns+grid
 - [ ] change tempo with <kbd>bpm</kbd>+<kbd>K3</kbd>
 - [ ] change volume with <kbd>bpm</kbd>+<kbd>1-16</kbd> (**modified**: instead of master, this changes it for an entire *sound*)
 - [ ] parameter locking with <kbd>write</kbd>+(<kbd>K2</kbd> or <kbd>K3</kbd>)
-- [ ] chain pattern with <kbd>pattern</kbd>+<kbd>1-16</kbd>
+- [x] chain pattern with <kbd>pattern</kbd>+<kbd>1-16</kbd>
 - [ ] copy pattern with <kbd>write</kbd>+<kbd>pattern</kbd>+<kbd>1-16</kbd>
 - [ ] clear pattern with <kbd>record</kbd>+<kbd>pattern</kbd>
 - [ ] save with <kbd>write</kbd>+<kbd>sound</kbd>+<kbd>play</kbd>
