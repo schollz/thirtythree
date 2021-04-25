@@ -98,6 +98,8 @@ function Graphics:metro_icon(tick,x,y)
   screen.move(x+7,y+3)
   screen.line(tick and (x+4) or (x+10),y)
   screen.stroke()
+  screen.move(x+14,y)
+  screen.text(params:get("clock_tempo"))
 end
 
 function Graphics:filter(filter_type,freq,resonance)
