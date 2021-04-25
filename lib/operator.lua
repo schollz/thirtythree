@@ -114,14 +114,14 @@ function Operator:sound_load(snd_id,filename)
   end
 end
 
-function Operator:sound_play_from_press(overwrite)
-  overwrite=overwrite or {}
-  overwrite.voice=1
+function Operator:sound_play_from_press(override)
+  override=override or {}
+  override.voice=1
   -- show sound
   local snd=self.sound[self.cur_snd_id][self.cur_smpl_id]
   if snd.loaded then
     renderer:expand(snd.wav.filename,snd.s,snd.e)
-    snd:play(overwrite)
+    snd:play(override)
   end
 end
 
@@ -138,10 +138,12 @@ function Operator:volume_draw()
 end
 
 function Operator:volume_set(d)
-  self.amp=util.clamp(0,1,self.amp+d/100)
+  self.amp=util.clamp(self.amp+d/100,0,1)
   if self.buttons[B_WRITE].pressed and self.mode_play then
     -- add parameter lock for volume
-    self.pattern[self.cur_ptn_id][self.cur_ptn_step].lock[self.cur_snd_id]:set("amp",self.amp)
+    self:debug("updating lock for amp on snd_id "..self.cur_snd_id.." to "..self.amp)
+    local next_step = (self.cur_ptn_step-1+1) % 16+1
+    self.pattern[self.cur_ptn_id][next_step].lock[self.cur_snd_id]:set("amp",self.amp)
   else
     for i=1,16 do
       self.sound[self.cur_snd_id][i].amp=self.amp
@@ -154,7 +156,7 @@ function Operator:pitch_draw()
 end
 
 function Operator:pitch_set(d)
-  self.pitch=util.clamp(-12,12,self.pitch+math.sign(d))
+  self.pitch=util.clamp(self.pitch+math.sign(d),-12,12)
 end
 
 function Operator:filter_draw()
@@ -166,11 +168,11 @@ function Operator:filter_draw()
 end
 
 function Operator:resonance_set(d)
-  self.resonance=util.clamp(0,1,self.resonance+d/100)
+  self.resonance=util.clamp(self.resonance+d/100,0,1)
 end
 
 function Operator:filter_set(d)
-  self.cur_filter_number=util.clamp(1,101,self.cur_filter_number+d)
+  self.cur_filter_number=util.clamp(self.cur_filter_number+d,1,101)
   if self.cur_filter_number>50 then
     self.hpf=util.linexp(51,101,20,20000,self.cur_filter_number)
     self.is_lpf=false
@@ -272,32 +274,47 @@ function Operator:pattern_step()
   -- play sounds associated with step
   for snd_id,snd in pairs(self.pattern[self.cur_ptn_id][self.cur_ptn_step].snd) do
     self:debug("pattern_step: playing sound "..snd_id.." sample "..snd.id)
-    local overwrite=overwrite or {}
-    if self.buttons[B_FX].pressed and self.cur_fx_id>0 and overwrite.effect==nil then
+    local override={}
+    if self.buttons[B_FX].pressed and self.cur_fx_id>0 and override.effect==nil then
       -- perform effect
-      overwrite.effect=self.cur_fx_id
+      override.effect=self.cur_fx_id
     else
       -- get effect from the pattern
-      overwrite.effect=self.pattern[self.cur_ptn_id][self.cur_ptn_step].fx_id
+      override.effect=self.pattern[self.cur_ptn_id][self.cur_ptn_step].fx_id
     end
     if snd.loaded then
-      -- overwrite with parameter locks
-      for k,v in pairs(self.pattern[self.cur_ptn_id][self.cur_ptn_step].lock[snd.snd_id].modified) do
-        overwrite[k]=v
+      -- override with parameter locks
+      for k,v in pairs(self.pattern[self.cur_ptn_id][self.cur_ptn_step].lock[snd_id].modified) do
+        self:debug("override with parameter lock "..k..": "..v)
+        override[k]=v
       end
-      snd:play(overwrite)
+      snd:play(override)
       if self.cur_snd_id==snd_id and (not self.buttons[B_WRITE].pressed) then
         renderer:expand(snd.wav.filename,snd.s,snd.e)
       end
-    else
-      -- update sound with parameter locks
-      self.pattern[self.cur_ptn_id][self.cur_ptn_step].lock[snd.snd_id]:play_if_locked()
     end
+  end
+  -- update sound with parameter locks for any sound thats doing stuff in the pattern
+  local snd_list = self:pattern_sound_list(self.cur_ptn_id)
+  tab.print(snd_list)
+  for snd_id,_ in pairs(snd_list) do
+      print(snd_id,"in pattern")
+      self.pattern[self.cur_ptn_id][self.cur_ptn_step].lock[snd_id]:play_if_locked()
   end
 end
 
 function Operator:pattern_reset()
   self.cur_ptn_step=0
+end
+
+function Operator:pattern_sound_list(ptn_id)
+  local snd_list = {}
+  for ptn_step,_ in ipairs(self.pattern[ptn_id]) do
+    for snd_id,_ in pairs(self.pattern[ptn_id][ptn_step].snd) do
+      snd_list[snd_id]=true
+    end
+  end
+  return snd_list
 end
 
 function Operator:pattern_has_sound(ptn_id)
@@ -334,7 +351,7 @@ function Operator:pattern_initialize(ptn_id)
   for ptn_step=1,16 do
     self.pattern[ptn_id][ptn_step]={fx_id=16,snd={},lock={}}
     for snd_id=1,16 do
-      self.pattern[ptn_id][ptn_step].lock[snd_id]=lock:new()
+      self.pattern[ptn_id][ptn_step].lock[snd_id]=lock:new({snd_id=snd_id})
     end
   end
 end
@@ -358,11 +375,11 @@ function Operator:pattern_remove_locks(ptn_id,ptn_step,snd_id)
     local step=((ptn_step+i-2)%16)+1
     -- always remove first one
     if i==1 then
-      self.pattern[ptn_id][step].lock[snd_id]=lock:new()
+      self.pattern[ptn_id][step].lock[snd_id]=lock:new({snd_id=snd_id})
     elseif self.pattern[ptn_id][step].snd[snd_id]~=nil then
       break
     else
-      self.pattern[ptn_id][step].lock[snd_id]=lock:new()
+      self.pattern[ptn_id][step].lock[snd_id]=lock:new({snd_id=snd_id})
     end
   end
 end

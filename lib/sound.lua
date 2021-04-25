@@ -60,7 +60,7 @@ function Sound:dump()
 end
 
 -- Sound:press will play a sound from a sample
-function Sound:play(i,override)
+function Sound:play(override)
   if not self.loaded then
     print("sound not loaded")
     do return end
