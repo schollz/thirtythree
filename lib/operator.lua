@@ -598,7 +598,12 @@ function Operator:buttons_register()
     --
     --
     self.buttons[i].on_press=function()
-      if self.buttons[B_PATTERN].pressed then
+      if self.buttons[B_PATTERN].pressed and self.buttons[B_WRITE].pressed then
+        -- copy current pattern to the new button
+        if self.cur_ptn_id ~= b then
+          self.pattern[b]=json.decode(json.encode(self.pattern[self.cur_ptn_id]))
+        end
+      elseif self.buttons[B_PATTERN].pressed then
         -- chain pattern
         if self.mode_switchpattern then
           -- new chain

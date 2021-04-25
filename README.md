@@ -29,8 +29,8 @@ A po-33 clone for norns+grid
 - [x] change master volume with <kbd>bpm</kbd>+<kbd>1-16</kbd>
 - [ ] parameter locking with <kbd>write</kbd>+(<kbd>K2</kbd> or <kbd>K3</kbd>) (see below for progress)
 - [x] chain pattern with <kbd>pattern</kbd>+<kbd>1-16</kbd>
-- [ ] copy pattern with <kbd>write</kbd>+<kbd>pattern</kbd>+<kbd>1-16</kbd>
-- [ ] clear pattern with <kbd>record</kbd>+<kbd>pattern</kbd>
+- [x] copy pattern with <kbd>write</kbd>+<kbd>pattern</kbd>+<kbd>1-16</kbd>
+- [x] clear pattern with <kbd>record</kbd>+<kbd>pattern</kbd>
 - [x] backup data with <kbd>write</kbd>+<kbd>sound</kbd>+<kbd>play</kbd>
 - [x] restore data with <kbd>write</kbd>+<kbd>sound</kbd>+<kbd>record</kbd>
 
