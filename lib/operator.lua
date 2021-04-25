@@ -143,7 +143,7 @@ function Operator:volume_set(d)
     -- add parameter lock for volume
     self.pattern[self.cur_ptn_id][self.cur_ptn_step].lock[self.cur_snd_id]:set("amp",self.amp)
   else
-    for i=1,16 do 
+    for i=1,16 do
       self.sound[self.cur_snd_id][i].amp=self.amp
     end
   end
