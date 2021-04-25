@@ -282,9 +282,11 @@ function Operator:pattern_step()
       -- get effect from the pattern
       overwrite.effect=self.pattern[self.cur_ptn_id][self.cur_ptn_step].fx_id
     end
-    snd:play(overwrite)
-    if self.cur_snd_id==snd_id and not self.buttons[B_WRITE].pressed then
-      renderer:expand(snd.wav.filename,snd.s,snd.e)
+    if snd.loaded then
+      snd:play(overwrite)
+      if self.cur_snd_id==snd_id and (not self.buttons[B_WRITE].pressed) then
+        renderer:expand(snd.wav.filename,snd.s,snd.e)
+      end
     end
   end
 end
@@ -451,7 +453,10 @@ function Operator:buttons_register()
     --
     --
     self.buttons[i].off_press=function()
-      if self.mode_write then
+      if self.buttons[B_PATTERN].pressed then
+      elseif self.buttons[B_SOUND].pressed then
+      elseif self.buttons[B_FX].pressed then
+      elseif self.mode_write then
         -- toggle a step here for the current sound
         self:pattern_toggle_sample(self.cur_ptn_id,b,self.cur_snd_id,self.cur_smpl_id)
       end
@@ -542,7 +547,7 @@ function Operator:buttons_register()
         end
       elseif self:pattern_has_sample(self.cur_ptn_id,self.cur_snd_id,b) then
         -- show if this button corresponds to the sample of the current sound while playing
-          return 3
+          -- return 1
         -- TODO (stretch goal): (also, not po-33 but) show dim light if this sound is part of current pattern
       end
     end

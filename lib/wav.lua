@@ -25,6 +25,30 @@ function Wav:get(filename)
     self.files[filename].filename=filename
     self.files[filename].sc_index=self.sc_index
 
+    -- onset detection
+    cmd="aubioonset -i "..filename.." -B 4096 -H 2048 -t 0.3 -M 0.3"
+    onset_string = os.capture(cmd)
+    if mode_debug then 
+      print(cmd)
+      print("onsets:")
+      print(onset_string)
+    end
+    onsets = {}
+    for substring in onset_string:gmatch("%S+") do
+       table.insert(onsets, tonumber(substring)/self.files[filename].duration)
+    end
+    table.insert(onsets,1.0)
+    if onsets[1] ~= 0 then
+      table.insert(onsets,0,1)
+    end
+    self.files[filename].onsets={}
+    for i,_ in ipairs(onsets) do
+      if i>1 then
+        self.files[filename].onsets[i-1]={onsets[i-1],onsets[i]}
+        print(i-1,onsets[i-1],onsets[i])
+      end
+    end
+
     -- load it into supercollider
     engine.tt_load(self.sc_index,filename)
 
@@ -45,6 +69,7 @@ function Wav:get(filename)
     sample_rate=self.files[filename].sample_rate,
     duration=self.files[filename].duration,
     sc_index=self.files[filename].sc_index,
+    onsets=self.files[filename].onsets,
   }
 end
 

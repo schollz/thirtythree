@@ -12,10 +12,12 @@ function Sound:new(o)
   self.__index=self
 
   -- parameters
-  o.melodic=o.melodic or true
+  if o.melodic==nil then
+    o.melodic=true
+  end
   o.id=o.id or 1
   o.group=o.group or 1
-  o.s=o.s or 1
+  o.s=o.s or 0
   o.e=o.e or 1
   o.rate=o.rate or 1
   o.amp=o.amp or 1
@@ -30,7 +32,14 @@ end
 
 function Sound:load(filename)
   self.wav=wav:get(filename)
+  -- partition transients
+  if (not self.melodic) and self.wav.onsets[self.id] ~= nil then 
+        self.s=self.wav.onsets[self.id][1]
+        self.e=self.wav.onsets[self.id][2]
+  end
+
   self.loaded=true
+
 end
 
 function Sound:dump()

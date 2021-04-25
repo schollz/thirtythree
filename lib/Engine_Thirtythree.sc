@@ -24,7 +24,7 @@ Engine_Thirtythree : CroneEngine {
                 arg bufnum, amp=0, ampLag=0,t_trig=0,t_trigtime=0,fadeout=0.05,
                 sampleStart=0,sampleEnd=1,samplePos=0,
                 rate=0,rateSlew=0,bpm_sample=1,bpm_target=1,
-                bitcrush=0,bitcrush_bits=24,bitcrush_rate=44100,
+                bitcrush=1,bitcrush_bits=8,bitcrush_rate=23000,
                 scratch=0,strobe=0,vinyl=0,loop=0,
                 timestretch=0,timestretchSlowDown=1,timestretchWindowBeats=1,
                 pan=0,lpf=20000,lpflag=0,hpf=10,hpflag=0;
@@ -47,7 +47,7 @@ Engine_Thirtythree : CroneEngine {
                 env=EnvGen.ar(
                     Env.new(
                         levels: [0,1,1,0], 
-                        times: [0.01,(sampleEnd-sampleStart)*(BufDur.kr(bufnum)-fadeout-0.01),fadeout],
+                        times: [0.01,(sampleEnd-sampleStart)*(BufDur.kr(bufnum)/(BufRateScale.kr(bufnum)*rate))-fadeout-0.01-0.01,fadeout],
                         curve:\sine,
                     ), 
                     gate: t_trig,
