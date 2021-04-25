@@ -1,7 +1,12 @@
 # thirtythree
 A po-33 clone for norns+grid
 
-## general
+## norns special
+
+- [ ] menu to change layout
+- [ ] menu to change to "classic mode" (8-bit, 24k sample rate)
+
+## po-33 basics
 
 - [ ] show clock
 - [x] recording (via tape)
