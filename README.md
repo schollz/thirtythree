@@ -13,7 +13,7 @@ A po-33 clone for norns+grid
 - [x] toggle parameters with <kbd>fx</kbd>
 - [ ] adjust tone (pitch+volume) with <kbd>E2</kbd> and <kbd>E3</kbd>
 - [ ] adjust filter (lp+hp) with <kbd>E2</kbd> and <kbd>E3</kbd>
-- [ ] adjust trim (start+end) with <kbd>E2</kbd> and <kbd>E3</kbd>
+- [x] adjust trim (start+end) with <kbd>E2</kbd> and <kbd>E3</kbd>
 - [ ] delete sound with <kbd>record</kbd>+<kbd>sound</kbd>
 - [ ] delete sound with <kbd>record</kbd>+<kbd>sound</kbd>
 - [ ] copy slice with <kbd>write</kbd>+<kbd>sound</kbd>+<kbd>1-16</kbd>+<kbd>9-16</kbd>
