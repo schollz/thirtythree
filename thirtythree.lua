@@ -5,6 +5,13 @@
 
 mode_debug=true
 
+--json
+print(_VERSION)
+print(package.cpath)
+if not string.find(package.cpath,"/home/we/dust/code/thirtythree/lib/") then
+  package.cpath=package.cpath..";/home/we/dust/code/thirtythree/lib/?.so"
+end
+json=require("cjson")
 
 -- globals
 include("lib/constants")
