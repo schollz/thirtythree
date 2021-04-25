@@ -357,6 +357,10 @@ function Operator:buttons_register()
     self.buttons[i].press=function(on)
       self.buttons[i].pressed=on
       if on then
+        -- if recording, ignore all on presses!
+        if recorder.is_recording then 
+          do return end 
+        end
         self:debug("buttons_register: button "..i.." pressed on")
         self.buttons[i].time_press=os.clock()
         if self.buttons[i].on_press~=nil then
@@ -443,6 +447,14 @@ function Operator:buttons_register()
   self.buttons[B_FX].off_press=function()
     self.mode_fx=false
   end
+  self.buttons[B_RECORD].off_press=function()
+    recorder:record_stop()
+    local fname = recorder:recorded_file()
+    if fname ~= nil then 
+      -- there was a recording, load it into the currenet sound
+      self:sound_load(self.cur_snd_id,fname)
+    end
+  end
 
   -- steps "1" to "16"
   for i=B_BUTTON_FIRST,B_BUTTON_LAST do
@@ -453,10 +465,18 @@ function Operator:buttons_register()
     --
     --
     self.buttons[i].off_press=function()
-      if self.buttons[B_PATTERN].pressed then
-      elseif self.buttons[B_SOUND].pressed then
-      elseif self.buttons[B_FX].pressed then
-      elseif self.mode_write then
+      if self.mode_write then
+        -- preventing setting write buttons while doing other stuff
+        for j=B_FIRST,B_BUTTON_FIRST-1 do
+          if self.buttons[j].pressed then 
+            do return end 
+          end
+        end
+        for j=B_BUTTON_LAST+1,B_LAST do
+          if self.buttons[j].pressed then 
+            do return end 
+          end
+        end
         -- toggle a step here for the current sound
         self:pattern_toggle_sample(self.cur_ptn_id,b,self.cur_snd_id,self.cur_smpl_id)
       end
@@ -494,6 +514,11 @@ function Operator:buttons_register()
           -- save effect on current samples
           self:sound_set_fx_all_current()
         end
+      elseif self.buttons[B_RECORD].pressed then
+        -- record into this sample
+        self.cur_snd_id=b
+        sel_adj=ADJ_TRIM
+        recorder:record_start()
       elseif not self.mode_write then
         -- set this sample to default
         self.cur_smpl_id=b

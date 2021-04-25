@@ -31,6 +31,8 @@ wav_=include("lib/wav")
 wav=wav_:new()
 timekeeper_=include("lib/timekeeper")
 timekeeper=timekeeper_:new()
+recorder_=include("lib/recorder")
+recorder=recorder_:new()
 gridd_=include("lib/gridd")
 gridd=gridd_:new()
 sound=include("lib/sound")
@@ -116,6 +118,9 @@ function redraw()
 
   -- metronome icon
   graphics:metro_icon(timekeeper:tick(),-2,3)
+
+  -- show record level if recording
+  recorder:draw()
 
   -- show alert atop everything if needed
   graphics:show_alert_if_needed()

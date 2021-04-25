@@ -110,6 +110,7 @@ function Graphics:volume(vol)
 end
 
 function Graphics:pitch(pitch)
+  screen.font_size(12)
   screen.level(15)
   screen.move(4,55)
   screen.text("Ptc")
@@ -123,6 +124,26 @@ function Graphics:pitch(pitch)
     local slider2 = UI.Slider.new(74-45-1,55-9,45,10,math.abs(pitch),0,12,{},'left')
     slider2:redraw()
   end
+end
+
+function Graphics:box(x,y,w,h,c)
+  screen.level(0)
+  screen.rect(x,y,w,h)
+  screen.fill()
+  screen.level(c or 15)
+  screen.rect(x,y,w,h)
+  screen.stroke()
+end
+
+function Graphics:show_level(level)
+  self:box(3,45,120,14,0)
+  screen.font_size(12)
+  screen.level(15)
+  screen.move(4,55)
+  screen.text("Rec")
+  -- pitch=-12
+  local slider = UI.Slider.new(28,55-9,92,10,level,0,1,{},'right')
+  slider:redraw()
 end
 
 return Graphics

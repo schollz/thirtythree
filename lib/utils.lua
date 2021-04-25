@@ -34,3 +34,43 @@ function os.capture(cmd, raw)
   return s
 end
 
+
+
+function _list_files(d,files,recursive)
+  -- list files in a flat table
+  if d=="." or d=="./" then
+    d=""
+  end
+  if d~="" and string.sub(d,-1)~="/" then
+    d=d.."/"
+  end
+  folders={}
+  if recursive then
+    local cmd="ls -ad "..d.."*/ 2>/dev/null"
+    local f=assert(io.popen(cmd,'r'))
+    local out=assert(f:read('*a'))
+    f:close()
+    for s in out:gmatch("%S+") do
+      if not (string.match(s,"ls: ") or s=="../" or s=="./") then
+        files=_list_files(s,files,recursive)
+      end
+    end
+  end
+  do
+    local cmd="ls -p "..d
+    local f=assert(io.popen(cmd,'r'))
+    local out=assert(f:read('*a'))
+    f:close()
+    for s in out:gmatch("%S+") do
+      table.insert(files,d..s)
+    end
+  end
+  return files
+end
+
+function list_files(d,recurisve)
+  if recursive==nil then
+    recursive=false
+  end
+  return _list_files(d,{},recursive)
+end
