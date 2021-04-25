@@ -109,11 +109,7 @@ function redraw()
     ops[sel_operator]:volume_draw()
     ops[sel_operator]:pitch_draw()
   else
-    screen.display_png(_path.code.."thirtythree/img/a"..ani1..".png",20,20)
-    ani1 = ani1 + 1 
-    if ani1 > 4 then 
-      ani1 = 1
-    end
+    screen.display_png(_path.code.."thirtythree/img/oh.png",4,20)
   end
 
   -- metronome icon
