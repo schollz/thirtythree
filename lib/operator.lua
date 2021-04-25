@@ -40,7 +40,8 @@ function Operator:init()
     -- pattern is a map of sounds that maps to samples
     -- self.pattern[ptn_id][ptn_step]={fx_id=16,snd={},parm={}}
     -- self.pattern[ptn_id][ptn_step].snd[snd_id]=<sound>
-    -- self.pattern[ptn_id][ptn_step].lock[snd_id]=<param> -- used for parameter locking
+    -- self.pattern[ptn_id][ptn_step].plock[snd_id]=<param> -- used for parameter locking
+    -- self.pattern[ptn_id][ptn_step].flock[snd_id]=<param> -- used for fx locking
   end
 
   -- params
@@ -330,9 +331,6 @@ function Operator:pattern_step()
     if self.buttons[B_FX].pressed and self.cur_fx_id>0 and override.effect==nil then
       -- perform effect
       override.effect=self.cur_fx_id
-    else
-      -- get effect from the pattern
-      override.effect=self.pattern[self.cur_ptn_id][self.cur_ptn_step].fx_id
     end
     if snd.loaded then
       -- override with parameter locks
@@ -401,9 +399,10 @@ end
 function Operator:pattern_initialize(ptn_id)
   -- initialize all the steps
   for ptn_step=1,16 do
-    self.pattern[ptn_id][ptn_step]={fx_id=16,snd={},lock={}}
+    self.pattern[ptn_id][ptn_step]={snd={},lock={}}
     for snd_id=1,16 do
-      self.pattern[ptn_id][ptn_step].lock[snd_id]=lock:new({snd_id=snd_id})
+      self.pattern[ptn_id][ptn_step].plock[snd_id]=lock:new({snd_id=snd_id})
+      self.pattern[ptn_id][ptn_step].flock[snd_id]=lock:new({snd_id=snd_id})
     end
   end
 end
@@ -416,22 +415,22 @@ function Operator:pattern_toggle_sample(ptn_id,ptn_step,snd_id,smpl_id)
     self:debug("pattern_toggle_sample: adding sample "..smpl_id.." from sound "..snd_id.." on pattern "..ptn_id.." step "..ptn_step)
     self.pattern[ptn_id][ptn_step].snd[snd_id]=self:sound_clone(snd_id,smpl_id)
   end
-  self:pattern_remove_locks(ptn_id,ptn_step,snd_id)
+  self:pattern_remove_plocks(ptn_id,ptn_step,snd_id)
 end
 
 
--- pattern_remove_locks removes locks from
+-- pattern_remove_plocks removes plocks from
 -- ptn_step until next step with a slice from snd_id
-function Operator:pattern_remove_locks(ptn_id,ptn_step,snd_id)
+function Operator:pattern_remove_plocks(ptn_id,ptn_step,snd_id)
   for i=1,16 do
     local step=((ptn_step+i-2)%16)+1
     -- always remove first one
     if i==1 then
-      self.pattern[ptn_id][step].lock[snd_id]=lock:new({snd_id=snd_id})
+      self.pattern[ptn_id][step].plock[snd_id]=lock:new({snd_id=snd_id})
     elseif self.pattern[ptn_id][step].snd[snd_id]~=nil then
       break
     else
-      self.pattern[ptn_id][step].lock[snd_id]=lock:new({snd_id=snd_id})
+      self.pattern[ptn_id][step].plock[snd_id]=lock:new({snd_id=snd_id})
     end
   end
 end
@@ -660,7 +659,7 @@ function Operator:buttons_register()
         if self.mode_play and self.buttons[B_WRITE].pressed and self.cur_ptn_step>0 then
           -- put current sound onto current playing step
           self.pattern[self.cur_ptn_id][self.cur_ptn_step].snd[self.cur_snd_id]=self:sound_clone(self.cur_snd_id,self.cur_smpl_id)
-          self:pattern_remove_locks(self.cur_ptn_id,self.cur_ptn_step,self.cur_snd_id)
+          self:pattern_remove_plocks(self.cur_ptn_id,self.cur_ptn_step,self.cur_snd_id)
           -- TODO (stretch goal): actually, put current sound onto *closest* playing step
         end
       end
