@@ -15,6 +15,10 @@ function Sound:new(o)
   if o.melodic==nil then
     o.melodic=true
   end
+  o.op_id=o.op_id 
+  if o.op_id == nil then 
+    print("ERROR THERE IS NO OP ID IN THIS SOUND")
+  end
   o.id=o.id or 1
   o.snd_id=o.snd_id or 1
   o.s=o.s or 0
@@ -44,6 +48,7 @@ end
 
 function Sound:dump()
   return {
+    op_id=self.op_id,
     melodic=self.melodic,
     id=self.id,
     snd_id=self.snd_id,
@@ -94,7 +99,7 @@ function Sound:play(override)
     voice,-- which sampler player
     self.wav.sc_index,-- buffer number
     effect,
-    amp,
+    amp*ops[self.op_id].amp_global,
     pitch.transpose_rate(self.pitch),
     s,
     e

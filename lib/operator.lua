@@ -64,6 +64,9 @@ function Operator:init()
   -- filter
   self.cur_filter_number=51 -- [1,101]
 
+  -- operator "global" parameters
+  self.amp_global=1.0
+
   self:buttons_register()
 
   self:debug("initialized operator")
@@ -100,6 +103,7 @@ function Operator:sound_initialize(snd_id)
     self.sound[snd_id][smpl_id]=sound:new({
       id=smpl_id,
       snd_id=snd_id,
+      op_id=self.id,
       s=s,
       e=e,
       melodic=snd_id<9,
@@ -556,6 +560,9 @@ function Operator:buttons_register()
           self:debug("chaining pattern, adding "..b)
           table.insert(self.pattern_chain,b)
         end
+      elseif self.buttons[B_BPM].pressed then
+        -- change the global amp volume
+        self.amp_global = util.linlin(1,16,0,2,b)
       elseif self.buttons[B_SOUND].pressed then
         -- change sound
         self.cur_snd_id=b
@@ -601,6 +608,11 @@ function Operator:buttons_register()
         elseif self.sound[b][1].loaded then
           -- has sound
           return 4
+        end
+      elseif self.buttons[B_BPM].pressed then
+        local val = util.linlin(0,2,1,16,self.amp_global)
+        if b <= val then 
+          return 14 
         end
       elseif self.buttons[B_PATTERN].pressed then
         -- if pattern pressed, show if this button has pattern / is active pattern

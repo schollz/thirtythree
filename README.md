@@ -26,12 +26,18 @@ A po-33 clone for norns+grid
 - [ ] change swing with <kbd>bpm</kbd>+<kbd>K2</kbd>
 - [ ] change tempo tapping <kbd>bpm</kbd>
 - [ ] change tempo with <kbd>bpm</kbd>+<kbd>K3</kbd>
-- [ ] change volume with <kbd>bpm</kbd>+<kbd>1-16</kbd> (**modified**: instead of master, this changes it for an entire *sound*)
-- [ ] parameter locking with <kbd>write</kbd>+(<kbd>K2</kbd> or <kbd>K3</kbd>)
+- [x] change master volume with <kbd>bpm</kbd>+<kbd>1-16</kbd>
+- [ ] parameter locking with <kbd>write</kbd>+(<kbd>K2</kbd> or <kbd>K3</kbd>) (see below for progress)
 - [x] chain pattern with <kbd>pattern</kbd>+<kbd>1-16</kbd>
 - [ ] copy pattern with <kbd>write</kbd>+<kbd>pattern</kbd>+<kbd>1-16</kbd>
 - [ ] clear pattern with <kbd>record</kbd>+<kbd>pattern</kbd>
 - [ ] save with <kbd>write</kbd>+<kbd>sound</kbd>+<kbd>play</kbd>
+
+## parameter locking
+
+- [x] volume
+- [ ] filter 
+- [ ] pitch
 
 ## effects
 
