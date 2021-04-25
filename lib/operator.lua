@@ -66,6 +66,7 @@ function Operator:init()
 
   -- operator "global" parameters
   self.amp_global=1.0
+  self.bpm=clock.get_tempo()
 
   self:buttons_register()
 
@@ -299,6 +300,9 @@ end
 -- pattern functions
 --
 function Operator:pattern_step()
+  if clock.get_tempo()~=self.bpm then 
+    self.bpm=clock.get_tempo()
+  end
   if not self.mode_play then
     do return end
   end
