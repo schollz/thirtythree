@@ -98,7 +98,7 @@ function Graphics:metro_icon(tick,x,y)
   screen.move(x+7,y+3)
   screen.line(tick and (x+4) or (x+10),y)
   screen.stroke()
-  screen.move(x+14,y)
+  screen.move(x+16,y+4)
   screen.text(params:get("clock_tempo"))
 end
 

@@ -377,9 +377,7 @@ function Operator:pattern_step()
   end
   -- update sound with parameter locks for any sound thats doing stuff in the pattern
   local snd_list=self:pattern_sound_list(self.cur_ptn_id)
-  tab.print(snd_list)
   for snd_id,_ in pairs(snd_list) do
-    print(snd_id,"in pattern")
     self.pattern[self.cur_ptn_id][self.cur_ptn_step].plock[snd_id]:play_if_locked()
   end
 end
@@ -542,7 +540,7 @@ function Operator:buttons_register()
   end
   self.buttons[B_PLAY].on_press=function()
     if self.buttons[B_WRITE].pressed and self.buttons[B_SOUND].pressed then
-      self:backup()
+      snapshot:backup()
       do return end
     end
     self.mode_play=not self.mode_play
@@ -587,7 +585,7 @@ function Operator:buttons_register()
   end
   self.buttons[B_RECORD].on_press=function()
     if self.buttons[B_WRITE].pressed and self.buttons[B_SOUND].pressed then
-      self:restore()
+      snapshot:restore()
     end
   end
   self.buttons[B_RECORD].off_press=function()
@@ -602,7 +600,7 @@ function Operator:buttons_register()
   end
   self.buttons[B_BPM].on_short_press=function()
     --update the bpm to next closest
-    if params:get("clock_tempo") >= 140 then 
+    if params:get("clock_tempo") >= 140 or params:get("clock_tempo")<80 then 
       params:set("clock_tempo",80)
     elseif params:get("clock_tempo") >= 120 then
       params:set("clock_tempo",140)
