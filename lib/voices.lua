@@ -26,7 +26,7 @@ end
 
 function Voices:get_main()
   engine.tt_amp(self.main,0,0.1)
-  self.main = 3 - self.main 
+  self.main=3-self.main
   return self.main
 end
 

@@ -29,7 +29,7 @@ function Snapshot:backup()
   io.output(f)
   io.write(json.encode(data))
   io.close(f)
-  local t2 = math.floor((clock.get_beat_sec()*clock.get_beats()-t1)*100)/100
+  local t2=math.floor((clock.get_beat_sec()*clock.get_beats()-t1)*100)/100
   graphics:alert("saved in "..t2.." s")
 end
 
@@ -72,7 +72,7 @@ function Snapshot:restore()
     ops[i]:unmarshal(data.ops[i])
   end
 
-  local t2 = math.floor((clock.get_beat_sec()*clock.get_beats()-t1)*100)/100
+  local t2=math.floor((clock.get_beat_sec()*clock.get_beats()-t1)*100)/100
   graphics:alert("loaded in "..t2.." s")
 end
 

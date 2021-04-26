@@ -57,11 +57,11 @@ function Lock:play_if_locked()
   end
   self:debug("updating")
   for k,v in pairs(self.modified) do
-    v2 = nil 
+    v2=nil
     if k=="lpf" or k=="hpf" then
       v2=self.modified["resonance"]
-      if v2==nil then 
-        v2 = 1.0
+      if v2==nil then
+        v2=1.0
       end
     end
     -- skip filters if they are not activated

@@ -31,7 +31,7 @@ end
 
 -- alert shows an alert for 2 seconds
 function Graphics:alert(msg,seconds)
-  if self.alert_clock_id~=nil then 
+  if self.alert_clock_id~=nil then
     clock.cancel(self.alert_clock_id)
   end
   self.alert_msg=msg

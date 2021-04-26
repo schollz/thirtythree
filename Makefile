@@ -15,6 +15,7 @@ format: lua-format.py
 	python3 lua-format.py lib/recorder.lua
 	python3 lua-format.py lib/lock.lua
 	python3 lua-format.py lib/snapshot.lua
+	python3 lua-format.py lib/parameters.lua
 
 lua-format.py:
 	wget https://raw.githubusercontent.com/schollz/LuaFormat/master/lua-format.py

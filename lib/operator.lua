@@ -20,9 +20,6 @@ function Operator:new(o)
 end
 
 function Operator:init()
-  -- layout
-  self.layout=1
-
   -- defaults
   self.sound={}
   for snd_id=1,16 do
@@ -406,7 +403,7 @@ function Operator:pattern_step()
     if snd.loaded then
       -- override with parameter locks
       for k,v in pairs(self.pattern[self.cur_ptn_id][self.cur_ptn_step].plock[snd_id].modified) do
-        if type(v) ~= "boolean" then
+        if type(v)~="boolean" then
           self:debug("override with parameter lock "..k..": "..v)
         else
           self:debug("override with parameter lock "..k)
@@ -553,9 +550,9 @@ function Operator:buttons_register()
       end
     end
     self.buttons[i].pos=function()
-      local startrow=PO33_LAYOUT[self.layout][24][1]
-      local startcol=PO33_LAYOUT[self.layout][24][2]*(self.id-1)+1
-      return PO33_LAYOUT[self.layout][i][1]+startrow,PO33_LAYOUT[self.layout][i][2]+startcol
+      local startrow=PO33_LAYOUT[params:get("layout")][24][1]
+      local startcol=PO33_LAYOUT[params:get("layout")][24][2]*(self.id-1)+1
+      return PO33_LAYOUT[params:get("layout")][i][1]+startrow,PO33_LAYOUT[params:get("layout")][i][2]+startcol
     end
   end
 
