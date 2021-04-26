@@ -8,8 +8,19 @@ function Lock:new(o)
   o.snd_id=o.snd_id or 1
   o.modified={}
   o.has_modified=false
+  o:register_engine()
   -- updates modified thigns
   return o
+end
+
+function Lock:register_engine()
+  self.engine={}
+  self.engine["amp"]=function(voice,v)
+    engine.tt_amp(voice,v,0.1)
+  end
+  self.engine["pitch"]=function(voice,v)
+    engine.tt_rate(voice,pitch.transpose_rate(v),0.05)
+  end
 end
 
 function Lock:marshal()
@@ -57,9 +68,8 @@ function Lock:play_if_locked()
   end
   self:debug("updating")
   for k,v in pairs(self.modified) do
-    if k=="amp" then
-      -- set amp with a little lag
-      engine.tt_amp(voice,v,0.1)
+    if self.engine[k] ~= nil then 
+      self.engine[k](voice,v)
     end
   end
 end

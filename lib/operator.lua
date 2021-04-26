@@ -210,22 +210,25 @@ end
 --
 -- parameters
 --
+function Operator:parameter_update_sounds_and_locks(k,v)
+  if self.buttons[B_WRITE].pressed and self.mode_play then
+    self:debug("updating lock for "..k.." on snd_id "..self.cur_snd_id.." to "..v)
+    local next_step=(self.cur_ptn_step-1+1)%16+1
+    self.pattern[self.cur_ptn_id][next_step].plock[self.cur_snd_id]:set(k,v)
+  else
+    for i=1,16 do
+      self.sound[self.cur_snd_id][i][k]=v
+    end
+  end
+end
+
 function Operator:volume_draw()
   graphics:volume(self.amp)
 end
 
 function Operator:volume_set(d)
   self.amp=util.clamp(self.amp+d/100,0,1)
-  if self.buttons[B_WRITE].pressed and self.mode_play then
-    -- add parameter lock for volume
-    self:debug("updating lock for amp on snd_id "..self.cur_snd_id.." to "..self.amp)
-    local next_step=(self.cur_ptn_step-1+1)%16+1
-    self.pattern[self.cur_ptn_id][next_step].plock[self.cur_snd_id]:set("amp",self.amp)
-  else
-    for i=1,16 do
-      self.sound[self.cur_snd_id][i].amp=self.amp
-    end
-  end
+  self:parameter_update_sounds_and_locks("amp",self.amp)
 end
 
 function Operator:pitch_draw()
@@ -234,6 +237,7 @@ end
 
 function Operator:pitch_set(d)
   self.pitch=util.clamp(self.pitch+math.sign(d),-12,12)
+  self:parameter_update_sounds_and_locks("pitch",self.pitch)
 end
 
 function Operator:filter_draw()

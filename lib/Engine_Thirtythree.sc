@@ -159,6 +159,14 @@ Engine_Thirtythree : CroneEngine {
             );
         });
 
+        this.addCommand("tt_rate","iff", { arg msg;
+            // lua is sending 1-index
+            playerThirtythree[msg[1]-1].set(
+                \rate,msg[2],
+                \rateSlew,msg[3],
+            );
+        });
+
         this.addCommand("tt_bpm","f", { arg msg; 
             (0..16).do({arg i; 
                 playerThirtythree[i].set(
