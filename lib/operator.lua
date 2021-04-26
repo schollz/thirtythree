@@ -74,7 +74,7 @@ function Operator:init()
 end
 
 function Operator:marshal()
-  local data = {}
+  local data={}
   for k,v in pairs(self) do
     print(k,v)
     if k~="buttons" and k~="pattern" and k~="sound" then
@@ -111,7 +111,7 @@ function Operator:unmarshal(content)
     print("no data found in save file")
     do return end
   end
-  
+
   -- reinitialize
   self:init()
 
@@ -331,7 +331,7 @@ end
 -- pattern functions
 --
 function Operator:pattern_step()
-  if clock.get_tempo()~=self.bpm then 
+  if clock.get_tempo()~=self.bpm then
     self.bpm=clock.get_tempo()
     -- update engine (only first operator does this)
     if self.id==1 then
@@ -600,9 +600,9 @@ function Operator:buttons_register()
   end
   self.buttons[B_BPM].on_short_press=function()
     --update the bpm to next closest
-    if params:get("clock_tempo") >= 140 or params:get("clock_tempo")<80 then 
+    if params:get("clock_tempo")>=140 or params:get("clock_tempo")<80 then
       params:set("clock_tempo",80)
-    elseif params:get("clock_tempo") >= 120 then
+    elseif params:get("clock_tempo")>=120 then
       params:set("clock_tempo",140)
     elseif params:get("clock_tempo")>=80 then
       params:set("clock_tempo",120)
@@ -645,7 +645,7 @@ function Operator:buttons_register()
     self.buttons[i].on_press=function()
       if self.buttons[B_PATTERN].pressed and self.buttons[B_WRITE].pressed then
         -- copy current pattern to the new button
-        if self.cur_ptn_id ~= b then
+        if self.cur_ptn_id~=b then
           self.pattern[b]=json.decode(json.encode(self.pattern[self.cur_ptn_id]))
         end
       elseif self.buttons[B_PATTERN].pressed then

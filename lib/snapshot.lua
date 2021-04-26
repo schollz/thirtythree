@@ -25,7 +25,7 @@ function Snapshot:backup()
 
   -- wav files
   data.wav=wav:marshal()
-  
+
   io.output(f)
   io.write(json.encode(data))
   io.close(f)
@@ -46,16 +46,16 @@ function Snapshot:restore()
   local content=f:read("*all")
   f:close()
 
-  local data = json.decode(content)
-  if data == nil then 
+  local data=json.decode(content)
+  if data==nil then
     print("error loading data")
     do return end
   end
-  if data.ops== nil then
+  if data.ops==nil then
     print("error loading ops")
     do return end
   end
-  if data.wav== nil then
+  if data.wav==nil then
     print("error loading wav")
     do return end
   end
@@ -75,4 +75,4 @@ function Snapshot:restore()
 end
 
 
-return Snapshot
+return Snapsho

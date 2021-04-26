@@ -20,7 +20,7 @@ function Dev:new(o)
   -- ops[1].cur_snd_id=12
   -- sel_adj=1
   -- snapshot:backup()
-  
+
   snapshot:restore()
   return o
 end

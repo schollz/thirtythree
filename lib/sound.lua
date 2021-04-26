@@ -25,7 +25,7 @@ function Sound:new(o)
   o.lpf=o.lpf or 20000
   o.hpf=o.hpf or 20
   o.resonance=o.resonance or 1
-  if o.is_lpf == nil then 
+  if o.is_lpf==nil then
     o.is_lpf=true
   end
   o.wav=o.wav or nil
@@ -36,7 +36,7 @@ end
 
 
 function Sound:marshal()
-  local data = {}
+  local data={}
   for k,v in pairs(self) do
     data[k]=json.encode(v)
   end
@@ -96,7 +96,7 @@ function Sound:play(override)
   local effect=0
   local amp=self.amp
   local lpf=self.lpf
-  local hpf=self.hpf 
+  local hpf=self.hpf
   local lpf_resonance=self.resonance
   local hpf_resonance=self.resonance
   local is_lpf=self.is_lpf
@@ -106,7 +106,7 @@ function Sound:play(override)
     e=override.e or e
     effect=override.effect or 0
     amp=override.amp or amp
-    if override.is_lpf ~= nil then 
+    if override.is_lpf~=nil then
       is_lpf=override.is_lpf
     end
   end
@@ -114,10 +114,10 @@ function Sound:play(override)
     voice=voices:new_voice(self.snd_id)
   end
   if is_lpf then
-    hpf_resonance=1 
+    hpf_resonance=1
     hpf=20
   else
-    lpf_resonance=1 
+    lpf_resonance=1
     lpf=20000
   end
   if mode_debug then

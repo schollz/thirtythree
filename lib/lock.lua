@@ -13,7 +13,7 @@ function Lock:new(o)
 end
 
 function Lock:marshal()
-  local data = {}
+  local data={}
   for k,v in pairs(self) do
     data[k]=json.encode(v)
   end
