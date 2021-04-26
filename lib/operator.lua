@@ -391,8 +391,6 @@ function Operator:pattern_step()
     end
     if sel_parm==PARM_FILTER then
       self:filter_set(0) -- add 0 will adjust it by nothing by call all the updates
-    end
-    if sel_parm==PARM_RESONANCE then
       self:resonance_set(0) -- add 0 will adjust it by nothing by call all the updates
     end
   end

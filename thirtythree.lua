@@ -91,12 +91,11 @@ function enc(k,d)
       ops[sel_operator]:trim_jog(sel_looppoint,d)
     end
   elseif sel_adj==ADJ_FILT then
+    sel_parm=PARM_FILTER
     if k==2 then
       ops[sel_operator]:filter_set(d)
-      sel_parm=PARM_FILTER
     elseif k==3 then
       ops[sel_operator]:resonance_set(-d)
-      sel_parm=PARM_RESONANCE
     end
   elseif sel_adj==ADJ_TONE then
     if k==2 then
