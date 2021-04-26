@@ -11,8 +11,7 @@ end
 function Snapshot:backup()
   graphics:alert("saving")
   local t1=clock.get_beat_sec()*clock.get_beats()
-  -- TODO: automatically generate the save name
-  local filename=_path.data.."thirtythree/save.json"
+  local filename=_path.data.."thirtythree/save"..params:get("snapshot")..".json"
   print("saving to ")
   local data={}
 
@@ -36,8 +35,7 @@ end
 function Snapshot:restore()
   graphics:alert("loading")
   local t1=clock.get_beat_sec()*clock.get_beats()
-  -- TODO: get the last save point
-  local filename=_path.data.."thirtythree/save.json"
+  local filename=_path.data.."thirtythree/save"..params:get("snapshot")..".json"
   if not util.file_exists(filename) then
     print("no save file to load")
     do return end

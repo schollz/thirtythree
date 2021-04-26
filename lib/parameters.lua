@@ -1,4 +1,5 @@
 function register_parameters()
+  params:add_number("snapshot","snapshot #",1,99,true,1)
   params:add_option("layout","layout",{"5x5","4x6"},1)
   params:add_option("load sounds","load sounds",{"files","recording"},1)
   params:add_option("po-33 sound","po-33 sound",{"off","on"},1)
