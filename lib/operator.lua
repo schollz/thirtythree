@@ -718,10 +718,19 @@ function Operator:buttons_register()
           self:sound_set_fx_all_current()
         end
       elseif self.buttons[B_RECORD].pressed then
-        -- record into this sample
-        self.cur_snd_id=b
-        sel_adj=ADJ_TRIM
-        recorder:record_start()
+        if params:get("load sounds")==2 then
+          -- open file
+          fileselect.enter(_path.audio,function(fname)
+            if fname~=nil then
+              self:sound_load(self.cur_snd_id,fname)
+            end
+          end)
+        else
+          -- record into this sample
+          self.cur_snd_id=b
+          sel_adj=ADJ_TRIM
+          recorder:record_start()
+        end
       elseif not self.mode_write then
         -- set this sample to default
         self.cur_smpl_id=b

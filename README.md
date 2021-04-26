@@ -5,15 +5,15 @@ A po-33 clone for norns+grid
 
 - [x] menu to change layout
 - [x] menu to change to "classic mode" (8-bit, 24k sample rate)
-- [ ] menu option to change snapshot number
+- [x] menu option to change snapshot number
 - [ ] load sounds via recording (classic) or from files (norns only)
 
 ## po-33 basics
 
 - [ ] hip+impractical ui on main screen
 - [ ] show clock
-- [x] recording (via tape)
 - [x] melodic and drum sounds
+- [x] record with <kbd>record</kbd>+<kbd>1-16</kbd> (option to load files instead in parameters)
 - [x] select sound with <kbd>sound</kbd>+<kbd>1-16</kbd>
 - [x] write mode activated with <kb>write</kbd>
 - [x] select pattern with <kbd>pattern</kbd>+<kbd>1-16</kbd>

@@ -29,6 +29,7 @@ ops={} -- operators
 engine.name="Thirtythree"
 
 -- individual libraries
+fileselect=include("lib/fileselect")
 pitch=include("lib/pitch")
 lock=include("lib/lock")
 graphics_=include("lib/graphics")
