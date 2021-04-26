@@ -111,7 +111,7 @@ end
 
 function Graphics:filter(filter_type,freq,resonance)
   screen.level(15)
-  local filter_graph=FilterGraph.new(20,20000,-60,30,filter_type,12,freq,resonance)
+  local filter_graph=FilterGraph.new(20,20000,-60,30,filter_type,12,freq,1-resonance)
   filter_graph:set_position_and_size(4,22,120,38)
   filter_graph:redraw()
 end

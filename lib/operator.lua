@@ -52,7 +52,7 @@ function Operator:init()
   self.is_lpf=true
   self.lpf=20000
   self.hpf=20
-  self.resonance=0.0
+  self.resonance=1.0
   self.pitch=0
 
   -- currents
@@ -210,14 +210,23 @@ end
 --
 -- parameters
 --
-function Operator:parameter_update_sounds_and_locks(k,v)
+function Operator:parameter_update_sounds_and_locks(k,v,update,v2,v3)
   if self.buttons[B_WRITE].pressed and self.mode_play then
-    self:debug("updating lock for "..k.." on snd_id "..self.cur_snd_id.." to "..v)
+    if (type(v)~="boolean") then
+      self:debug("updating lock for "..k.." on snd_id "..self.cur_snd_id.." to "..v)
+    else
+      self:debug("updating lock for "..k.." on snd_id "..self.cur_snd_id)
+    end
     local next_step=(self.cur_ptn_step-1+1)%16+1
     self.pattern[self.cur_ptn_id][next_step].plock[self.cur_snd_id]:set(k,v)
   else
     for i=1,16 do
       self.sound[self.cur_snd_id][i][k]=v
+    end
+    -- update current engine
+    if update==nil or update==true then
+      ngen:update(1,k,v,v2,v3)
+      ngen:update(2,k,v,v2,v3)
     end
   end
 end
@@ -249,7 +258,7 @@ function Operator:filter_draw()
 end
 
 function Operator:resonance_set(d)
-  self.resonance=util.clamp(self.resonance+d/100,0,1)
+  self.resonance=util.clamp(self.resonance+d/100,0.1,1)
 end
 
 function Operator:filter_set(d)
@@ -261,6 +270,10 @@ function Operator:filter_set(d)
     self.lpf=util.linexp(1,50,20,20000,self.cur_filter_number)
     self.is_lpf=true
   end
+  self:parameter_update_sounds_and_locks("lpf",self.lpf,self.is_lpf==true,self.resonance)
+  self:parameter_update_sounds_and_locks("is_lpf",self.is_lpf,false)
+  self:parameter_update_sounds_and_locks("hpf",self.hpf,self.is_lpf==false,self.resonance)
+  self:parameter_update_sounds_and_locks("resonance",self.resonance,false) -- add to lock but don't update
   graphics:update()
 end
 
@@ -370,7 +383,11 @@ function Operator:pattern_step()
     if snd.loaded then
       -- override with parameter locks
       for k,v in pairs(self.pattern[self.cur_ptn_id][self.cur_ptn_step].plock[snd_id].modified) do
-        self:debug("override with parameter lock "..k..": "..v)
+        if type(v) ~= "boolean" then
+          self:debug("override with parameter lock "..k..": "..v)
+        else
+          self:debug("override with parameter lock "..k)
+        end
         override[k]=v
       end
       snd:play(override)

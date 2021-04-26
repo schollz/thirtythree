@@ -8,19 +8,8 @@ function Lock:new(o)
   o.snd_id=o.snd_id or 1
   o.modified={}
   o.has_modified=false
-  o:register_engine()
   -- updates modified thigns
   return o
-end
-
-function Lock:register_engine()
-  self.engine={}
-  self.engine["amp"]=function(voice,v)
-    engine.tt_amp(voice,v,0.1)
-  end
-  self.engine["pitch"]=function(voice,v)
-    engine.tt_rate(voice,pitch.transpose_rate(v),0.05)
-  end
 end
 
 function Lock:marshal()
@@ -68,8 +57,18 @@ function Lock:play_if_locked()
   end
   self:debug("updating")
   for k,v in pairs(self.modified) do
-    if self.engine[k] ~= nil then 
-      self.engine[k](voice,v)
+    v2 = nil 
+    if k=="lpf" or k=="hpf" then
+      v2=self.modified["resonance"]
+      if v2==nil then 
+        v2 = 1.0
+      end
+    end
+    -- skip filters if they are not activated
+    if k=="lpf" and self.modified["is_lpf"]==false then
+    elseif k=="hpf" and self.modified["is_lpf"]==true then
+    else
+      ngen:update(voice,k,v,v2)
     end
   end
 end

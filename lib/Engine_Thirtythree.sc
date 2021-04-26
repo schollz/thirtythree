@@ -175,28 +175,27 @@ Engine_Thirtythree : CroneEngine {
             }); 
         });
 
-
         this.addCommand("tt_lpf","ifff", { arg msg;
             // lua is sending 1-index
             playerThirtythree[msg[1]-1].set(
                 \lpf,msg[2],
-                \lpf_resonance,msg[3],
-                \lpflag,msg[4],
+                \lpflag,msg[3],
                 \hpf,20,
-                \hpf_resonance,1.0,
-                \hpflag,msg[4],
+                \hpflag,msg[3],
+                \lpf_resonance,msg[4],
+                \hpf_resonance,1,
             );
         });
 
         this.addCommand("tt_hpf","ifff", { arg msg;
             // lua is sending 1-index
             playerThirtythree[msg[1]-1].set(
-                \hpf,msg[2],
-                \hpf_resonance,msg[3],
-                \hpflag,msg[4],
                 \lpf,20000,
-                \lpf_resonance,1.0,
-                \lpflag,msg[4],
+                \lpflag,msg[3],
+                \hpf,msg[2],
+                \hpflag,msg[3],
+                \hpf_resonance,msg[4],
+                \lpf_resonance,1,
             );
         });
 

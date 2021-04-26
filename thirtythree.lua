@@ -31,6 +31,8 @@ pitch=include("lib/pitch")
 lock=include("lib/lock")
 graphics_=include("lib/graphics")
 graphics=graphics_:new()
+ngen_=include("lib/ngen")
+ngen=ngen_:new()
 renderer_=include("lib/renderer")
 renderer=renderer_:new()
 voices_=include("lib/voices")
@@ -89,7 +91,7 @@ function enc(k,d)
     if k==2 then
       ops[sel_operator]:filter_set(d)
     elseif k==3 then
-      ops[sel_operator]:resonance_set(d)
+      ops[sel_operator]:resonance_set(-d)
     end
   elseif sel_adj==ADJ_TONE then
     if k==2 then
@@ -142,7 +144,7 @@ function redraw()
 
   -- show alert atop everything if needed
   graphics:show_alert_if_needed()
-  
+
   screen.update()
 end
 
