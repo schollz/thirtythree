@@ -21,8 +21,8 @@ A po-33 clone for norns+grid
 - [x] adjust tone (pitch+volume) with <kbd>E2</kbd> and <kbd>E3</kbd>
 - [x] adjust filter (lp+hp) with <kbd>E2</kbd> and <kbd>E3</kbd>
 - [x] adjust trim (start+end) with <kbd>E2</kbd> and <kbd>E3</kbd>
-- [ ] delete sound with <kbd>record</kbd>+<kbd>sound</kbd>
-- [ ] copy slice with <kbd>write</kbd>+<kbd>sound</kbd>+<kbd>1-16</kbd>+<kbd>9-16</kbd>
+- [x] delete sound with <kbd>record</kbd>+<kbd>sound</kbd>
+- [ ] copy slice with <kbd>write</kbd>+<kbd>sound</kbd>+<kbd>9-16</kbd>+<kbd>1-16</kbd>
 - [ ] add effects with <kbd>fx</kbd>+<kbd>1-16</kbd> (see below for progress)
 - [ ] change swing with <kbd>bpm</kbd>+<kbd>K2</kbd>
 - [x] change tempo tapping <kbd>bpm</kbd>
