@@ -14,6 +14,7 @@ format: lua-format.py
 	python3 lua-format.py lib/timekeeper.lua
 	python3 lua-format.py lib/recorder.lua
 	python3 lua-format.py lib/lock.lua
+	python3 lua-format.py lib/snapshot.lua
 
 lua-format.py:
 	wget https://raw.githubusercontent.com/schollz/LuaFormat/master/lua-format.py
