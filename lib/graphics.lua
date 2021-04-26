@@ -9,6 +9,7 @@ function Graphics:new(o)
   setmetatable(o,self)
   self.__index=self
 
+  o.alert_clock_id=nil
   o.alert_msg=""
   o.dirty=false
   o.fps=15
@@ -29,13 +30,17 @@ function Graphics:update()
 end
 
 -- alert shows an alert for 2 seconds
-function Graphics:alert(msg)
-  clock.run(function()
-    self.alert_msg=message
-    self.dirty=true
-    clock.sleep(2)
+function Graphics:alert(msg,seconds)
+  if self.alert_clock_id~=nil then 
+    clock.cancel(self.alert_clock_id)
+  end
+  self.alert_msg=msg
+  self.dirty=true
+  self.alert_clock_id=clock.run(function()
+    clock.sleep(seconds or 2)
     self.alert_msg=nil
     self.dirty=true
+    redraw()
   end)
 end
 
@@ -60,6 +65,7 @@ function Graphics:show_alert_if_needed()
   screen.rect(x-w/2,y,w,10)
   screen.stroke()
   screen.move(x,y+7)
+  screen.font_size(8)
   screen.text_center(self.alert_msg)
 end
 

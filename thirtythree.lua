@@ -142,6 +142,7 @@ function redraw()
 
   -- show alert atop everything if needed
   graphics:show_alert_if_needed()
+  
   screen.update()
 end
 

@@ -9,7 +9,7 @@ end
 
 
 function Snapshot:backup()
-  print("saving")
+  graphics:alert("saving")
   local t1=clock.get_beat_sec()*clock.get_beats()
   -- TODO: automatically generate the save name
   local filename=_path.data.."thirtythree/save.json"
@@ -29,11 +29,12 @@ function Snapshot:backup()
   io.output(f)
   io.write(json.encode(data))
   io.close(f)
-  print("saved in "..(clock.get_beat_sec()*clock.get_beats()-t1).." seconds")
+  local t2 = math.floor((clock.get_beat_sec()*clock.get_beats()-t1)*100)/100
+  graphics:alert("saved in "..t2.." s")
 end
 
 function Snapshot:restore()
-  print("loading")
+  graphics:alert("loading")
   local t1=clock.get_beat_sec()*clock.get_beats()
   -- TODO: get the last save point
   local filename=_path.data.."thirtythree/save.json"
@@ -71,7 +72,8 @@ function Snapshot:restore()
     ops[i]:unmarshal(data.ops[i])
   end
 
-  print("loaded in "..(clock.get_beat_sec()*clock.get_beats()-t1).." seconds")
+  local t2 = math.floor((clock.get_beat_sec()*clock.get_beats()-t1)*100)/100
+  graphics:alert("loaded in "..t2.." s")
 end
 
 return Snapshot

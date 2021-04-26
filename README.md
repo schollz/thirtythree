@@ -72,3 +72,4 @@ many effects can be done simultaneously. effects apply to sounds, not to whole p
 - [ ] octave up
 - [ ] loop 16
 - [ ] loop 12
+- [ ] gate probability
