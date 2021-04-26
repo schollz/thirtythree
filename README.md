@@ -6,7 +6,7 @@ A po-33 clone for norns+grid
 - [x] menu to change layout
 - [x] menu to change to "classic mode" (8-bit, 24k sample rate)
 - [x] menu option to change snapshot number
-- [ ] load sounds via recording (classic) or from files (norns only)
+- [x] load sounds via recording (classic) or from files (norns only)
 
 ## po-33 basics
 
