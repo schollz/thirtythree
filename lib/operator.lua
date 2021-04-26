@@ -237,6 +237,7 @@ end
 
 function Operator:volume_set(d)
   self.amp=util.clamp(self.amp+d/100,0,1)
+  self:debug("updating volume to "..self.amp)
   self:parameter_update_sounds_and_locks("amp",self.amp)
 end
 
@@ -259,6 +260,8 @@ end
 
 function Operator:resonance_set(d)
   self.resonance=util.clamp(self.resonance+d/100,0.1,1)
+  self:parameter_update_sounds_and_locks("resonance",self.resonance,false) -- add to lock but don't update
+  graphics:update()
 end
 
 function Operator:filter_set(d)
@@ -348,6 +351,7 @@ end
 -- pattern functions
 --
 function Operator:pattern_step()
+  -- update the tempo each step (if needed)
   if clock.get_tempo()~=self.bpm then
     self.bpm=clock.get_tempo()
     -- update engine (only first operator does this)
@@ -355,12 +359,16 @@ function Operator:pattern_step()
       engine.tt_bpm(self.bpm)
     end
   end
+
+  -- skip the rest if not playing
   if not self.mode_play then
     do return end
   end
+
   -- increase step
   self.cur_ptn_step=self.cur_ptn_step+1
 
+  -- jump to next pattern or return to beginning
   if self.cur_ptn_step>16 then
     -- goto next pattern
     self.pattern_chain_index=self.pattern_chain_index+1
@@ -370,6 +378,23 @@ function Operator:pattern_step()
     self.cur_ptn_id=self.pattern_chain[self.pattern_chain_index]
     self.cur_ptn_step=1
     self:debug("continuing with pattern "..self.cur_ptn_id)
+  end
+
+  -- if holding down write after selecting parameter,
+  -- then continually lock in that parameter
+  if self.buttons[B_WRITE].pressed and self.mode_play then
+    if sel_parm==PARM_VOLUME then
+      self:volume_set(0) -- add 0 will adjust it by nothing by call all the updates
+    end
+    if sel_parm==PARM_PITCH then
+      self:pitch_set(0) -- add 0 will adjust it by nothing by call all the updates
+    end
+    if sel_parm==PARM_FILTER then
+      self:filter_set(0) -- add 0 will adjust it by nothing by call all the updates
+    end
+    if sel_parm==PARM_RESONANCE then
+      self:resonance_set(0) -- add 0 will adjust it by nothing by call all the updates
+    end
   end
 
   -- play sounds associated with step
@@ -396,6 +421,7 @@ function Operator:pattern_step()
       end
     end
   end
+
   -- update sound with parameter locks for any sound thats doing stuff in the pattern
   local snd_list=self:pattern_sound_list(self.cur_ptn_id)
   for snd_id,_ in pairs(snd_list) do

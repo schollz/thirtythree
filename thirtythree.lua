@@ -21,6 +21,7 @@ sel_operator=1
 sel_filename=""
 sel_looppoint=1
 sel_adj=ADJ_NONE
+sel_parm=PARM_NONE
 ops={} -- operators
 
 -- engine
@@ -77,9 +78,11 @@ function enc(k,d)
       if op.buttons[B_BPM].pressed then
         -- change tempo
         params:delta("clock_tempo",d)
+        do return end
       end
     end
   end
+  sel_parm=PARM_NONE
   if sel_adj==ADJ_TRIM then
     if k==1 then
       ops[sel_operator]:trim_zoom(sel_looppoint,d)
@@ -90,20 +93,25 @@ function enc(k,d)
   elseif sel_adj==ADJ_FILT then
     if k==2 then
       ops[sel_operator]:filter_set(d)
+      sel_parm=PARM_FILTER
     elseif k==3 then
       ops[sel_operator]:resonance_set(-d)
+      sel_parm=PARM_RESONANCE
     end
   elseif sel_adj==ADJ_TONE then
     if k==2 then
-      ops[sel_operator]:pitch_set(d)
-    elseif k==3 then
       ops[sel_operator]:volume_set(d)
+      sel_parm=PARM_VOLUME
+    elseif k==3 then
+      ops[sel_operator]:pitch_set(d)
+      sel_parm=PARM_PITCH
     end
   end
   graphics:update()
 end
 
 function key(k,z)
+  sel_parm=PARM_NONE
   if k>1 and z==1 then
     local v=k*2-5
     sel_adj=sel_adj+v
