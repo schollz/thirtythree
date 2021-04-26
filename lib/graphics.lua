@@ -99,6 +99,7 @@ function Graphics:metro_icon(tick,x,y)
   screen.line(tick and (x+4) or (x+10),y)
   screen.stroke()
   screen.move(x+16,y+4)
+  screen.font_size(8)
   screen.text(params:get("clock_tempo"))
 end
 

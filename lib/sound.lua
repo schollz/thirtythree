@@ -112,6 +112,8 @@ function Sound:play(override)
   end
   if voice==nil then
     voice=voices:new_voice(self.snd_id)
+  elseif voice==1 then -- main voice
+    voice = voices:get_main()
   end
   if is_lpf then
     hpf_resonance=1
