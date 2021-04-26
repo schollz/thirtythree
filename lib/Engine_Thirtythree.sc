@@ -186,8 +186,8 @@ Engine_Thirtythree : CroneEngine {
                 \hpf_resonance,1,
             );
         });
-
-        this.addCommand("tt_hpf","ifff", { arg msg;
+        
+	this.addCommand("tt_hpf","ifff", { arg msg;
             // lua is sending 1-index
             playerThirtythree[msg[1]-1].set(
                 \lpf,20000,
@@ -197,6 +197,16 @@ Engine_Thirtythree : CroneEngine {
                 \hpf_resonance,msg[4],
                 \lpf_resonance,1,
             );
+        });
+
+        this.addCommand("tt_bitcrush_all","ifff", { arg msg;
+            // lua is sending 1-index
+            (0..16).do({arg i; 
+              playerThirtythree[i].set(
+		\bitcrush,msg[2],
+		\bitcrush_bits,msg[3],
+		\bitcrush_rate,msg[4],
+            )});
         });
 
         // ^ Thirtythree specific

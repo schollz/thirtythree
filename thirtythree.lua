@@ -66,6 +66,9 @@ function init()
   runner.event=updater
   runner:start()
 
+  -- register parameters
+  register_parameters()
+
   dev_=include("lib/dev")
   dev=dev_:new()
 end
