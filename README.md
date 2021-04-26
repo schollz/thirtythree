@@ -3,11 +3,13 @@ A po-33 clone for norns+grid
 
 ## norns special
 
-- [ ] menu to change layout
-- [ ] menu to change to "classic mode" (8-bit, 24k sample rate)
+- [x] menu to change layout
+- [x] menu to change to "classic mode" (8-bit, 24k sample rate)
+- [ ] menu option to change snapshot number
 
 ## po-33 basics
 
+- [ ] hip+impractical ui on main screen
 - [ ] show clock
 - [x] recording (via tape)
 - [x] melodic and drum sounds
@@ -16,10 +18,9 @@ A po-33 clone for norns+grid
 - [x] select pattern with <kbd>pattern</kbd>+<kbd>1-16</kbd>
 - [x] play pattern with <kbd>play</kbd>
 - [x] toggle parameters with <kbd>fx</kbd>
-- [ ] adjust tone (pitch+volume) with <kbd>E2</kbd> and <kbd>E3</kbd>
-- [ ] adjust filter (lp+hp) with <kbd>E2</kbd> and <kbd>E3</kbd>
+- [x] adjust tone (pitch+volume) with <kbd>E2</kbd> and <kbd>E3</kbd>
+- [x] adjust filter (lp+hp) with <kbd>E2</kbd> and <kbd>E3</kbd>
 - [x] adjust trim (start+end) with <kbd>E2</kbd> and <kbd>E3</kbd>
-- [ ] delete sound with <kbd>record</kbd>+<kbd>sound</kbd>
 - [ ] delete sound with <kbd>record</kbd>+<kbd>sound</kbd>
 - [ ] copy slice with <kbd>write</kbd>+<kbd>sound</kbd>+<kbd>1-16</kbd>+<kbd>9-16</kbd>
 - [ ] add effects with <kbd>fx</kbd>+<kbd>1-16</kbd> (see below for progress)
@@ -67,3 +68,8 @@ many effects can be done simultaneously. effects apply to sounds, not to whole p
 - [ ] loop 16
 - [ ] loop 12
 - [ ] gate probability
+
+
+## stretch
+
+- [ ] full backup (to copy over the sounds and everything to a new folder)
