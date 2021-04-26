@@ -74,5 +74,4 @@ function Snapshot:restore()
   print("loaded in "..(clock.get_beat_sec()*clock.get_beats()-t1).." seconds")
 end
 
-
-return Snapsho
+return Snapshot
