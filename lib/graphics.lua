@@ -151,12 +151,12 @@ function Graphics:box(x,y,w,h,c)
   screen.stroke()
 end
 
-function Graphics:show_level(level)
+function Graphics:show_level(level,time_left)
   self:box(3,45,120,14,0)
   screen.font_size(12)
   screen.level(15)
   screen.move(4,55)
-  screen.text("Rec")
+  screen.text(time_left)
   -- pitch=-12
   local slider=UI.Slider.new(28,55-9,92,10,level,0,1,{},'right')
   slider:redraw()

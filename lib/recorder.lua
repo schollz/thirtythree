@@ -21,8 +21,7 @@ function Recorder:draw()
     do return end
   end
   print(self.level)
-  graphics:show_level(self.level)
-  -- TODO: draw time left
+  graphics:show_level(self.level,self.time_left)
 end
 
 function Recorder:recorded_file()
