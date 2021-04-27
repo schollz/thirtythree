@@ -465,7 +465,11 @@ function Operator:pattern_step()
           lock_voice=false
         end
         -- send the sound played, in case it is needed for the fx (e.g. for the looping)
-        ngen:fx(fx_id,fx_apply,snd_played)
+        if fx_id==FX_RETRIGGER then
+          self.cur_ptn_step=16
+        else
+          ngen:fx(snd,fx_id,fx_apply)
+        end
       end
       -- lock voice so it doesn't get stolen while effect is going
       -- (or unlock it if the effect has disappeared)
