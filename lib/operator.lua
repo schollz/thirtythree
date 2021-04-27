@@ -560,37 +560,6 @@ function Operator:pattern_remove_plocks(ptn_id,ptn_step,snd_id)
   end
 end
 
---
--- fx 
---
-
-
--- TODO change fx_remove -> fx
--- TODO fx_add -> fx
-function Operator:fx(snd_id,fx_id,add)
-  if not self.mode_play then 
-    do return end 
-  end
-  if self.mode_write then
-    -- TODO: move this
-    -- fx's only added when they are pressed, not in this function
-  end
-  if add then
-    self.sound_fx[snd_id][fx_id]=true
-  else
-    self.sound_fx[snd_id][fx_id]=nil 
-  end
-  local voice = voices:get_voice(self.id,snd_id)
-  if voice ~= nil then 
-    -- apply/remove the fx immediately
-    ngen:fx(voice,fx_id,add)
-  end
-end
-
-
-function Operator:fx_current(snd_id)
-  return self.sound_fx[snd_id]
-end
 
 --
 -- button logic
