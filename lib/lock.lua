@@ -5,6 +5,7 @@ function Lock:new(o)
   setmetatable(o,self)
   self.__index=self
 
+  o.op_id=o.op_id or 1
   o.snd_id=o.snd_id or 1
   o.modified={}
   o.has_modified=false
@@ -45,11 +46,10 @@ end
 
 function Lock:play_if_locked()
   if not self.has_modified then
-    self:debug("nothing modified")
     -- no need to update engine since sound is not modified
     do return end
   end
-  local voice=voices:get_voice(self.snd_id)
+  local voice=voices:get_voice(self.op_id,self.snd_id)
   if voice==nil then
     -- nothing to update, voice has been stolen
     self:debug("can't get voice")

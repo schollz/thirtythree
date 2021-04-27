@@ -22,7 +22,9 @@ end
 function Operator:init()
   -- defaults
   self.sound={}
+  self.sound_fx={} -- keep track of which sounds have been punched in
   for snd_id=1,16 do
+    self.sound_fx[snd_id]={} -- => sound_fx[snd_id][fx_id]=true
     self:sound_initialize(snd_id)
   end
   -- self.sound[snd_id][smpl_id] => is sound object
@@ -134,10 +136,8 @@ function Operator:unmarshal(content)
       self.pattern[ptn_id][ptn_step].snd[snd_id]=sound:new()
       self.pattern[ptn_id][ptn_step].snd[snd_id]:unmarshal(p[5])
     elseif p[1]=="plock" then
-      -- self.pattern[ptn_id][ptn_step].plock[snd_id]=lock:new()
       self.pattern[ptn_id][ptn_step].plock[snd_id]:unmarshal(p[5])
     elseif p[1]=="flock" then
-      -- self.pattern[ptn_id][ptn_step].flock[snd_id]=lock:new()
       self.pattern[ptn_id][ptn_step].flock[snd_id]:unmarshal(p[5])
     end
   end
@@ -480,8 +480,8 @@ function Operator:pattern_initialize(ptn_id)
   for ptn_step=1,16 do
     self.pattern[ptn_id][ptn_step]={snd={},plock={},flock={}}
     for snd_id=1,16 do
-      self.pattern[ptn_id][ptn_step].plock[snd_id]=lock:new({snd_id=snd_id})
-      self.pattern[ptn_id][ptn_step].flock[snd_id]=lock:new({snd_id=snd_id})
+      self.pattern[ptn_id][ptn_step].plock[snd_id]=lock:new({snd_id=snd_id,op_id=self.id})
+      self.pattern[ptn_id][ptn_step].flock[snd_id]=lock:new({snd_id=snd_id,op_id=self.id})
     end
   end
 end
@@ -505,13 +505,45 @@ function Operator:pattern_remove_plocks(ptn_id,ptn_step,snd_id)
     local step=((ptn_step+i-2)%16)+1
     -- always remove first one
     if i==1 then
-      self.pattern[ptn_id][step].plock[snd_id]=lock:new({snd_id=snd_id})
+      self.pattern[ptn_id][step].plock[snd_id]=lock:new({snd_id=snd_id,op_id=self.id})
     elseif self.pattern[ptn_id][step].snd[snd_id]~=nil then
       break
     else
-      self.pattern[ptn_id][step].plock[snd_id]=lock:new({snd_id=snd_id})
+      self.pattern[ptn_id][step].plock[snd_id]=lock:new({snd_id=snd_id,op_id=self.id})
     end
   end
+end
+
+--
+-- fx 
+--
+
+
+-- TODO change fx_remove -> fx
+-- TODO fx_add -> fx
+function Operator:fx(snd_id,fx_id,add)
+  if not self.mode_play then 
+    do return end 
+  end
+  if self.mode_write then
+    -- TODO: move this
+    -- fx's only added when they are pressed, not in this function
+  end
+  if add then
+    self.sound_fx[snd_id][fx_id]=true
+  else
+    self.sound_fx[snd_id][fx_id]=nil 
+  end
+  local voice = voices:get_voice(self.id,snd_id)
+  if voice ~= nil then 
+    -- apply/remove the fx immediately
+    ngen:fx(voice,fx_id,add)
+  end
+end
+
+
+function Operator:fx_current(snd_id)
+  return self.sound_fx[snd_id]
 end
 
 --
@@ -519,7 +551,6 @@ end
 --
 
 function Operator:buttons_register()
-  self.mode_fx=false
   self.mode_play=false
   self.mode_write=false
   self.mode_switchpattern=false
@@ -624,14 +655,11 @@ function Operator:buttons_register()
   self.buttons[B_PATTERN].off_press=function()
     self.mode_switchpattern=false
   end
-  self.buttons[B_FX].on_press=function()
-    if self.mode_play then
-      self.mode_fx=true
-      self.cur_fx_id={}
-    end
-  end
   self.buttons[B_FX].off_press=function()
-    self.mode_fx=false
+    -- remove all punched in effects
+    for fx,_ in pairs(self.sound_fx[self.cur_snd_id]) do
+      self:fx_remove(self.cur_snd_id,fx)
+    end
   end
   self.buttons[B_RECORD].on_press=function()
     if self.buttons[B_WRITE].pressed and self.buttons[B_SOUND].pressed then
@@ -684,7 +712,7 @@ function Operator:buttons_register()
         self:pattern_toggle_sample(self.cur_ptn_id,b,self.cur_snd_id,self.cur_smpl_id)
       end
       if self.buttons[B_FX].pressed then
-        self.cur_fx_id={}
+        self:fx_remove(self.cur_snd_id,b)
       end
     end
     --
@@ -720,11 +748,7 @@ function Operator:buttons_register()
         self.cur_snd_id=b
       elseif self.buttons[B_FX].pressed and self.mode_play then
         -- update the current effect
-        self.cur_fx_id[b]=true
-        if self.mode_write then
-          -- save effect on current samples
-          self:sound_set_fx_all_current()
-        end
+        self:fx_add(self.cur_snd_id,b)
       elseif self.buttons[B_RECORD].pressed then
         if params:get("load sounds")==2 then
           -- open file

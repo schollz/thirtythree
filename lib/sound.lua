@@ -33,6 +33,12 @@ function Sound:new(o)
   return o
 end
 
+function Sound:fx(fx_id)
+  if fx_id==FX_LOOP then 
+    -- loop one beat
+    engine.tt_fx_loop(self.s,self.s,self.s+clock.get_beat_sec()/self.wav.duration)
+  end
+end
 
 function Sound:marshal()
   local data={}
@@ -92,7 +98,7 @@ function Sound:play(override)
   local voice=nil
   local s=self.s
   local e=self.e
-  local effect=0
+  local effect={}
   local amp=self.amp
   local lpf=self.lpf
   local hpf=self.hpf
@@ -103,16 +109,10 @@ function Sound:play(override)
     voice=override.voice
     s=override.s or s
     e=override.e or e
-    effect=override.effect or {}
     amp=override.amp or amp
     if override.is_lpf~=nil then
       is_lpf=override.is_lpf
     end
-  end
-  if voice==nil then
-    voice=voices:new_voice(self.snd_id)
-  elseif voice==1 then -- main voice
-    voice=voices:get_main()
   end
   if is_lpf then
     hpf_resonance=1
@@ -120,6 +120,24 @@ function Sound:play(override)
   else
     lpf_resonance=1
     lpf=20000
+  end
+
+
+  local fx=ops[self.op_id]:fx_current(self.snd_id)
+
+  -- check if effect overrides new sounds (i.e., loop)
+  for fx_id,_ in pairs(fx) do 
+    if e==FX_LOOP then 
+      -- the effect is still playing, ignore
+      do return end
+    end
+  end
+
+  -- get new voice
+  if voice==nil then
+    voice=voices:new_voice(self.op_id,self.snd_id)
+  elseif voice==1 then -- main voice
+    voice=voices:get_main()
   end
   if mode_debug then
     print("playing "..self.wav.name.." on voice "..voice.." at pos ("..s..","..e..")")
@@ -133,7 +151,6 @@ function Sound:play(override)
   engine.tt_play(
     voice,-- which sampler player
     self.wav.sc_index,-- buffer number
-    effect,
     amp*ops[self.op_id].amp_global,
     pitch.transpose_rate(self.pitch),
     s,
@@ -141,7 +158,8 @@ function Sound:play(override)
     lpf,
     lpf_resonance,
     hpf,
-    hpf_resonance
+    hpf_resonance,
+    fx[FX_REVERSE] and 1 or 0
   )
 end
 

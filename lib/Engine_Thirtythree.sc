@@ -19,7 +19,7 @@ Engine_Thirtythree : CroneEngine {
             Buffer.new(context.server);
         });
 
-        (0..25).do({arg i; 
+        (0..15).do({arg i; 
             SynthDef("playerThirtythree"++i,{ 
                 arg bufnum, amp=0, ampLag=0,t_trig=0,t_trigtime=0,fadeout=0.05,
                 sampleStart=0,sampleEnd=1,samplePos=0,
@@ -27,7 +27,8 @@ Engine_Thirtythree : CroneEngine {
                 bitcrush=0,bitcrush_bits=8,bitcrush_rate=23000,
                 scratch=0,strobe=0,vinyl=0,loop=0,
                 timestretch=0,timestretchSlowDown=1,timestretchWindowBeats=1,
-                pan=0,lpf=20000,lpflag=0,hpf=10,hpflag=0,lpf_resonance=1,hpf_resonance=1;
+                pan=0,lpf=20000,lpflag=0,hpf=10,hpflag=0,lpf_resonance=1,hpf_resonance=1,
+                use_envelope=1, fx_reverse=0;
     
                 // vars
                 var snd,pos,timestretchPos,timestretchWindow,env;
@@ -54,6 +55,10 @@ Engine_Thirtythree : CroneEngine {
                 );
 
                 rate = Lag.kr(rate,rateSlew);
+
+                // reverse effect
+                rate = ((fx_reverse>0)*(rate.neg))+((fx_reverse<1)*rate);
+
                 // scratch effect
                 rate = (scratch<1*rate) + (scratch>0*LFTri.kr(bpm_target/60*2));
 
@@ -102,7 +107,7 @@ Engine_Thirtythree : CroneEngine {
                 // manual panning
                 snd = Balance2.ar(snd[0],snd[1],
                     pan+SinOsc.kr(60/bpm_target*16,mul:strobe*0.5),
-                    level:Lag.kr(amp,ampLag)*env,
+                    level:Lag.kr(amp,ampLag)*(((use_envelope>0)*env)+(use_envelope<1)),
                 );
 
                 // // send position message for player 1 only
@@ -120,7 +125,7 @@ Engine_Thirtythree : CroneEngine {
         //     NetAddr("127.0.0.1", 10111).sendMsg("tt_pos",1,msg[3]);  
         // },'/tr', context.server.addr);
 
-        playerThirtythree = Array.fill(25,{arg i;
+        playerThirtythree = Array.fill(15,{arg i;
             Synth("playerThirtythree"++i, target:context.xg);
         });
 
@@ -131,22 +136,24 @@ Engine_Thirtythree : CroneEngine {
             sampleBuffThirtythree[msg[1]-1] = Buffer.read(context.server,msg[2]);
         });
 
-        this.addCommand("tt_play","iiiffffffff", { arg msg;
+        this.addCommand("tt_play","iifffffffff", { arg msg;
             // lua is sending 1-index
             playerThirtythree[msg[1]-1].set(
                 \t_trig,1,
                 \bufnum,sampleBuffThirtythree[msg[2]-1],
-                \amp,msg[4],
-                \rate,msg[5],
-                \samplePos,msg[6],
-                \sampleStart,msg[6],
-                \sampleEnd,msg[7],
-                \lpf,msg[8],
-                \lpf_resonance,msg[9],
+                \amp,msg[3],
+                \rate,msg[4],
+                \samplePos,msg[5],
+                \sampleStart,msg[5],
+                \sampleEnd,msg[6],
+                \lpf,msg[7],
+                \lpf_resonance,msg[8],
                 \lpflag,0,
-                \hpf,msg[10],
-                \hpf_resonance,msg[11],
+                \hpf,msg[9],
+                \hpf_resonance,msg[10],
                 \hpflag,0,
+                \use_envelope,1,
+                \fx_reverse,msg[11],
             );
             // TODO: use effect information
         });
@@ -168,7 +175,7 @@ Engine_Thirtythree : CroneEngine {
         });
 
         this.addCommand("tt_bpm","f", { arg msg; 
-            (0..25).do({arg i; 
+            (0..15).do({arg i; 
                 playerThirtythree[i].set(
                     \bpm_target,msg[1],
                 );
@@ -187,7 +194,7 @@ Engine_Thirtythree : CroneEngine {
             );
         });
         
-	this.addCommand("tt_hpf","ifff", { arg msg;
+	   this.addCommand("tt_hpf","ifff", { arg msg;
             // lua is sending 1-index
             playerThirtythree[msg[1]-1].set(
                 \lpf,20000,
@@ -201,12 +208,31 @@ Engine_Thirtythree : CroneEngine {
 
         this.addCommand("tt_bitcrush_all","ifff", { arg msg;
             // lua is sending 1-index
-            (0..25).do({arg i; 
+            (0..15).do({arg i; 
               playerThirtythree[i].set(
         		\bitcrush,msg[2],
         		\bitcrush_bits,msg[3],
         		\bitcrush_rate,msg[4],
             )});
+        });
+
+
+        this.addCommand("tt_fx_loop","ifff", { arg msg;
+            // lua is sending 1-index
+            playerThirtythree[msg[1]-1].set(
+                \samplePos,msg[2],
+                \sampleStart,msg[3],
+                \sampleEnd,msg[4],
+                \use_envelope,0,
+            );
+        });
+
+
+        this.addCommand("tt_fx_reverse","if", { arg msg;
+            // lua is sending 1-index
+            playerThirtythree[msg[1]-1].set(
+                \fx_reverse,msg[2],
+            );
         });
 
         // ^ Thirtythree specific
@@ -216,7 +242,7 @@ Engine_Thirtythree : CroneEngine {
     free {
         // Thirtythree Specific v0.0.1
         (0..64).do({arg i; sampleBuffThirtythree[i].free});
-        (0..25).do({arg i; playerThirtythree[i].free});
+        (0..15).do({arg i; playerThirtythree[i].free});
         osfunThirtyThree.free;
         // ^ Thirtythree specific
     }

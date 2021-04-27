@@ -58,8 +58,9 @@ A po-33 clone for norns+grid
 
 many effects can be done simultaneously. effects apply to sounds, not to whole pattern.
 
-- [ ] retrigger pattern
 - [ ] reverse
+- [ ] loop (loops one beat of the current sample until released)
+- [ ] retrigger pattern
 - [ ] scratch
 - [ ] stutter
 - [ ] pingpong pan slow
