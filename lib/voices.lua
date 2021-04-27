@@ -8,7 +8,7 @@ function Voices:new(o)
   o.max=24
   o.played={}
   for i=1,o.max do
-    o.played[i]={snd_id=0,last_played=os.clock()}
+    o.played[i]={snd_id=0,last_played=os.clock(),locked=false}
   end
   o.pos=0
   o.main=1
@@ -58,12 +58,13 @@ function Voices:new_voice(snd_id)
       -- turn this voice down
       engine.tt_amp(i,0,0.1)
       self.played[i].snd_id=0 -- reset it
+      self.played[i].locked=false
     end
   end
 
   -- get the current voice used already, or the oldest voice
   for i=3,self.max do -- voice 1 is reserved
-    if current_time-self.played[i].last_played>longest_duration then
+    if current_time-self.played[i].last_played>longest_duration and not self.played[i].locked then
       longest_duration=current_time-self.played[i].last_played
       voice_oldest=i
     end
@@ -74,7 +75,7 @@ function Voices:new_voice(snd_id)
     voice=voice_oldest
   end
 
-  self.played[voice]={snd_id=snd_id,last_played=os.clock()}
+  self.played[voice]={snd_id=snd_id,last_played=os.clock(),locked=false}
   return voice
 end
 
