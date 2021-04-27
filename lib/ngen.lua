@@ -19,8 +19,22 @@ function Ngen:new(o)
     engine.tt_hpf(voice,hpf,0.05,resonance)
   end
   o.engine[FX_REVERSE]=function(voice,on)
-    print("tt_fx_reverse",on and 1 or 0)
     engine.tt_fx_reverse(voice,on and 1 or 0)
+  end
+  o.engine[FX_BITCRUSH]=function(voice,on)
+    engine.tt_bitcrush(voice,on and 1 or 0,8,12000)
+  end
+  o.engine[FX_TIMESTRETCH]=function(voice,on)
+    engine.tt_fx_timestretch(voice,on and 1 or 0,4,4)
+  end
+  o.engine[FX_OCTAVE_UP]=function(voice,on)
+    engine.tt_fx_octaveup(voice,on and 1 or 0)
+  end
+  o.engine[FX_OCTAVE_DOWN]=function(voice,on)
+    engine.tt_fx_octavedown(voice,on and 1 or 0)
+  end
+  o.engine[FX_STUTTER]=function(voice,on)
+    engine.tt_fx_octavedown(voice,on and 1 or 0)
   end
   -- updates modified thigns
   return o

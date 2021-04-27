@@ -7,6 +7,7 @@ Engine_Thirtythree : CroneEngine {
     var sampleBuffThirtythree;
     var playerThirtythree;
     var osfunThirtyThree;
+    var playerThirtythreePos;
     // Thirtythree ^
 
     *new { arg context, doneCallback;
@@ -20,6 +21,10 @@ Engine_Thirtythree : CroneEngine {
         });
 
         (0..15).do({arg i; 
+            playerThirtythreePos[i]=0
+        });
+
+        (0..15).do({arg i; 
             SynthDef("playerThirtythree"++i,{ 
                 arg bufnum, amp=0, ampLag=0,t_trig=0,t_trigtime=0,fadeout=0.05,
                 sampleStart=0,sampleEnd=1,samplePos=0,
@@ -28,7 +33,7 @@ Engine_Thirtythree : CroneEngine {
                 fx_scratch=0,fx_strobe=0,vinyl=0,loop=0,
                 timestretch=0,timestretchSlowDown=1,timestretchWindowBeats=1,
                 pan=0,lpf=20000,lpflag=0,hpf=10,hpflag=0,lpf_resonance=1,hpf_resonance=1,
-                use_envelope=1,fx_reverse=0,fx_autopan=0;
+                use_envelope=1,fx_reverse=0,fx_autopan=0,fx_octaveup=0,fx_octavedown=0;
     
                 // vars
                 var snd,pos,timestretchPos,timestretchWindow,env;
@@ -57,6 +62,13 @@ Engine_Thirtythree : CroneEngine {
                 // reverse effect
                 rate = ((fx_reverse<1)*rate)+((fx_reverse>0)*rate.neg);
 
+                // octave up
+                rate = ((fx_octaveup<1)*rate)+((fx_octaveup>0)*rate*2);
+
+                // octave down
+                rate = ((fx_octavedown<1)*rate)+((fx_octavedown>0)*rate*0.5);
+
+                // rate slew
                 rate = Lag.kr(rate,rateSlew);
 
                 // scratch effect
@@ -88,7 +100,7 @@ Engine_Thirtythree : CroneEngine {
                     loop:0,
                     interpolation:1
                 );
-                timestretch=Lag.kr(timestretch,2);
+                timestretch=Lag.kr(timestretch,0.2);
                 snd=((1-timestretch)*snd)+(timestretch*BufRd.ar(2,bufnum,
                     timestretchWindow,
                     loop:0,
@@ -112,9 +124,11 @@ Engine_Thirtythree : CroneEngine {
                 );
 
                 // send position message for player 1 only
+                playerThirtythreePos[i]=A2K.kr(((1-timestretch)*pos)+(timestretch*timestretchPos))/BufFrames.kr(bufnum)/BufRateScale.kr(bufnum);
                 if ((i<2)&&(amp>0),{
-                    SendTrig.kr(Impulse.kr(15),i,A2K.kr(((1-timestretch)*pos)+(timestretch*timestretchPos))/BufFrames.kr(bufnum)/BufRateScale.kr(bufnum));                        
+                    SendTrig.kr(Impulse.kr(15),i,playerThirtythreePos[i]);                        
                 },{});
+
 
                 Out.ar(0,snd)
             }).add; 
@@ -229,10 +243,42 @@ Engine_Thirtythree : CroneEngine {
         });
 
 
+        this.addCommand("tt_bitcrush","ifff", { arg msg;
+            // lua is sending 1-index
+            playerThirtythree[msg[1]-1].set(
+                \bitcrush,msg[2],
+                \bitcrush_bits,msg[3],
+                \bitcrush_rate,msg[4],
+             );
+        });
+
         this.addCommand("tt_fx_reverse","if", { arg msg;
             // lua is sending 1-index
             playerThirtythree[msg[1]-1].set(
                 \fx_reverse,msg[2],
+            );
+        });
+
+        this.addCommand("tt_fx_octaveup","if", { arg msg;
+            // lua is sending 1-index
+            playerThirtythree[msg[1]-1].set(
+                \fx_octaveup,msg[2],
+            );
+        });
+
+        this.addCommand("tt_fx_octavedown","if", { arg msg;
+            // lua is sending 1-index
+            playerThirtythree[msg[1]-1].set(
+                \fx_octavedown,msg[2],
+            );
+        });
+
+        this.addCommand("tt_fx_timestretch","ifff", { arg msg;
+            // lua is sending 1-index
+            playerThirtythree[msg[1]-1].set(
+                \timestretch,msg[2],
+                \timestretchWindowBeats,msg[3],
+                \timestretchSlowDown,msg[4],
             );
         });
 
