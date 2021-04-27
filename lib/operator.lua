@@ -24,7 +24,7 @@ function Operator:init()
   self.sound={}
   self.sound_prevent={}
   for snd_id=1,16 do
-  self.sound_prevent][snd_id]=false -- used to prevent new sounds when using fx
+  self.sound_prevent[snd_id]=false -- used to prevent new sounds when using fx
   self:sound_initialize(snd_id)
 end
 -- self.sound[snd_id][smpl_id] => is sound object
@@ -468,9 +468,9 @@ function Operator:pattern_step()
         -- send the sound played, in case it is needed for the fx (e.g. for the looping)
         if fx_id==FX_RETRIGGER then
           self.cur_ptn_step=16
-        else fx_id=FX_GHOST then
+        elseif fx_id==FX_GHOST then
           if math.random()<0.3 then
-          self.sound_prevent]snd_id]=true -- skip the next sound
+          self.sound_prevent[snd_id]=true -- skip the next sound
         end
       else
         ngen:fx(snd,fx_id,fx_apply)
