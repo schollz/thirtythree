@@ -24,52 +24,52 @@ function Operator:init()
   self.sound={}
   self.sound_prevent={}
   for snd_id=1,16 do
-  self.sound_prevent[snd_id]=false -- used to prevent new sounds when using fx
-  self:sound_initialize(snd_id)
-end
--- self.sound[snd_id][smpl_id] => is sound object
+    self.sound_prevent[snd_id]=false -- used to prevent new sounds when using fx
+    self:sound_initialize(snd_id)
+  end
+  -- self.sound[snd_id][smpl_id] => is sound object
 
--- patterns
-self.pattern={}
-self.pattern_chain={1}
-self.pattern_chain_index=1
-for ptn_id=1,16 do
-  self.pattern[ptn_id]={}
-  self:pattern_initialize(ptn_id)
-  -- pattern is a map of sounds that maps to samples
-  -- self.pattern[ptn_id][ptn_step]={snd={},plock={},flock={}}
-  -- self.pattern[ptn_id][ptn_step].snd[snd_id]=<sound>
-  -- self.pattern[ptn_id][ptn_step].plock[snd_id]=<param> -- used for parameter locking
-  -- self.pattern[ptn_id][ptn_step].flock[snd_id][fx_id]=true -- used for fx locking
-end
+  -- patterns
+  self.pattern={}
+  self.pattern_chain={1}
+  self.pattern_chain_index=1
+  for ptn_id=1,16 do
+    self.pattern[ptn_id]={}
+    self:pattern_initialize(ptn_id)
+    -- pattern is a map of sounds that maps to samples
+    -- self.pattern[ptn_id][ptn_step]={snd={},plock={},flock={}}
+    -- self.pattern[ptn_id][ptn_step].snd[snd_id]=<sound>
+    -- self.pattern[ptn_id][ptn_step].plock[snd_id]=<param> -- used for parameter locking
+    -- self.pattern[ptn_id][ptn_step].flock[snd_id][fx_id]=true -- used for fx locking
+  end
 
--- params
-self.division=1/16
-self.s=0
-self.e=1
-self.amp=0.5
-self.is_lpf=true
-self.lpf=20000
-self.hpf=20
-self.resonance=1.0
-self.pitch=0
+  -- params
+  self.division=1/16
+  self.s=0
+  self.e=1
+  self.amp=0.5
+  self.is_lpf=true
+  self.lpf=20000
+  self.hpf=20
+  self.resonance=1.0
+  self.pitch=0
 
--- currents
-self.cur_snd_id=1
-self.cur_smpl_id=1
-self.cur_ptn_id=1
-self.cur_ptn_step=0
-self.cur_fx_id={}
+  -- currents
+  self.cur_snd_id=1
+  self.cur_smpl_id=1
+  self.cur_ptn_id=1
+  self.cur_ptn_step=0
+  self.cur_fx_id={}
 
--- filter
-self.cur_filter_number=51 -- [1,101]
+  -- filter
+  self.cur_filter_number=51 -- [1,101]
 
--- operator "global" parameters
-self.amp_global=1.0
+  -- operator "global" parameters
+  self.amp_global=1.0
 
-self:buttons_register()
+  self:buttons_register()
 
-self:debug("initialized operator")
+  self:debug("initialized operator")
 end
 
 function Operator:marshal()
@@ -470,17 +470,17 @@ function Operator:pattern_step()
           self.cur_ptn_step=16
         elseif fx_id==FX_GHOST then
           if math.random()<0.3 then
-          self.sound_prevent[snd_id]=true -- skip the next sound
+            self.sound_prevent[snd_id]=true -- skip the next sound
+          end
+        else
+          ngen:fx(snd,fx_id,fx_apply)
         end
-      else
-        ngen:fx(snd,fx_id,fx_apply)
       end
+      -- lock voice so it doesn't get stolen while effect is going
+      -- (or unlock it if the effect has disappeared)
+      voices:lock(voice,lock_voice)
     end
-    -- lock voice so it doesn't get stolen while effect is going
-    -- (or unlock it if the effect has disappeared)
-    voices:lock(voice,lock_voice)
   end
-end
 end
 
 function Operator:pattern_reset()
