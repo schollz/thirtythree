@@ -59,6 +59,7 @@ function Operator:init()
   self.cur_smpl_id=1
   self.cur_ptn_id=1
   self.cur_ptn_step=0
+  self.cur_ptn_sync_step=-1
   self.cur_fx_id={}
 
   -- filter
@@ -356,6 +357,7 @@ end
 -- pattern functions
 --
 function Operator:pattern_step()
+  self.cur_ptn_sync_step=self.cur_ptn_sync_step+1
   -- update the tempo each step (if needed)
   if clock.get_tempo()~=self.bpm then
     self.bpm=clock.get_tempo()
@@ -374,7 +376,7 @@ function Operator:pattern_step()
   self.cur_ptn_step=self.cur_ptn_step+1
 
   -- jump to next pattern or return to beginning
-  if self.cur_ptn_step>16 then
+  if self.cur_ptn_step>16 || self.cur_ptn_sync_step%16==0 then
     -- goto next pattern
     self.pattern_chain_index=self.pattern_chain_index+1
     if self.pattern_chain_index>#self.pattern_chain then
@@ -467,7 +469,9 @@ function Operator:pattern_step()
         end
         -- send the sound played, in case it is needed for the fx (e.g. for the looping)
         if fx_id==FX_RETRIGGER then
-          self:pattern_reset()
+          self:cur_ptn_step=0
+        elseif fx_id==FX_JUMP then
+          self.cur_ptn_step=math.random(1,16)
         elseif fx_id==FX_GHOST then
           if math.random()<0.3 then
             self.sound_prevent[snd_id]=true -- skip the next sound
@@ -485,6 +489,7 @@ end
 
 function Operator:pattern_reset()
   self.cur_ptn_step=0
+  self.cur_ptn_sync_step=-1 -- resets the sync
 end
 
 function Operator:pattern_sound_list(ptn_id)
@@ -644,13 +649,13 @@ function Operator:buttons_register()
       snapshot:backup()
       do return end
     end
-    self.mode_play=not self.mode_play
-    if self.mode_play then
+    if not self.mode_play then
       self:debug("on_press: play activated")
       self:pattern_reset()
     else
       self:debug("on_press: play stopped")
     end
+    self.mode_play=not self.mode_play
   end
   self.buttons[B_PLAY].light=function()
     if self.mode_play then

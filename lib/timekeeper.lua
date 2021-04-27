@@ -20,7 +20,7 @@ function Timekeeper:init()
   for i,_ in ipairs(ops) do
     self.pattern[i]=self.lattice:new_pattern{
       action=function(t)
-        self:emit_note(i,t)
+        ops[i]:pattern_step()
         if sel_operator==i then
           self.metronome_tick=not self.metronome_tick
           graphics:update()
@@ -29,19 +29,6 @@ function Timekeeper:init()
       division=1/8
     }
   end
-
-  self.sync=self.lattice:new_pattern{
-    action=function(t)
-      -- TODO: reset all operators to first step
-      for _,op in ipairs(ops) do
-        if op.cur_ptn_step>1 and op.cur_ptn_step<16 then
-          print("master clock reseting operator")
-          op:pattern_reset()
-        end
-      end
-    end,
-    division=2 -- 16 beats
-  }
 
   self.lattice:start()
 end
@@ -56,10 +43,6 @@ end
 
 function Timekeeper:tick()
   return self.metronome_tick
-end
-
-function Timekeeper:emit_note(i,t)
-  ops[i]:pattern_step()
 end
 
 function Timekeeper:reset()
