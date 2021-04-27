@@ -110,7 +110,7 @@ function Graphics:metro_icon(tick,x,y)
     screen.text(params:get("clock_tempo")..", swing="..timekeeper:get_swing(sel_operator).."%")
   else
     screen.text(params:get("clock_tempo"))
-  end    
+  end
 end
 
 function Graphics:filter(filter_type,freq,resonance)

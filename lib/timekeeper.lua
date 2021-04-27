@@ -17,7 +17,7 @@ function Timekeeper:init()
   -- TODO: allow different operators to select divisions
 
   self.pattern={}
-  for i,_ in ipairs(ops) do 
+  for i,_ in ipairs(ops) do
     self.pattern[i]=self.lattice:new_pattern{
       action=function(t)
         self:emit_note(i,t)
@@ -38,7 +38,7 @@ function Timekeeper:adjust_swing(i,d)
 end
 
 function Timekeeper:get_swing(i)
-  return self.pattern[i].swing 
+  return self.pattern[i].swing
 end
 
 function Timekeeper:tick()

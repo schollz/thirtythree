@@ -144,9 +144,9 @@ end
 local ani1=1
 
 function redraw()
-  if sel_files then 
+  if sel_files then
     -- don't interupt file selection
-    do return end 
+    do return end
   end
   screen.clear()
 

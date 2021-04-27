@@ -719,7 +719,7 @@ function Operator:buttons_register()
         end
       elseif self.buttons[B_RECORD].pressed then
         if params:get("load sounds")==2 then
-          -- open file          
+          -- open file
           sel_files=true
           fileselect.enter(_path.audio,function(fname)
             sel_files=false
