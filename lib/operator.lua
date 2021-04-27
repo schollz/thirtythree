@@ -22,9 +22,9 @@ end
 function Operator:init()
   -- defaults
   self.sound={}
-  self.sound_fx={} -- keep track of which sounds have been punched in
+  self.sound_prevent={}
   for snd_id=1,16 do
-    self.sound_fx[snd_id]={} -- => sound_fx[snd_id][fx_id]=true
+    self.sound_prevent][snd_id]=false -- used to prevent new sounds when using fx
     self:sound_initialize(snd_id)
   end
   -- self.sound[snd_id][smpl_id] => is sound object
@@ -404,9 +404,8 @@ function Operator:pattern_step()
   local snd_played=nil
   for snd_id,snd in pairs(self.pattern[self.cur_ptn_id][self.cur_ptn_step].snd) do
     self:debug("pattern_step: playing sound "..snd_id.." sample "..snd.id)
-    local skip_sound = false 
     -- TODO: check if should skip sound (i.e. if using loop effect or stutter effect)
-    if snd.loaded and not skip_sound then
+    if snd.loaded and not self.sound_prevent[snd_id] then
       -- override with parameter locks
       for k,v in pairs(self.pattern[self.cur_ptn_id][self.cur_ptn_step].plock[snd_id].modified) do
         if type(v)~="boolean" then
@@ -431,6 +430,7 @@ function Operator:pattern_step()
   end
 
   for snd_id,snd in pairs(snd_list) do
+    self.sound_prevent[snd_id]=false
     local voice = voices:get_voice(self.id,snd_id)
     -- apply effects to any sounds in pattern have have a voice
     if voice ~= nil then
@@ -456,8 +456,9 @@ function Operator:pattern_step()
       local lock_voice = false 
       -- turn off all effects
       for fx_id,fx_apply in pairs(fx_to_apply) do 
-        if (fx_id == FX_LOOP) and fx_apply then 
+        if (fx_id == FX_LOOP or fx_id == FX_STUTTER) and fx_apply then 
           lock_voice=true
+          self.sound_prevent[snd_id]=true
         end
         -- no FX takes precedence, cancels out all others
         if fx_to_apply[FX_NONE] then
