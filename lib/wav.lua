@@ -63,12 +63,18 @@ function Wav:get(filename)
     onset_string = os.capture(cmd)
     if mode_debug then 
       print(cmd)
-      print("onsets:")
-      print(onset_string)
+      print("aubioonset: "..onset_string)
     end
     onsets = {}
     for substring in onset_string:gmatch("%S+") do
-       table.insert(onsets, tonumber(substring)/self.files[filename].duration)
+      local onset=tonumber(substring)/self.files[filename].duration
+      if mode_debug then
+        print(tonumber(substring),self.files[filename].duration,onset)
+      end
+      if onset==nil then
+        print("error with onset")
+      end
+      table.insert(onsets, onset)
     end
     table.insert(onsets,1.0)
     if onsets[1] ~= 0 then
