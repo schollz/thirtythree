@@ -57,7 +57,7 @@ function Operator:init()
   self.cur_smpl_id=1
   self.cur_ptn_id=1
   self.cur_ptn_step=0
-  self.cur_fx_id=0
+  self.cur_fx_id={}
 
   -- filter
   self.cur_filter_number=51 -- [1,101]
@@ -404,7 +404,7 @@ function Operator:pattern_step()
   for snd_id,snd in pairs(self.pattern[self.cur_ptn_id][self.cur_ptn_step].snd) do
     self:debug("pattern_step: playing sound "..snd_id.." sample "..snd.id)
     local override={}
-    if self.buttons[B_FX].pressed and self.cur_fx_id>0 and override.effect==nil then
+    if self.buttons[B_FX].pressed and (not table.isempty(self.cur_fx_id)) and override.effect==nil then
       -- perform effect
       override.effect=self.cur_fx_id
     end
@@ -627,7 +627,7 @@ function Operator:buttons_register()
   self.buttons[B_FX].on_press=function()
     if self.mode_play then
       self.mode_fx=true
-      self.cur_fx_id=0
+      self.cur_fx_id={}
     end
   end
   self.buttons[B_FX].off_press=function()
@@ -684,7 +684,7 @@ function Operator:buttons_register()
         self:pattern_toggle_sample(self.cur_ptn_id,b,self.cur_snd_id,self.cur_smpl_id)
       end
       if self.buttons[B_FX].pressed then
-        self.cur_fx_id=0
+        self.cur_fx_id={}
       end
     end
     --
@@ -720,7 +720,7 @@ function Operator:buttons_register()
         self.cur_snd_id=b
       elseif self.buttons[B_FX].pressed and self.mode_play then
         -- update the current effect
-        self.cur_fx_id=b
+        self.cur_fx_id[b]=true
         if self.mode_write then
           -- save effect on current samples
           self:sound_set_fx_all_current()

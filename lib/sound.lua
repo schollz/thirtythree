@@ -103,7 +103,7 @@ function Sound:play(override)
     voice=override.voice
     s=override.s or s
     e=override.e or e
-    effect=override.effect or 0
+    effect=override.effect or {}
     amp=override.amp or amp
     if override.is_lpf~=nil then
       is_lpf=override.is_lpf
@@ -125,7 +125,6 @@ function Sound:play(override)
     print("playing "..self.wav.name.." on voice "..voice.." at pos ("..s..","..e..")")
     print(voice,-- which sampler player
       self.wav.sc_index,-- buffer number
-      effect,
       amp,
       pitch.transpose_rate(self.pitch),
       s,
