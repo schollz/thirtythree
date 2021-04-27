@@ -83,20 +83,28 @@ function Operator:marshal()
   for ptn_id,_ in ipairs(self.pattern) do
     for ptn_step,_ in ipairs(self.pattern[ptn_id]) do
       for snd_id,snd in pairs(self.pattern[ptn_id][ptn_step].snd) do
-        table.insert(data.pattern,{"snd",ptn_id,ptn_step,snd_id,snd:marshal()})
+        if snd.loaded==true then
+          table.insert(data.pattern,{"snd",ptn_id,ptn_step,snd_id,snd:marshal()})
+        end
       end
       for snd_id,plock in pairs(self.pattern[ptn_id][ptn_step].plock) do
-        table.insert(data.pattern,{"plock",ptn_id,ptn_step,snd_id,plock:marshal()})
+        if not table.isempty(plock) then
+          table.insert(data.pattern,{"plock",ptn_id,ptn_step,snd_id,plock:marshal()})
+        end
       end
       for snd_id,flock in pairs(self.pattern[ptn_id][ptn_step].flock) do
-        table.insert(data.pattern,{"flock",ptn_id,ptn_step,snd_id,flock:marshal()})
+        if not table.isempty(plock) then
+          table.insert(data.pattern,{"flock",ptn_id,ptn_step,snd_id,flock:marshal()})
+        end
       end
     end
   end
   data.sound={}
   for snd_id,_ in ipairs(self.sound) do
     for smpl_id,snd in ipairs(self.sound[snd_id]) do
-      table.insert(data.sound,{snd_id,smpl_id,snd:marshal()})
+      if snd.loaded then
+        table.insert(data.sound,{snd_id,smpl_id,snd:marshal()})
+      end
     end
   end
   return json.encode(data)

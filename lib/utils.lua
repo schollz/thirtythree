@@ -2,6 +2,16 @@ function rerun()
   norns.script.load(norns.state.script)
 end
 
+function table.isempty(t)
+  if t==nil then 
+    do return true end
+  end
+  for k, _ in pairs(t) do
+    do return false end 
+  end
+  return true
+end
+
 function math.sign(number)
   if number>0 then
     return 1

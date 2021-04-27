@@ -28,8 +28,7 @@ function Sound:new(o)
   if o.is_lpf==nil then
     o.is_lpf=true
   end
-  o.wav=o.wav or nil
-  o.loaded=o.loaded or false
+  o.loaded=o.loaded==nil and false or o.loaded
 
   return o
 end
