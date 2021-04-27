@@ -111,7 +111,7 @@ Engine_Thirtythree : CroneEngine {
                     level:Lag.kr(amp,ampLag)*(((use_envelope>0)*env)+(use_envelope<1)),
                 );
 
-                // // send position message for player 1 only
+                // send position message for player 1 only
                 if ((i<2)&&(amp>0),{
                     SendTrig.kr(Impulse.kr(15),i,A2K.kr(((1-timestretch)*pos)+(timestretch*timestretchPos))/BufFrames.kr(bufnum)/BufRateScale.kr(bufnum));                        
                 },{});
