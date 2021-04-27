@@ -112,7 +112,7 @@ Engine_Thirtythree : CroneEngine {
                 );
 
                 // // send position message for player 1 only
-                if (((i==1)&&(amp>0))||((i==2)&&(amp>0)),{
+                if ((i<2)&&(amp>0),{
                     SendTrig.kr(Impulse.kr(15),i,A2K.kr(((1-timestretch)*pos)+(timestretch*timestretchPos))/BufFrames.kr(bufnum)/BufRateScale.kr(bufnum));                        
                 },{});
 
@@ -218,13 +218,13 @@ Engine_Thirtythree : CroneEngine {
         });
 
 
-        this.addCommand("tt_fx_loop","ifff", { arg msg;
+        this.addCommand("tt_fx_loop","iffff", { arg msg;
             // lua is sending 1-index
             playerThirtythree[msg[1]-1].set(
                 \samplePos,msg[2],
                 \sampleStart,msg[3],
                 \sampleEnd,msg[4],
-                \use_envelope,0,
+                \use_envelope,msg[5], // effectively used to turn on and off
             );
         });
 
