@@ -37,7 +37,7 @@ end
 
 -- get_voice returns the voice currently being used for a sound
 function Voices:get_voice(op_id,snd_id)
-  local snd_id = 16*(op_id-1)+snd_id
+  local snd_id=16*(op_id-1)+snd_id
   for i=3,self.max do
     if self.played[i].snd_id==snd_id then
       return i
@@ -52,7 +52,7 @@ end
 
 -- new_voice will make a new voice for a sound, fading out previous sound
 function Voices:new_voice(op_id,snd_id)
-  local snd_id = 16*(op_id-1)+snd_id
+  local snd_id=16*(op_id-1)+snd_id
   local current_time=os.clock()
   local voice=0
   local voice_oldest=1

@@ -3,11 +3,11 @@ function rerun()
 end
 
 function table.isempty(t)
-  if t==nil then 
+  if t==nil then
     do return true end
   end
-  for k, _ in pairs(t) do
-    do return false end 
+  for k,_ in pairs(t) do
+    do return false end
   end
   return true
 end

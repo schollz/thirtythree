@@ -24,52 +24,52 @@ function Operator:init()
   self.sound={}
   self.sound_prevent={}
   for snd_id=1,16 do
-    self.sound_prevent][snd_id]=false -- used to prevent new sounds when using fx
-    self:sound_initialize(snd_id)
-  end
-  -- self.sound[snd_id][smpl_id] => is sound object
+  self.sound_prevent][snd_id]=false -- used to prevent new sounds when using fx
+  self:sound_initialize(snd_id)
+end
+-- self.sound[snd_id][smpl_id] => is sound object
 
-  -- patterns
-  self.pattern={}
-  self.pattern_chain={1}
-  self.pattern_chain_index=1
-  for ptn_id=1,16 do
-    self.pattern[ptn_id]={}
-    self:pattern_initialize(ptn_id)
-    -- pattern is a map of sounds that maps to samples
-    -- self.pattern[ptn_id][ptn_step]={snd={},plock={},flock={}}
-    -- self.pattern[ptn_id][ptn_step].snd[snd_id]=<sound>
-    -- self.pattern[ptn_id][ptn_step].plock[snd_id]=<param> -- used for parameter locking
-    -- self.pattern[ptn_id][ptn_step].flock[snd_id][fx_id]=true -- used for fx locking
-  end
+-- patterns
+self.pattern={}
+self.pattern_chain={1}
+self.pattern_chain_index=1
+for ptn_id=1,16 do
+  self.pattern[ptn_id]={}
+  self:pattern_initialize(ptn_id)
+  -- pattern is a map of sounds that maps to samples
+  -- self.pattern[ptn_id][ptn_step]={snd={},plock={},flock={}}
+  -- self.pattern[ptn_id][ptn_step].snd[snd_id]=<sound>
+  -- self.pattern[ptn_id][ptn_step].plock[snd_id]=<param> -- used for parameter locking
+  -- self.pattern[ptn_id][ptn_step].flock[snd_id][fx_id]=true -- used for fx locking
+end
 
-  -- params
-  self.division=1/16
-  self.s=0
-  self.e=1
-  self.amp=0.5
-  self.is_lpf=true
-  self.lpf=20000
-  self.hpf=20
-  self.resonance=1.0
-  self.pitch=0
+-- params
+self.division=1/16
+self.s=0
+self.e=1
+self.amp=0.5
+self.is_lpf=true
+self.lpf=20000
+self.hpf=20
+self.resonance=1.0
+self.pitch=0
 
-  -- currents
-  self.cur_snd_id=1
-  self.cur_smpl_id=1
-  self.cur_ptn_id=1
-  self.cur_ptn_step=0
-  self.cur_fx_id={}
+-- currents
+self.cur_snd_id=1
+self.cur_smpl_id=1
+self.cur_ptn_id=1
+self.cur_ptn_step=0
+self.cur_fx_id={}
 
-  -- filter
-  self.cur_filter_number=51 -- [1,101]
+-- filter
+self.cur_filter_number=51 -- [1,101]
 
-  -- operator "global" parameters
-  self.amp_global=1.0
+-- operator "global" parameters
+self.amp_global=1.0
 
-  self:buttons_register()
+self:buttons_register()
 
-  self:debug("initialized operator")
+self:debug("initialized operator")
 end
 
 function Operator:marshal()
@@ -431,38 +431,38 @@ function Operator:pattern_step()
 
   for snd_id,snd in pairs(snd_list) do
     self.sound_prevent[snd_id]=false
-    local voice = voices:get_voice(self.id,snd_id)
+    local voice=voices:get_voice(self.id,snd_id)
     -- apply effects to any sounds in pattern have have a voice
-    if voice ~= nil then
+    if voice~=nil then
       local fx_to_apply={}
-      for i=1,16 do 
+      for i=1,16 do
         fx_to_apply[i]=false
       end
-      if self.buttons[B_FX].pressed then 
+      if self.buttons[B_FX].pressed then
         -- if FX are pressed, only apply those
-        for i=B_BUTTON_FIRST,B_BUTTON_LAST do 
-          local fx_id = i-B_BUTTON_FIRST+1
-          if self.buttons[i].pressed then 
+        for i=B_BUTTON_FIRST,B_BUTTON_LAST do
+          local fx_id=i-B_BUTTON_FIRST+1
+          if self.buttons[i].pressed then
             fx_to_apply[fx_id]=true
           end
         end
       else
         -- if no FX are pressed, apply FX from parameter locks
-        for fx_id,_ in pairs(self.pattern[self.cur_ptn_id][self.cur_ptn_step].flock) do 
-            fx_to_apply[fx_id]=true
+        for fx_id,_ in pairs(self.pattern[self.cur_ptn_id][self.cur_ptn_step].flock) do
+          fx_to_apply[fx_id]=true
         end
       end
       -- apply fx ot the voice
-      local lock_voice = false 
+      local lock_voice=false
       -- turn off all effects
-      for fx_id,fx_apply in pairs(fx_to_apply) do 
-        if (fx_id == FX_LOOP or fx_id == FX_STUTTER) and fx_apply then 
+      for fx_id,fx_apply in pairs(fx_to_apply) do
+        if (fx_id==FX_LOOP or fx_id==FX_STUTTER) and fx_apply then
           lock_voice=true
           self.sound_prevent[snd_id]=true
         end
         -- no FX takes precedence, cancels out all others
         if fx_to_apply[FX_NONE] then
-          fx_apply = false 
+          fx_apply=false
           lock_voice=false
         end
         -- send the sound played, in case it is needed for the fx (e.g. for the looping)
@@ -762,7 +762,7 @@ function Operator:buttons_register()
         self.cur_snd_id=b
       elseif self.buttons[B_FX].pressed and self.mode_play then
         -- add to fx lock
-        if self.mode_write then 
+        if self.mode_write then
           self.pattern[self.cur_ptn_id][self.cur_ptn_step].flock[b]=true
         end
         -- rest is handled in the pattern update

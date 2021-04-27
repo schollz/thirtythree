@@ -84,7 +84,7 @@ function startup()
   dev_=include("lib/dev")
   dev=dev_:new()
   startup_done=true
-end 
+end
 
 function updater(c)
   if not startup_initiated then

@@ -16,6 +16,7 @@ format: lua-format.py
 	python3 lua-format.py lib/lock.lua
 	python3 lua-format.py lib/snapshot.lua
 	python3 lua-format.py lib/parameters.lua
+	python3 lua-format.py lib/ngen.lua
 
 todo:
 	rg TODO -g '*.lua'

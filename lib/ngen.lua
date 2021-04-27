@@ -5,7 +5,7 @@ function Ngen:new(o)
   setmetatable(o,self)
   self.__index=self
 
- o.engine={}
+  o.engine={}
   o.engine["amp"]=function(voice,amp)
     engine.tt_amp(voice,amp,0.1)
   end
@@ -27,7 +27,7 @@ function Ngen:new(o)
 end
 
 function Ngen:update(voice,k,v1,v2,v3)
-  if self.engine[k] ~= nil then 
+  if self.engine[k]~=nil then
     self.engine[k](voice,v1,v2,v3)
   end
 end
