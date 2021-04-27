@@ -33,8 +33,24 @@ function Ngen:new(o)
   o.engine[FX_OCTAVE_DOWN]=function(voice,on)
     engine.tt_fx_octavedown(voice,on and 1 or 0)
   end
-  o.engine[FX_STUTTER]=function(voice,on)
-    engine.tt_fx_octavedown(voice,on and 1 or 0)
+  o.engine[FX_AUTOPAN]=function(voice,on)
+    engine.tt_fx_autopan(voice,on and 1 or 0)
+  end
+  o.engine[FX_SCRATCH]=function(voice,on)
+    engine.tt_fx_scratch(voice,on and 1 or 0)
+  end
+  o.engine[FX_STROBE]=function(voice,on)
+    engine.tt_fx_strobe(voice,on and 1 or 0)
+  end
+  o.engine[FX_STUTTER]=function(voice,on,snd)
+    local s=math.random(math.floor(snd.s*1000),math.floor(snd.e*1000))/1000
+    local e=s+clock.get_beat_sec()/snd.wav.duration/4
+    engine.tt_fx_loop(voice,s,s,e,1)
+  end
+  o.engine[FX_LOOP]=function(voice,on,snd)
+    local s=snd.s
+    local e=s+clock.get_beat_sec()/snd.wav.duration
+    engine.tt_fx_loop(voice,s,s,e,1)
   end
   -- updates modified thigns
   return o
@@ -46,10 +62,14 @@ function Ngen:update(voice,k,v1,v2,v3)
   end
 end
 
-function Ngen:fx(voice,fx_id,on)
+function Ngen:fx(snd,fx_id,on)
+  local voice=voices:get_voice(snd.id)
+  if voice==nil then
+    do return end
+  end
   print("fx",voice,fx_id)
   if self.engine[fx_id]~=nil then
-    self.engine[fx_id](voice,on)
+    self.engine[fx_id](voice,on,snd)
   end
 end
 

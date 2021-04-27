@@ -7,7 +7,6 @@ Engine_Thirtythree : CroneEngine {
     var sampleBuffThirtythree;
     var playerThirtythree;
     var osfunThirtyThree;
-    var playerThirtythreePos;
     // Thirtythree ^
 
     *new { arg context, doneCallback;
@@ -18,10 +17,6 @@ Engine_Thirtythree : CroneEngine {
         // Thirtythree specific v0.0.1
         sampleBuffThirtythree = Array.fill(64, { arg i; 
             Buffer.new(context.server);
-        });
-
-        (0..15).do({arg i; 
-            playerThirtythreePos[i]=0
         });
 
         (0..15).do({arg i; 
@@ -124,11 +119,9 @@ Engine_Thirtythree : CroneEngine {
                 );
 
                 // send position message for player 1 only
-                playerThirtythreePos[i]=A2K.kr(((1-timestretch)*pos)+(timestretch*timestretchPos))/BufFrames.kr(bufnum)/BufRateScale.kr(bufnum);
                 if ((i<2)&&(amp>0),{
-                    SendTrig.kr(Impulse.kr(15),i,playerThirtythreePos[i]);                        
+                    SendTrig.kr(Impulse.kr(15),i,A2K.kr(((1-timestretch)*pos)+(timestretch*timestretchPos))/BufFrames.kr(bufnum)/BufRateScale.kr(bufnum));                        
                 },{});
-
 
                 Out.ar(0,snd)
             }).add; 
@@ -279,6 +272,27 @@ Engine_Thirtythree : CroneEngine {
                 \timestretch,msg[2],
                 \timestretchWindowBeats,msg[3],
                 \timestretchSlowDown,msg[4],
+            );
+        });
+
+        this.addCommand("tt_fx_autopan","if", { arg msg;
+            // lua is sending 1-index
+            playerThirtythree[msg[1]-1].set(
+                \fx_autopan,msg[2],
+            );
+        });
+
+        this.addCommand("tt_fx_scratch","if", { arg msg;
+            // lua is sending 1-index
+            playerThirtythree[msg[1]-1].set(
+                \fx_scratch,msg[2],
+            );
+        });
+
+        this.addCommand("tt_fx_strobe","if", { arg msg;
+            // lua is sending 1-index
+            playerThirtythree[msg[1]-1].set(
+                \fx_strobe,msg[2],
             );
         });
 
