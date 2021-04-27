@@ -150,8 +150,9 @@ Engine_Thirtythree : CroneEngine {
                 \hpf_resonance,msg[10],
                 \hpflag,0,
                 \use_envelope,1
+                // TODO: reset all effects here, they
+                // will be applied later
             );
-            // TODO: use effect information
         });
 
         this.addCommand("tt_amp","iff", { arg msg;

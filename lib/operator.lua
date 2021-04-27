@@ -40,7 +40,7 @@ function Operator:init()
     -- self.pattern[ptn_id][ptn_step]={snd={},plock={},flock={}}
     -- self.pattern[ptn_id][ptn_step].snd[snd_id]=<sound>
     -- self.pattern[ptn_id][ptn_step].plock[snd_id]=<param> -- used for parameter locking
-    -- self.pattern[ptn_id][ptn_step].flock[snd_id]=<param> -- used for fx locking
+    -- self.pattern[ptn_id][ptn_step].flock[snd_id]={table of fx} -- used for fx locking
   end
 
   -- params
@@ -96,7 +96,7 @@ function Operator:marshal()
       end
       for snd_id,flock in pairs(self.pattern[ptn_id][ptn_step].flock) do
         if not table.isempty(plock) then
-          table.insert(data.pattern,{"flock",ptn_id,ptn_step,snd_id,flock:marshal()})
+          table.insert(data.pattern,{"flock",ptn_id,ptn_step,snd_id,json.encode(flock)})
         end
       end
     end
@@ -138,7 +138,7 @@ function Operator:unmarshal(content)
     elseif p[1]=="plock" then
       self.pattern[ptn_id][ptn_step].plock[snd_id]:unmarshal(p[5])
     elseif p[1]=="flock" then
-      self.pattern[ptn_id][ptn_step].flock[snd_id]:unmarshal(p[5])
+      self.pattern[ptn_id][ptn_step].flock[snd_id]=json.decode(p[5])
     end
   end
 
@@ -401,6 +401,7 @@ function Operator:pattern_step()
   end
 
   -- play sounds associated with step
+  local snd_played=nil
   for snd_id,snd in pairs(self.pattern[self.cur_ptn_id][self.cur_ptn_step].snd) do
     self:debug("pattern_step: playing sound "..snd_id.." sample "..snd.id)
     local skip_sound = false 
@@ -415,22 +416,61 @@ function Operator:pattern_step()
         end
         override[k]=v
       end
-      local voice = snd:play(override)
+      snd_played=snd
+      snd:play(override)
       if self.cur_snd_id==snd_id and (not self.buttons[B_WRITE].pressed) then
         renderer:expand(snd.wav.filename,snd.s,snd.e)
       end
     end
   end
 
-  -- update sound with parameter locks for any sound thats doing stuff in the pattern
   local snd_list=self:pattern_sound_list(self.cur_ptn_id)
+  -- update sound with fx/parameter locks for any sound thats doing stuff in the pattern
   for snd_id,_ in pairs(snd_list) do
     self.pattern[self.cur_ptn_id][self.cur_ptn_step].plock[snd_id]:play_if_locked()
-    -- TODO: apply effects to any sounds in pattern have have a voice
-    -- first check if FX are pressed, apply those
-    -- if no FX are pressed, apply FX from parameter locks
-    -- if using FX_LOOP or FX_STUTTER, then lock the voice
-    -- otherwise always unlock the voice?
+  end
+
+  for snd_id,snd in pairs(snd_list) do
+    local voice = voices:get_voice(self.id,snd_id)
+    -- apply effects to any sounds in pattern have have a voice
+    if voice ~= nil then
+      local fx_to_apply={}
+      for i=1,16 do 
+        fx_to_apply[i]=false
+      end
+      if self.buttons[B_FX].pressed then 
+        -- if FX are pressed, only apply those
+        for i=B_BUTTON_FIRST,B_BUTTON_LAST do 
+          local fx_id = i-B_BUTTON_FIRST+1
+          if self.buttons[i].pressed then 
+            fx_to_apply[fx_id]=true
+          end
+        end
+      else
+        -- if no FX are pressed, apply FX from parameter locks
+        for _, fx_id in ipairs(self.pattern[self.cur_ptn_id][self.cur_ptn_step].flock) do 
+            fx_to_apply[fx_id]=true
+        end
+      end
+      -- apply fx ot the voice
+      local lock_voice = false 
+      -- turn off all effects
+      for fx_id,fx_apply in ipairs(fx_to_apply) do 
+        if (fx_id == FX_LOOP) and fx_apply then 
+          lock_voice=true
+        end
+        -- no FX takes precedence, cancels out all others
+        if fx_to_apply[FX_NONE] then
+          fx_apply = false 
+          lock_voice=false
+        end
+        -- send the sound played, in case it is needed for the fx (e.g. for the looping)
+        ngen:fx(fx_id,fx_apply,snd_played)
+      end
+      -- lock voice so it doesn't get stolen while effect is going
+      -- (or unlock it if the effect has disappeared)
+      voices:lock(voice,lock_voice)
+    end
   end
 end
 
@@ -441,8 +481,8 @@ end
 function Operator:pattern_sound_list(ptn_id)
   local snd_list={}
   for ptn_step,_ in ipairs(self.pattern[ptn_id]) do
-    for snd_id,_ in pairs(self.pattern[ptn_id][ptn_step].snd) do
-      snd_list[snd_id]=true
+    for snd_id,snd in pairs(self.pattern[ptn_id][ptn_step].snd) do
+      snd_list[snd_id]=snd
     end
   end
   return snd_list
@@ -483,7 +523,7 @@ function Operator:pattern_initialize(ptn_id)
     self.pattern[ptn_id][ptn_step]={snd={},plock={},flock={}}
     for snd_id=1,16 do
       self.pattern[ptn_id][ptn_step].plock[snd_id]=lock:new({snd_id=snd_id,op_id=self.id})
-      self.pattern[ptn_id][ptn_step].flock[snd_id]=lock:new({snd_id=snd_id,op_id=self.id})
+      self.pattern[ptn_id][ptn_step].flock[snd_id]={}
     end
   end
 end
