@@ -25,10 +25,10 @@ Engine_Thirtythree : CroneEngine {
                 sampleStart=0,sampleEnd=1,samplePos=0,
                 rate=0,rateSlew=0,bpm_sample=1,bpm_target=1,
                 bitcrush=0,bitcrush_bits=8,bitcrush_rate=23000,
-                scratch=0,strobe=0,vinyl=0,loop=0,
+                fx_scratch=0,fx_strobe=0,vinyl=0,loop=0,
                 timestretch=0,timestretchSlowDown=1,timestretchWindowBeats=1,
                 pan=0,lpf=20000,lpflag=0,hpf=10,hpflag=0,lpf_resonance=1,hpf_resonance=1,
-                use_envelope=1, fx_reverse=0;
+                use_envelope=1,fx_reverse=0,fx_autopan=0;
     
                 // vars
                 var snd,pos,timestretchPos,timestretchWindow,env;
@@ -54,13 +54,13 @@ Engine_Thirtythree : CroneEngine {
                     gate: t_trig,
                 );
 
+                // reverse effect
+                rate = ((fx_reverse<1)*rate)+((fx_reverse>0)*rate.neg);
+
                 rate = Lag.kr(rate,rateSlew);
 
-                // reverse effect
-                rate = ((fx_reverse>0)*(rate.neg))+((fx_reverse<1)*rate);
-
                 // scratch effect
-                rate = (scratch<1*rate) + (scratch>0*LFTri.kr(bpm_target/60*2));
+                rate = (fx_scratch<1*rate) + (fx_scratch>0*LFTri.kr(bpm_target/60*2));
 
                 pos = Phasor.ar(
                     trig:t_trig,
@@ -98,32 +98,33 @@ Engine_Thirtythree : CroneEngine {
                 snd = RLPF.ar(snd,Lag.kr(lpf,lpflag),lpf_resonance);
                 snd = RHPF.ar(snd,Lag.kr(hpf,hpflag),hpf_resonance);
 
-                // strobe
-                snd = ((strobe<1)*snd)+((strobe>0)*snd*LFPulse.ar(60/bpm_target*16));
+                // fx_strobe
+                snd = ((fx_strobe<1)*snd)+((fx_strobe>0)*snd*LFPulse.ar(60/bpm_target*16));
+
                 // bitcrush
-                bitcrush = VarLag.kr(bitcrush,1,warp:\cubed);
+                bitcrush = VarLag.kr(bitcrush,0.1,warp:\cubed);
                 snd = (snd*(1-bitcrush))+(bitcrush*Decimator.ar(snd,VarLag.kr(bitcrush_rate,1,warp:\cubed),VarLag.kr(bitcrush_bits,1,warp:\cubed)));
 
                 // manual panning
                 snd = Balance2.ar(snd[0],snd[1],
-                    pan+SinOsc.kr(60/bpm_target*16,mul:strobe*0.5),
+                    pan+SinOsc.kr(60/bpm_target*16,mul:fx_autopan*0.5),
                     level:Lag.kr(amp,ampLag)*(((use_envelope>0)*env)+(use_envelope<1)),
                 );
 
-                // // send position message for player 1 only
-                // if (i==1,{
-                //     SendTrig.kr(Impulse.kr(15),i,A2K.kr(((1-timestretch)*pos)+(timestretch*timestretchPos))/BufFrames.kr(bufnum)/BufRateScale.kr(bufnum));                        
-                // },{});
+                // send position message for player 1 only
+                if ((i<2)&&(amp>0),{
+                    SendTrig.kr(Impulse.kr(15),i,A2K.kr(((1-timestretch)*pos)+(timestretch*timestretchPos))/BufFrames.kr(bufnum)/BufRateScale.kr(bufnum));                        
+                },{});
 
                 Out.ar(0,snd)
             }).add; 
         });
 
-        // osfunThirtyThree = OSCFunc({ 
-        //     arg msg, time; 
-        //         // [time, msg].postln;
-        //     NetAddr("127.0.0.1", 10111).sendMsg("tt_pos",1,msg[3]);  
-        // },'/tr', context.server.addr);
+        osfunThirtyThree = OSCFunc({ 
+            arg msg, time; 
+                // [time, msg].postln;
+            NetAddr("127.0.0.1", 10111).sendMsg("tt_pos",1,msg[3]);  
+        },'/tr', context.server.addr);
 
         playerThirtythree = Array.fill(15,{arg i;
             Synth("playerThirtythree"++i, target:context.xg);
@@ -152,10 +153,10 @@ Engine_Thirtythree : CroneEngine {
                 \hpf,msg[9],
                 \hpf_resonance,msg[10],
                 \hpflag,0,
-                \use_envelope,1,
-                \fx_reverse,msg[11],
+                \use_envelope,1
+                // TODO: reset all effects here, they
+                // will be applied later
             );
-            // TODO: use effect information
         });
 
         this.addCommand("tt_amp","iff", { arg msg;
@@ -217,13 +218,13 @@ Engine_Thirtythree : CroneEngine {
         });
 
 
-        this.addCommand("tt_fx_loop","ifff", { arg msg;
+        this.addCommand("tt_fx_loop","iffff", { arg msg;
             // lua is sending 1-index
             playerThirtythree[msg[1]-1].set(
                 \samplePos,msg[2],
                 \sampleStart,msg[3],
                 \sampleEnd,msg[4],
-                \use_envelope,0,
+                \use_envelope,msg[5], // effectively used to turn on and off
             );
         });
 
@@ -232,6 +233,13 @@ Engine_Thirtythree : CroneEngine {
             // lua is sending 1-index
             playerThirtythree[msg[1]-1].set(
                 \fx_reverse,msg[2],
+            );
+        });
+
+        this.addCommand("tt_use_envelope","if", { arg msg;
+            // lua is sending 1-index
+            playerThirtythree[msg[1]-1].set(
+                \use_envelope,msg[2],
             );
         });
 

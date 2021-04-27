@@ -39,37 +39,22 @@ A po-33 clone for norns+grid
 ## effects
 
 - [ ] loop 16
-- [ ] loop 12
-- [ ] loop short
-- [ ] loop shorter
-- [ ] unison
-- [ ] unison low
+- [ ] loop 12 (now "?")
+- [ ] loop short (now "?")
+- [ ] loop shorter (now "?")
+- [ ] unison (now "bitcrush")
+- [ ] unison low (now "timestretch")
 - [ ] octave up
 - [ ] octave down
 - [ ] stutter 4
-- [ ] stutter 3
+- [ ] stutter 3 (now "autopan")
 - [ ] scratch
-- [ ] scratch fast
+- [ ] scratch fast (now "ghost")
 - [ ] 6/8 quantize
 - [ ] retrigger pattern
 - [ ] reverse
+- [ ] none
 
-## new effects
-
-many effects can be done simultaneously. effects apply to sounds, not to whole pattern.
-
-- [ ] reverse
-- [ ] loop (loops one beat of the current sample until released)
-- [ ] retrigger pattern
-- [ ] scratch
-- [ ] stutter
-- [ ] pingpong pan slow
-- [ ] pingpong pan fast
-- [ ] octave down
-- [ ] octave up
-- [ ] loop 16
-- [ ] loop 12
-- [ ] gate probability
 
 
 ## stretch
