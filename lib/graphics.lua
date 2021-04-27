@@ -106,7 +106,11 @@ function Graphics:metro_icon(tick,x,y)
   screen.stroke()
   screen.move(x+16,y+4)
   screen.font_size(8)
-  screen.text(params:get("clock_tempo"))
+  if ops[sel_operator].buttons[B_BPM].pressed then
+    screen.text(params:get("clock_tempo")..", swing="..timekeeper:get_swing(sel_operator).."%")
+  else
+    screen.text(params:get("clock_tempo"))
+  end    
 end
 
 function Graphics:filter(filter_type,freq,resonance)

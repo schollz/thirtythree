@@ -1,14 +1,9 @@
 local Timekeeper={}
 
--- TODO: use lattice with swing
-local lattice=require 'lattice'
-
-
 function Timekeeper:new(o)
   o=o or {}
   setmetatable(o,self)
   self.__index=self
-  o:init()
   return o
 end
 
@@ -18,37 +13,40 @@ function Timekeeper:init()
   self.lattice=lattice:new({
     ppqn=64
   })
-  self.timers={}
-  self.divisions={1/16,1/8,1/4}
-  for _,division in ipairs(self.divisions) do
-    self.timers[division]={}
-    self.timers[division].lattice=self.lattice:new_pattern{
-      action=function(t)
-        self:emit_note(division,t)
-      end,
-    division=division}
-  end
-  self.lattice:new_pattern{
-    action=function(t)
-      self.metronome_tick=not self.metronome_tick
-      graphics:update()
-    end,
-    division=1/4
-  }
-  self.lattice:start()
 
+  -- TODO: allow different operators to select divisions
+
+  self.pattern={}
+  for i,_ in ipairs(ops) do 
+    self.pattern[i]=self.lattice:new_pattern{
+      action=function(t)
+        self:emit_note(i,t)
+        if sel_operator==i then
+          self.metronome_tick=not self.metronome_tick
+          graphics:update()
+        end
+      end,
+      division=1/8
+    }
+  end
+
+  self.lattice:start()
+end
+
+function Timekeeper:adjust_swing(i,d)
+  self.pattern[i]:set_swing(d+self.pattern[i].swing)
+end
+
+function Timekeeper:get_swing(i)
+  return self.pattern[i].swing 
 end
 
 function Timekeeper:tick()
   return self.metronome_tick
 end
 
-function Timekeeper:emit_note(division,t)
-  for _,op in pairs(ops) do
-    if op.division==division then
-      op:pattern_step()
-    end
-  end
+function Timekeeper:emit_note(i,t)
+  ops[i]:pattern_step()
 end
 
 function Timekeeper:reset()

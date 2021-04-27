@@ -23,13 +23,15 @@ sel_filename=""
 sel_looppoint=1
 sel_adj=ADJ_NONE
 sel_parm=PARM_NONE
+sel_files=false
 ops={} -- operators
 
 -- engine
 engine.name="Thirtythree"
 
 -- individual libraries
-fileselect=include("lib/fileselect")
+lattice=include("thirtythree/lib/lattice")
+fileselect=require "fileselect"
 pitch=include("lib/pitch")
 lock=include("lib/lock")
 graphics_=include("lib/graphics")
@@ -60,6 +62,10 @@ function init()
   ops[1]=operator:new()
   ops[1]:init()
 
+
+  -- after initializing operators, intialize time keeper
+  timekeeper:init()
+
   -- start updater
   runner=metro.init()
   runner.time=1/15
@@ -78,13 +84,16 @@ function updater(c)
 end
 
 function enc(k,d)
-  if k==3 then
-    for i,op in ipairs(ops) do
-      if op.buttons[B_BPM].pressed then
-        -- change tempo
-        params:delta("clock_tempo",d)
-        do return end
-      end
+  for i,op in ipairs(ops) do
+    if op.buttons[B_BPM].pressed and k==2 then
+      -- change tempo
+      params:delta("clock_tempo",d)
+      graphics:update()
+      do return end
+    elseif op.buttons[B_BPM].pressed and k==3 then
+      timekeeper:adjust_swing(sel_operator,d)
+      graphics:update()
+      do return end
     end
   end
   sel_parm=PARM_NONE
@@ -135,6 +144,10 @@ end
 local ani1=1
 
 function redraw()
+  if sel_files then 
+    -- don't interupt file selection
+    do return end 
+  end
   screen.clear()
 
   if sel_adj==ADJ_TRIM then

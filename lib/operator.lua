@@ -719,9 +719,13 @@ function Operator:buttons_register()
         end
       elseif self.buttons[B_RECORD].pressed then
         if params:get("load sounds")==2 then
-          -- open file
+          -- open file          
+          sel_files=true
           fileselect.enter(_path.audio,function(fname)
+            sel_files=false
             if fname~=nil then
+              self.cur_snd_id=b
+              sel_adj=ADJ_TRIM
               self:sound_load(self.cur_snd_id,fname)
             end
           end)
