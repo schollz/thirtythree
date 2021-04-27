@@ -40,7 +40,7 @@ function Operator:init()
     -- self.pattern[ptn_id][ptn_step]={snd={},plock={},flock={}}
     -- self.pattern[ptn_id][ptn_step].snd[snd_id]=<sound>
     -- self.pattern[ptn_id][ptn_step].plock[snd_id]=<param> -- used for parameter locking
-    -- self.pattern[ptn_id][ptn_step].flock[snd_id]={table of fx} -- used for fx locking
+    -- self.pattern[ptn_id][ptn_step].flock[snd_id][fx_id]=true -- used for fx locking
   end
 
   -- params
@@ -448,14 +448,14 @@ function Operator:pattern_step()
         end
       else
         -- if no FX are pressed, apply FX from parameter locks
-        for _, fx_id in ipairs(self.pattern[self.cur_ptn_id][self.cur_ptn_step].flock) do 
+        for fx_id,_ in pairs(self.pattern[self.cur_ptn_id][self.cur_ptn_step].flock) do 
             fx_to_apply[fx_id]=true
         end
       end
       -- apply fx ot the voice
       local lock_voice = false 
       -- turn off all effects
-      for fx_id,fx_apply in ipairs(fx_to_apply) do 
+      for fx_id,fx_apply in pairs(fx_to_apply) do 
         if (fx_id == FX_LOOP) and fx_apply then 
           lock_voice=true
         end
@@ -698,10 +698,7 @@ function Operator:buttons_register()
     self.mode_switchpattern=false
   end
   self.buttons[B_FX].off_press=function()
-    -- remove all punched in effects
-    for fx,_ in pairs(self.sound_fx[self.cur_snd_id]) do
-      self:fx_remove(self.cur_snd_id,fx)
-    end
+    -- fx removal done in the pattern playing
   end
   self.buttons[B_RECORD].on_press=function()
     if self.buttons[B_WRITE].pressed and self.buttons[B_SOUND].pressed then
@@ -738,6 +735,9 @@ function Operator:buttons_register()
     --
     --
     self.buttons[i].off_press=function()
+      if self.buttons[B_FX].pressed then
+        -- handled in the pattern update
+      end
       if self.mode_write then
         -- preventing setting write buttons while doing other stuff
         for j=B_FIRST,B_BUTTON_FIRST-1 do
@@ -753,9 +753,7 @@ function Operator:buttons_register()
         -- toggle a step here for the current sound
         self:pattern_toggle_sample(self.cur_ptn_id,b,self.cur_snd_id,self.cur_smpl_id)
       end
-      if self.buttons[B_FX].pressed then
-        self:fx_remove(self.cur_snd_id,b)
-      end
+
     end
     --
     --
@@ -789,8 +787,11 @@ function Operator:buttons_register()
         -- change sound
         self.cur_snd_id=b
       elseif self.buttons[B_FX].pressed and self.mode_play then
-        -- update the current effect
-        self:fx_add(self.cur_snd_id,b)
+        -- add to fx lock
+        if self.mode_write then 
+          self.pattern[self.cur_ptn_id][self.cur_ptn_step].flock[b]=true
+        end
+        -- rest is handled in the pattern update
       elseif self.buttons[B_RECORD].pressed then
         if params:get("load sounds")==2 then
           -- open file

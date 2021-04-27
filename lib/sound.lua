@@ -91,7 +91,6 @@ function Sound:play(override)
   local voice=nil
   local s=self.s
   local e=self.e
-  local effect={}
   local amp=self.amp
   local lpf=self.lpf
   local hpf=self.hpf
