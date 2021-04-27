@@ -76,7 +76,7 @@ function Operator:marshal()
   local data={}
   for k,v in pairs(self) do
     print(k,v)
-    if k~="buttons" and k~="pattern" and k~="sound" then
+    if k~="buttons" and k~="pattern" and k~="sound" and k~="sound_prevent" then
       self:debug("encoding "..k)
       data[k]=json.encode(v)
     end
