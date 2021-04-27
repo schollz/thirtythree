@@ -56,31 +56,41 @@ snapshot_=include("lib/snapshot")
 snapshot=snapshot_:new()
 
 function init()
-  check_and_install_aubioonset()
-
-  -- TODO: initialize operators
-  ops[1]=operator:new()
-  ops[1]:init()
-
-
-  -- after initializing operators, intialize time keeper
-  timekeeper:init()
-
   -- start updater
   runner=metro.init()
   runner.time=1/15
   runner.count=-1
   runner.event=updater
   runner:start()
+  startup_done=false
+  startup_initiated=false
+end
+
+function startup()
+  startup_initiated=true
+  graphics:alert("loading")
+  check_and_install_aubioonset()
+
+  -- TODO: initialize operators
+  ops[1]=operator:new()
+  ops[1]:init()
+
+  -- after initializing operators, intialize time keeper
+  timekeeper:init()
 
   -- register parameters
   register_parameters()
 
   dev_=include("lib/dev")
   dev=dev_:new()
-end
+  startup_done=true
+end 
 
 function updater(c)
+  if not startup_initiated then
+    print("starting up")
+    clock.run(startup)
+  end
 end
 
 function enc(k,d)

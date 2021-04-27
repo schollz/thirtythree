@@ -19,7 +19,7 @@ Engine_Thirtythree : CroneEngine {
             Buffer.new(context.server);
         });
 
-        (0..16).do({arg i; 
+        (0..25).do({arg i; 
             SynthDef("playerThirtythree"++i,{ 
                 arg bufnum, amp=0, ampLag=0,t_trig=0,t_trigtime=0,fadeout=0.05,
                 sampleStart=0,sampleEnd=1,samplePos=0,
@@ -105,22 +105,22 @@ Engine_Thirtythree : CroneEngine {
                     level:Lag.kr(amp,ampLag)*env,
                 );
 
-                // send position message for player 1 only
-                if (i==1,{
-                    SendTrig.kr(Impulse.kr(15),i,A2K.kr(((1-timestretch)*pos)+(timestretch*timestretchPos))/BufFrames.kr(bufnum)/BufRateScale.kr(bufnum));                        
-                },{});
+                // // send position message for player 1 only
+                // if (i==1,{
+                //     SendTrig.kr(Impulse.kr(15),i,A2K.kr(((1-timestretch)*pos)+(timestretch*timestretchPos))/BufFrames.kr(bufnum)/BufRateScale.kr(bufnum));                        
+                // },{});
 
                 Out.ar(0,snd)
             }).add; 
         });
 
-        osfunThirtyThree = OSCFunc({ 
-            arg msg, time; 
-                // [time, msg].postln;
-            NetAddr("127.0.0.1", 10111).sendMsg("tt_pos",1,msg[3]);  
-        },'/tr', context.server.addr);
+        // osfunThirtyThree = OSCFunc({ 
+        //     arg msg, time; 
+        //         // [time, msg].postln;
+        //     NetAddr("127.0.0.1", 10111).sendMsg("tt_pos",1,msg[3]);  
+        // },'/tr', context.server.addr);
 
-        playerThirtythree = Array.fill(16,{arg i;
+        playerThirtythree = Array.fill(25,{arg i;
             Synth("playerThirtythree"++i, target:context.xg);
         });
 
@@ -168,7 +168,7 @@ Engine_Thirtythree : CroneEngine {
         });
 
         this.addCommand("tt_bpm","f", { arg msg; 
-            (0..16).do({arg i; 
+            (0..25).do({arg i; 
                 playerThirtythree[i].set(
                     \bpm_target,msg[1],
                 );
@@ -201,11 +201,11 @@ Engine_Thirtythree : CroneEngine {
 
         this.addCommand("tt_bitcrush_all","ifff", { arg msg;
             // lua is sending 1-index
-            (0..16).do({arg i; 
+            (0..25).do({arg i; 
               playerThirtythree[i].set(
-		\bitcrush,msg[2],
-		\bitcrush_bits,msg[3],
-		\bitcrush_rate,msg[4],
+        		\bitcrush,msg[2],
+        		\bitcrush_bits,msg[3],
+        		\bitcrush_rate,msg[4],
             )});
         });
 
@@ -216,7 +216,7 @@ Engine_Thirtythree : CroneEngine {
     free {
         // Thirtythree Specific v0.0.1
         (0..64).do({arg i; sampleBuffThirtythree[i].free});
-        (0..16).do({arg i; playerThirtythree[i].free});
+        (0..25).do({arg i; playerThirtythree[i].free});
         osfunThirtyThree.free;
         // ^ Thirtythree specific
     }
