@@ -467,7 +467,7 @@ function Operator:pattern_step()
         end
         -- send the sound played, in case it is needed for the fx (e.g. for the looping)
         if fx_id==FX_RETRIGGER then
-          self.cur_ptn_step=16
+          self:pattern_reset()
         elseif fx_id==FX_GHOST then
           if math.random()<0.3 then
             self.sound_prevent[snd_id]=true -- skip the next sound

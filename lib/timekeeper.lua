@@ -30,6 +30,19 @@ function Timekeeper:init()
     }
   end
 
+  self.sync=self.lattice:new_pattern{
+    action=function(t)
+      -- TODO: reset all operators to first step
+      for _,op in ipairs(ops) do
+        if op.cur_ptn_step>1 and op.cur_ptn_step<16 then
+          print("master clock reseting operator")
+          op:pattern_reset()
+        end
+      end
+    end,
+    division=2 -- 16 beats
+  }
+
   self.lattice:start()
 end
 
