@@ -46,6 +46,10 @@ function Voices:get_voice(op_id,snd_id)
   return nil
 end
 
+function Voices:lock(voice,lockit)
+  self.played[voice].locked=lockit
+end
+
 -- new_voice will make a new voice for a sound, fading out previous sound
 function Voices:new_voice(op_id,snd_id)
   local snd_id = 16*(op_id-1)+snd_id

@@ -403,12 +403,9 @@ function Operator:pattern_step()
   -- play sounds associated with step
   for snd_id,snd in pairs(self.pattern[self.cur_ptn_id][self.cur_ptn_step].snd) do
     self:debug("pattern_step: playing sound "..snd_id.." sample "..snd.id)
-    local override={}
-    if self.buttons[B_FX].pressed and (not table.isempty(self.cur_fx_id)) and override.effect==nil then
-      -- perform effect
-      override.effect=self.cur_fx_id
-    end
-    if snd.loaded then
+    local skip_sound = false 
+    -- TODO: check if should skip sound (i.e. if using loop effect or stutter effect)
+    if snd.loaded and not skip_sound then
       -- override with parameter locks
       for k,v in pairs(self.pattern[self.cur_ptn_id][self.cur_ptn_step].plock[snd_id].modified) do
         if type(v)~="boolean" then
@@ -418,7 +415,7 @@ function Operator:pattern_step()
         end
         override[k]=v
       end
-      snd:play(override)
+      local voice = snd:play(override)
       if self.cur_snd_id==snd_id and (not self.buttons[B_WRITE].pressed) then
         renderer:expand(snd.wav.filename,snd.s,snd.e)
       end
@@ -429,6 +426,11 @@ function Operator:pattern_step()
   local snd_list=self:pattern_sound_list(self.cur_ptn_id)
   for snd_id,_ in pairs(snd_list) do
     self.pattern[self.cur_ptn_id][self.cur_ptn_step].plock[snd_id]:play_if_locked()
+    -- TODO: apply effects to any sounds in pattern have have a voice
+    -- first check if FX are pressed, apply those
+    -- if no FX are pressed, apply FX from parameter locks
+    -- if using FX_LOOP or FX_STUTTER, then lock the voice
+    -- otherwise always unlock the voice?
   end
 end
 

@@ -28,7 +28,7 @@ Engine_Thirtythree : CroneEngine {
                 scratch=0,strobe=0,vinyl=0,loop=0,
                 timestretch=0,timestretchSlowDown=1,timestretchWindowBeats=1,
                 pan=0,lpf=20000,lpflag=0,hpf=10,hpflag=0,lpf_resonance=1,hpf_resonance=1,
-                use_envelope=1, fx_reverse=0;
+                use_envelope=1;
     
                 // vars
                 var snd,pos,timestretchPos,timestretchWindow,env;
@@ -55,9 +55,6 @@ Engine_Thirtythree : CroneEngine {
                 );
 
                 rate = Lag.kr(rate,rateSlew);
-
-                // reverse effect
-                rate = ((fx_reverse>0)*(rate.neg))+((fx_reverse<1)*rate);
 
                 // scratch effect
                 rate = (scratch<1*rate) + (scratch>0*LFTri.kr(bpm_target/60*2));
@@ -152,8 +149,7 @@ Engine_Thirtythree : CroneEngine {
                 \hpf,msg[9],
                 \hpf_resonance,msg[10],
                 \hpflag,0,
-                \use_envelope,1,
-                \fx_reverse,msg[11],
+                \use_envelope,1
             );
             // TODO: use effect information
         });
