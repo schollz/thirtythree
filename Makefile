@@ -21,5 +21,8 @@ format: lua-format.py
 todo:
 	rg TODO -g '*.lua'
 
+test:
+	rg TEST -g '*.lua'
+
 lua-format.py:
 	wget https://raw.githubusercontent.com/schollz/LuaFormat/master/lua-format.py
