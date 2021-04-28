@@ -23,10 +23,10 @@ function Operator:init()
   -- defaults
   self.sound={}
   self.sound_prevent={}
-  self.sound_fx_current={} 
+  self.sound_fx_current={}
   for snd_id=1,16 do
     self.sound_fx_current[snd_id]={}
-    for fx_id=1,16 do 
+    for fx_id=1,16 do
       self.sound_fx_current[snd_id][fx_id]=false
     end
     self.sound_prevent[snd_id]=false -- used to prevent new sounds when using fx
@@ -453,7 +453,7 @@ function Operator:pattern_step()
       local fx_to_apply={}
       for i=1,16 do
         fx_to_apply[i]=false
-      end         
+      end
       if self.buttons[B_FX].pressed and self.cur_snd_id==snd_id then
         -- if FX are pressed, only apply those
         for i=B_BUTTON_FIRST,B_BUTTON_LAST do
@@ -481,7 +481,7 @@ function Operator:pattern_step()
         end
         -- send the sound played, in case it is needed for the fx (e.g. for the looping)
         if fx_id==FX_NONE then
-          nofx=true       
+          nofx=true
         elseif fx_id==FX_RETRIGGER then
           if fx_apply then
             self:debug("FX_RETRIGGER")
@@ -508,9 +508,9 @@ function Operator:pattern_step()
       if not nofx then
         voices:lock(voice,lock_voice)
       else
-        if self.mode_write then 
+        if self.mode_write then
           -- remove all fx
-          for i=1,16 do 
+          for i=1,16 do
             self.pattern[self.cur_ptn_id][self.cur_ptn_step].flock[snd_id][i]=nil
           end
         end
@@ -536,7 +536,7 @@ end
 
 function Operator:pattern_has_sound(ptn_id)
   for ptn_step=1,16 do
-    for snd_id,_ in pairs(self.pattern[ptn_id][ptn_step].snd) do 
+    for snd_id,_ in pairs(self.pattern[ptn_id][ptn_step].snd) do
       do return true end
     end
   end
@@ -577,20 +577,20 @@ end
 function Operator:pattern_copy(from_ptn_id,to_ptn_id)
   self:debug("copying pattern "..from_ptn_id.." to "..to_ptn_id)
   self:pattern_initialize(to_ptn_id)
-      -- self.pattern[ptn_id][ptn_step].snd[snd_id]=<sound>
-    -- self.pattern[ptn_id][ptn_step].plock[snd_id]=<param> -- used for parameter locking
-    -- self.pattern[ptn_id][ptn_step].flock[snd_id][fx_id]=true -- used for fx locking
+  -- self.pattern[ptn_id][ptn_step].snd[snd_id]=<sound>
+  -- self.pattern[ptn_id][ptn_step].plock[snd_id]=<param> -- used for parameter locking
+  -- self.pattern[ptn_id][ptn_step].flock[snd_id][fx_id]=true -- used for fx locking
   for ptn_step=1,16 do
     for snd_id,snd in pairs(self.pattern[from_ptn_id][ptn_step].snd) do
       self.pattern[to_ptn_id][ptn_step].snd[snd_id]=sound:new(snd:dump())
-    end    
+    end
     for snd_id,plock in pairs(self.pattern[from_ptn_id][ptn_step].plock) do
       self.pattern[to_ptn_id][ptn_step].plock[snd_id]=lock:new({snd_id=snd_id,op_id=self.id})
       self.pattern[to_ptn_id][ptn_step].plock[snd_id]:unmarshal(plock:marshal())
-    end    
+    end
     for snd_id,flock in pairs(self.pattern[from_ptn_id][ptn_step].flock) do
       self.pattern[to_ptn_id][ptn_step].flock[snd_id]=json.decode(json.encode(flock))
-    end    
+    end
   end
 
 end

@@ -58,7 +58,7 @@ function Ngen:new(o)
   end
   -- o.engine[FX_STUTTER]=function(voice,on,snd)
   --   if not on then
-  --     do return end 
+  --     do return end
   --   end
   --   self:debug("FX_STUTTER")
   --   local s=math.random(math.floor(snd.s*1000),math.floor(snd.e*1000))/1000
@@ -67,7 +67,7 @@ function Ngen:new(o)
   -- end
   -- o.engine[FX_LOOP]=function(voice,on,snd)
   --   if not on then
-  --     do return end 
+  --     do return end
   --   end
   --   self:debug("FX_LOOP")
   --   local s=snd.s

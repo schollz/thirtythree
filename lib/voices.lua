@@ -1,5 +1,6 @@
 local Voices={}
 
+-- TODO: add duration to hold the voices for
 
 function Voices:new(o)
   o=o or {}
