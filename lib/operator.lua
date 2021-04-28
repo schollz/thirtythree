@@ -175,9 +175,9 @@ function Operator:sound_initialize(snd_id)
       s=(smpl_id-1)/16
       e=smpl_id/16
     end
-    local rate=1
+    local pitch=0
     if snd_id<=8 then
-      rate=pitch.transpose_rate(INVERTED_KEYBOARD[smpl_id]-9)
+      pitch=INVERTED_KEYBOARD[smpl_id]-9
     end
     self.sound[snd_id][smpl_id]=sound:new({
       id=smpl_id,
@@ -186,7 +186,7 @@ function Operator:sound_initialize(snd_id)
       s=s,
       e=e,
       melodic=snd_id<9,
-      rate=rate,
+      pitch_base=pitch,
     })
   end
 end
@@ -210,6 +210,7 @@ end
 
 function Operator:sound_clone(snd_id,smpl_id)
   local o=self.sound[snd_id][smpl_id]:dump()
+  o.pitch_base=o.pitch_base+o.pitch -- rebase the pitch
   return sound:new(o)
 end
 
@@ -376,7 +377,7 @@ function Operator:pattern_step()
   self.cur_ptn_step=self.cur_ptn_step+1
 
   -- jump to next pattern or return to beginning
-  if self.cur_ptn_step>16 || self.cur_ptn_sync_step%16==0 then
+  if self.cur_ptn_step>16 or self.cur_ptn_sync_step%16 == 0 then
     -- goto next pattern
     self.pattern_chain_index=self.pattern_chain_index+1
     if self.pattern_chain_index>#self.pattern_chain then
@@ -407,8 +408,15 @@ function Operator:pattern_step()
   for snd_id,snd in pairs(self.pattern[self.cur_ptn_id][self.cur_ptn_step].snd) do
     self:debug("pattern_step: playing sound "..snd_id.." sample "..snd.id)
     -- TODO: check if should skip sound (i.e. if using loop effect or stutter effect)
+    if self.sound_prevent[snd_id]==true then
+      self:debug("sound prevented!")
+    end
+    if not snd.loaded then
+      self:debug("not loaded!")
+    end
     if snd.loaded and not self.sound_prevent[snd_id] then
       -- override with parameter locks
+      local override={}
       for k,v in pairs(self.pattern[self.cur_ptn_id][self.cur_ptn_step].plock[snd_id].modified) do
         if type(v)~="boolean" then
           self:debug("override with parameter lock "..k..": "..v)
@@ -450,7 +458,7 @@ function Operator:pattern_step()
         end
       else
         -- if no FX are pressed, apply FX from parameter locks
-        for fx_id,_ in pairs(self.pattern[self.cur_ptn_id][self.cur_ptn_step].flock) do
+        for fx_id,_ in pairs(self.pattern[self.cur_ptn_id][self.cur_ptn_step].flock[snd_id]) do
           fx_to_apply[fx_id]=true
         end
       end
@@ -469,15 +477,23 @@ function Operator:pattern_step()
         end
         -- send the sound played, in case it is needed for the fx (e.g. for the looping)
         if fx_id==FX_RETRIGGER then
-          self:cur_ptn_step=0
+          if fx_apply then
+            self:debug("FX_RETRIGGER")
+            self.cur_ptn_step=0
+          end
         elseif fx_id==FX_JUMP then
-          self.cur_ptn_step=math.random(1,16)
+          if fx_apply then
+            self:debug("FX_JUMP")
+            self.cur_ptn_step=math.random(1,16)
+          end
         elseif fx_id==FX_GHOST then
-          if math.random()<0.3 then
-            self.sound_prevent[snd_id]=true -- skip the next sound
+          if fx_apply then
+            if math.random()<0.3 then
+              self.sound_prevent[snd_id]=true -- skip the next sound
+            end
           end
         else
-          ngen:fx(snd,fx_id,fx_apply)
+          -- ngen:fx(snd,fx_id,fx_apply)
         end
       end
       -- lock voice so it doesn't get stolen while effect is going
@@ -781,7 +797,8 @@ function Operator:buttons_register()
           sel_files=true
           fileselect.enter(_path.audio,function(fname)
             sel_files=false
-            if fname~=nil then
+            if fname~=nil and fname ~= "cancel" then
+              self:debug("selected "..fname)
               self.cur_snd_id=b
               sel_adj=ADJ_TRIM
               self:sound_load(self.cur_snd_id,fname)

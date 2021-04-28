@@ -12,7 +12,7 @@ function Graphics:new(o)
   o.alert_clock_id=nil
   o.alert_msg=""
   o.dirty=false
-  o.fps=15
+  o.fps=30
   clock.run(function()
     while true do
       if o.dirty then

@@ -156,7 +156,7 @@ function Renderer:draw(filename)
   local waveform_height=40
   local waveform_center=38
   local lp={}
-  local pos=util.round(util.linlin(window[1],window[2],1,128,voices:pos()))
+  local pos=util.round(util.linlin(window[1],window[2],1,128,voices.pos))
   lp[1]=util.round(util.linlin(window[1],window[2],1,128,loop_points[1]))
   lp[2]=util.round(util.linlin(window[1],window[2],1,128,loop_points[2]))
   if loop_points[2]>window[2] then

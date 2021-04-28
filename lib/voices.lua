@@ -17,7 +17,12 @@ function Voices:new(o)
   -- osc input
   osc.event=function(path,args,from)
     if path=="tt_pos" then
-      o.pos=args[2]
+      if args[1] > 0 then
+        o.pos=args[2]
+        if sel_adj==ADJ_TRIM then
+          graphics:update()
+        end
+      end
     end
   end
 
@@ -30,14 +35,9 @@ function Voices:get_main()
   return self.main
 end
 
--- pos returns the position of the index-1 voice
-function Voices:pos()
-  return self.pos
-end
-
 -- get_voice returns the voice currently being used for a sound
 function Voices:get_voice(op_id,snd_id)
-  local snd_id=16*(op_id-1)+snd_id
+  snd_id=16*(op_id-1)+snd_id
   for i=3,self.max do
     if self.played[i].snd_id==snd_id then
       return i

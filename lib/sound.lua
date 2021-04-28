@@ -20,7 +20,8 @@ function Sound:new(o)
   o.snd_id=o.snd_id or 1
   o.s=o.s or 0
   o.e=o.e or 1
-  o.pitch=o.pitch or 0
+  o.pitch_base=o.pitch_base or 0
+  o.pitch=0
   o.amp=o.amp or 1
   o.lpf=o.lpf or 20000
   o.hpf=o.hpf or 20
@@ -77,6 +78,7 @@ function Sound:dump()
     resonance=self.resonance,
     is_lpf=self.is_lpf,
     pitch=self.pitch,
+    pitch_base=self.pitch_base,
     wav=self.wav,
     loaded=self.loaded,
   }
@@ -125,7 +127,8 @@ function Sound:play(override)
     print(voice,-- which sampler player
       self.wav.sc_index,-- buffer number
       amp,
-      pitch.transpose_rate(self.pitch),
+      self.pitch_base+self.pitch,
+      pitch.transpose_rate(self.pitch_base+self.pitch),
       s,
     e)
   end
@@ -133,7 +136,7 @@ function Sound:play(override)
     voice,-- which sampler player
     self.wav.sc_index,-- buffer number
     amp*ops[self.op_id].amp_global,
-    pitch.transpose_rate(self.pitch),
+    pitch.transpose_rate(self.pitch_base+self.pitch),
     s,
     e,
     lpf,

@@ -63,11 +63,11 @@ function Ngen:update(voice,k,v1,v2,v3)
 end
 
 function Ngen:fx(snd,fx_id,on)
-  local voice=voices:get_voice(snd.id)
+  local voice=voices:get_voice(snd.op_id,snd.id)
   if voice==nil then
     do return end
   end
-  print("fx",voice,fx_id)
+  -- print("fx",voice,fx_id)
   if self.engine[fx_id]~=nil then
     self.engine[fx_id](voice,on,snd)
   end

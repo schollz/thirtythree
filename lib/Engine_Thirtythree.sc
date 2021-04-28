@@ -1,4 +1,4 @@
-// Engine_Thirtythree
+    // Engine_Thirtythree
 
 // Inherit methods from CroneEngine
 Engine_Thirtythree : CroneEngine {
@@ -113,14 +113,15 @@ Engine_Thirtythree : CroneEngine {
                 snd = (snd*(1-bitcrush))+(bitcrush*Decimator.ar(snd,VarLag.kr(bitcrush_rate,1,warp:\cubed),VarLag.kr(bitcrush_bits,1,warp:\cubed)));
 
                 // manual panning
+                amp = Lag.kr(amp,ampLag)*(((use_envelope>0)*env)+(use_envelope<1));
                 snd = Balance2.ar(snd[0],snd[1],
                     pan+SinOsc.kr(60/bpm_target*16,mul:fx_autopan*0.5),
-                    level:Lag.kr(amp,ampLag)*(((use_envelope>0)*env)+(use_envelope<1)),
+                    level:amp,
                 );
 
                 // send position message for player 1 only
-                if ((i<2)&&(amp>0),{
-                    SendTrig.kr(Impulse.kr(15),i,A2K.kr(((1-timestretch)*pos)+(timestretch*timestretchPos))/BufFrames.kr(bufnum)/BufRateScale.kr(bufnum));                        
+                if (i<2,{
+                    SendTrig.kr(Impulse.kr(30),amp,A2K.kr(((1-timestretch)*pos)+(timestretch*timestretchPos))/BufFrames.kr(bufnum)/BufRateScale.kr(bufnum));                        
                 },{});
 
                 Out.ar(0,snd)
@@ -130,7 +131,7 @@ Engine_Thirtythree : CroneEngine {
         osfunThirtyThree = OSCFunc({ 
             arg msg, time; 
                 // [time, msg].postln;
-            NetAddr("127.0.0.1", 10111).sendMsg("tt_pos",1,msg[3]);  
+            NetAddr("127.0.0.1", 10111).sendMsg("tt_pos",msg[2],msg[3]);  
         },'/tr', context.server.addr);
 
         playerThirtythree = Array.fill(15,{arg i;
@@ -144,7 +145,7 @@ Engine_Thirtythree : CroneEngine {
             sampleBuffThirtythree[msg[1]-1] = Buffer.read(context.server,msg[2]);
         });
 
-        this.addCommand("tt_play","iifffffffff", { arg msg;
+        this.addCommand("tt_play","iiffffffff", { arg msg;
             // lua is sending 1-index
             playerThirtythree[msg[1]-1].set(
                 \t_trig,1,
@@ -161,8 +162,6 @@ Engine_Thirtythree : CroneEngine {
                 \hpf_resonance,msg[10],
                 \hpflag,0,
                 \use_envelope,1
-                // TODO: reset all effects here, they
-                // will be applied later
             );
         });
 
