@@ -1,6 +1,10 @@
 # thirtythree
 A po-33 clone for norns+grid
 
+## other
+
+- [ ] make bus for strobe + bitcrush + compressor fx
+
 ## norns special
 
 - [x] menu to change layout
