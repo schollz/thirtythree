@@ -118,7 +118,7 @@ function Sound:play(override)
 
   -- get new voice
   if voice==nil then
-    voice=voices:new_voice(self.op_id,self.snd_id)
+    voice=voices:new_voice(self.op_id,self.snd_id,(e-s)*self.wav.duration)
   elseif voice==1 then -- main voice
     voice=voices:get_main()
   end

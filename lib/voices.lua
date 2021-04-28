@@ -9,7 +9,7 @@ function Voices:new(o)
   o.max=15
   o.played={}
   for i=1,o.max do
-    o.played[i]={snd_id=0,last_played=os.clock(),locked=false}
+    o.played[i]={snd_id=0,last_played=os.clock(),locked=false,duration=0}
   end
   o.pos=0
   o.main=1
@@ -28,6 +28,10 @@ function Voices:new(o)
   -- end
 
   return o
+end
+
+function Voices:time()
+  return clock.get_beat_sec()*clock.get_beats()
 end
 
 function Voices:get_main()
@@ -52,9 +56,9 @@ function Voices:lock(voice,lockit)
 end
 
 -- new_voice will make a new voice for a sound, fading out previous sound
-function Voices:new_voice(op_id,snd_id)
+function Voices:new_voice(op_id,snd_id,duration)
   local snd_id=16*(op_id-1)+snd_id
-  local current_time=os.clock()
+  local current_time=self:time()
   local voice=0
   local voice_oldest=1
   local longest_duration=-1
@@ -66,12 +70,16 @@ function Voices:new_voice(op_id,snd_id)
       engine.tt_amp(i,0,0.2)
       self.played[i].snd_id=0 -- reset it
       self.played[i].locked=false
+      self.played[i].duration=0
     end
   end
 
   -- get the current voice used already, or the oldest voice
   for i=3,self.max do -- voice 1 is reserved
-    if current_time-self.played[i].last_played>longest_duration and not self.played[i].locked then
+    local d=current_time-self.played[i].last_played
+    if current_time-self.played[i].last_played>longest_duration and
+      (not self.played[i].locked) and
+      (d<0 or d>=self.played[i].duration) then
       longest_duration=current_time-self.played[i].last_played
       voice_oldest=i
     end
@@ -82,7 +90,12 @@ function Voices:new_voice(op_id,snd_id)
     voice=voice_oldest
   end
 
-  self.played[voice]={snd_id=snd_id,last_played=os.clock(),locked=false}
+  if voice==0 then
+    print("NO VOICES!?")
+    do return end
+  end
+
+  self.played[voice]={snd_id=snd_id,last_played=os.clock(),locked=false,duration=duration}
   return voice
 end
 
