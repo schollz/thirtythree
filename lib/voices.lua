@@ -17,7 +17,7 @@ function Voices:new(o)
   -- osc input
   osc.event=function(path,args,from)
     if path=="tt_pos" then
-      if args[1] > 0 then
+      if args[1]>0 then
         o.pos=args[2]
         if sel_adj==ADJ_TRIM then
           graphics:update()

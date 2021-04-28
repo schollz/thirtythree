@@ -377,7 +377,7 @@ function Operator:pattern_step()
   self.cur_ptn_step=self.cur_ptn_step+1
 
   -- jump to next pattern or return to beginning
-  if self.cur_ptn_step>16 or self.cur_ptn_sync_step%16 == 0 then
+  if self.cur_ptn_step>16 or self.cur_ptn_sync_step%16==0 then
     -- goto next pattern
     self.pattern_chain_index=self.pattern_chain_index+1
     if self.pattern_chain_index>#self.pattern_chain then
@@ -797,7 +797,7 @@ function Operator:buttons_register()
           sel_files=true
           fileselect.enter(_path.audio,function(fname)
             sel_files=false
-            if fname~=nil and fname ~= "cancel" then
+            if fname~=nil and fname~="cancel" then
               self:debug("selected "..fname)
               self.cur_snd_id=b
               sel_adj=ADJ_TRIM
