@@ -23,7 +23,12 @@ function Operator:init()
   -- defaults
   self.sound={}
   self.sound_prevent={}
+  self.sound_fx_current={} 
   for snd_id=1,16 do
+    self.sound_fx_current[snd_id]={}
+    for fx_id=1,16 do 
+      self.sound_fx_current[snd_id][fx_id]=false
+    end
     self.sound_prevent[snd_id]=false -- used to prevent new sounds when using fx
     self:sound_initialize(snd_id)
   end
@@ -77,7 +82,7 @@ function Operator:marshal()
   local data={}
   for k,v in pairs(self) do
     print(k,v)
-    if k~="buttons" and k~="pattern" and k~="sound" and k~="sound_prevent" then
+    if k~="buttons" and k~="pattern" and k~="sound" and k~="sound_prevent" and k~="mode_write" and k~="mode_play" and k~="sound_fx_current" then
       self:debug("encoding "..k)
       data[k]=json.encode(v)
     end
@@ -441,14 +446,15 @@ function Operator:pattern_step()
 
   for snd_id,snd in pairs(snd_list) do
     self.sound_prevent[snd_id]=false
+    local nofx=false
     local voice=voices:get_voice(self.id,snd_id)
     -- apply effects to any sounds in pattern have have a voice
     if voice~=nil then
       local fx_to_apply={}
       for i=1,16 do
         fx_to_apply[i]=false
-      end
-      if self.buttons[B_FX].pressed then
+      end         
+      if self.buttons[B_FX].pressed and self.cur_snd_id==snd_id then
         -- if FX are pressed, only apply those
         for i=B_BUTTON_FIRST,B_BUTTON_LAST do
           local fx_id=i-B_BUTTON_FIRST+1
@@ -466,20 +472,20 @@ function Operator:pattern_step()
       local lock_voice=false
       -- turn off all effects
       for fx_id,fx_apply in pairs(fx_to_apply) do
+        -- only update if its new
+        if fx_apply==self.sound_fx_current[snd_id][fx_id] then goto continue end
+
         if (fx_id==FX_LOOP or fx_id==FX_STUTTER) and fx_apply then
           lock_voice=true
           self.sound_prevent[snd_id]=true
         end
-        -- no FX takes precedence, cancels out all others
-        if fx_to_apply[FX_NONE] then
-          fx_apply=false
-          lock_voice=false
-        end
         -- send the sound played, in case it is needed for the fx (e.g. for the looping)
-        if fx_id==FX_RETRIGGER then
+        if fx_id==FX_NONE then
+          nofx=true       
+        elseif fx_id==FX_RETRIGGER then
           if fx_apply then
             self:debug("FX_RETRIGGER")
-            self.cur_ptn_step=0
+            self.cur_ptn_step=1
           end
         elseif fx_id==FX_JUMP then
           if fx_apply then
@@ -493,12 +499,22 @@ function Operator:pattern_step()
             end
           end
         else
-          -- ngen:fx(snd,fx_id,fx_apply)
+          ngen:fx(snd,fx_id,fx_apply)
         end
+        ::continue::
       end
       -- lock voice so it doesn't get stolen while effect is going
       -- (or unlock it if the effect has disappeared)
-      voices:lock(voice,lock_voice)
+      if not nofx then
+        voices:lock(voice,lock_voice)
+      else
+        if self.mode_write then 
+          -- remove all fx
+          for i=1,16 do 
+            self.pattern[self.cur_ptn_id][self.cur_ptn_step].flock[snd_id][i]=nil
+          end
+        end
+      end
     end
   end
 end
@@ -519,9 +535,9 @@ function Operator:pattern_sound_list(ptn_id)
 end
 
 function Operator:pattern_has_sound(ptn_id)
-  for ptn_step,_ in ipairs(self.pattern[ptn_id]) do
-    if #self.pattern[ptn_id][ptn_step].snd>0 then
-      return true
+  for ptn_step=1,16 do
+    for snd_id,_ in pairs(self.pattern[ptn_id][ptn_step].snd) do 
+      do return true end
     end
   end
   return false
@@ -556,6 +572,27 @@ function Operator:pattern_initialize(ptn_id)
       self.pattern[ptn_id][ptn_step].flock[snd_id]={}
     end
   end
+end
+
+function Operator:pattern_copy(from_ptn_id,to_ptn_id)
+  self:debug("copying pattern "..from_ptn_id.." to "..to_ptn_id)
+  self:pattern_initialize(to_ptn_id)
+      -- self.pattern[ptn_id][ptn_step].snd[snd_id]=<sound>
+    -- self.pattern[ptn_id][ptn_step].plock[snd_id]=<param> -- used for parameter locking
+    -- self.pattern[ptn_id][ptn_step].flock[snd_id][fx_id]=true -- used for fx locking
+  for ptn_step=1,16 do
+    for snd_id,snd in pairs(self.pattern[from_ptn_id][ptn_step].snd) do
+      self.pattern[to_ptn_id][ptn_step].snd[snd_id]=sound:new(snd:dump())
+    end    
+    for snd_id,plock in pairs(self.pattern[from_ptn_id][ptn_step].plock) do
+      self.pattern[to_ptn_id][ptn_step].plock[snd_id]=lock:new({snd_id=snd_id,op_id=self.id})
+      self.pattern[to_ptn_id][ptn_step].plock[snd_id]:unmarshal(plock:marshal())
+    end    
+    for snd_id,flock in pairs(self.pattern[from_ptn_id][ptn_step].flock) do
+      self.pattern[to_ptn_id][ptn_step].flock[snd_id]=json.decode(json.encode(flock))
+    end    
+  end
+
 end
 
 function Operator:pattern_toggle_sample(ptn_id,ptn_step,snd_id,smpl_id)
@@ -762,9 +799,7 @@ function Operator:buttons_register()
     self.buttons[i].on_press=function()
       if self.buttons[B_PATTERN].pressed and self.buttons[B_WRITE].pressed then
         -- copy current pattern to the new button
-        if self.cur_ptn_id~=b then
-          self.pattern[b]=json.decode(json.encode(self.pattern[self.cur_ptn_id]))
-        end
+        self:pattern_copy(self.cur_ptn_id,b)
       elseif self.buttons[B_PATTERN].pressed then
         -- chain pattern
         if self.mode_switchpattern then
@@ -788,7 +823,7 @@ function Operator:buttons_register()
       elseif self.buttons[B_FX].pressed and self.mode_play then
         -- add to fx lock
         if self.mode_write then
-          self.pattern[self.cur_ptn_id][self.cur_ptn_step].flock[b]=true
+          self.pattern[self.cur_ptn_id][self.cur_ptn_step].flock[self.cur_snd_id][b]=true
         end
         -- rest is handled in the pattern update
       elseif self.buttons[B_RECORD].pressed then

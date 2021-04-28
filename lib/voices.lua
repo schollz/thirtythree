@@ -15,16 +15,16 @@ function Voices:new(o)
 
   -- collect position information from supercollider
   -- osc input
-  osc.event=function(path,args,from)
-    if path=="tt_pos" then
-      if args[1]>0 then
-        o.pos=args[2]
-        if sel_adj==ADJ_TRIM then
-          graphics:update()
-        end
-      end
-    end
-  end
+  -- osc.event=function(path,args,from)
+  --   if path=="tt_pos" then
+  --     if args[1]>0 then
+  --       o.pos=args[2]
+  --       if sel_adj==ADJ_TRIM then
+  --         graphics:update()
+  --       end
+  --     end
+  --   end
+  -- end
 
   return o
 end
@@ -62,7 +62,7 @@ function Voices:new_voice(op_id,snd_id)
   for i=3,self.max do
     if self.played[i].snd_id==snd_id and current_time-self.played[i].last_played<1 then
       -- turn this voice down
-      engine.tt_amp(i,0,0.1)
+      engine.tt_amp(i,0,0.2)
       self.played[i].snd_id=0 -- reset it
       self.played[i].locked=false
     end

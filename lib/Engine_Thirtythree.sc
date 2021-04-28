@@ -6,7 +6,7 @@ Engine_Thirtythree : CroneEngine {
     // Thirtythree specific v0.1.0
     var sampleBuffThirtythree;
     var playerThirtythree;
-    var osfunThirtyThree;
+    // var osfunThirtyThree;
     // Thirtythree ^
 
     *new { arg context, doneCallback;
@@ -33,18 +33,6 @@ Engine_Thirtythree : CroneEngine {
                 // vars
                 var snd,pos,timestretchPos,timestretchWindow,env;
 
-                // (
-                // {
-                //     EnvGen.ar(
-                //         Env.new(
-                //             levels: [0,1,1,0], 
-                //             times: [0,0.5,0.05],
-                //             curve:\sine,
-                //         ), 
-                //         gate: 1
-                //     );
-                // }.plot(duration: 1);
-                // )
                 env=EnvGen.ar(
                     Env.new(
                         levels: [0,1,1,0], 
@@ -119,20 +107,20 @@ Engine_Thirtythree : CroneEngine {
                     level:amp,
                 );
 
-                // send position message for player 1 only
-                if (i<2,{
-                    SendTrig.kr(Impulse.kr(30),amp,A2K.kr(((1-timestretch)*pos)+(timestretch*timestretchPos))/BufFrames.kr(bufnum)/BufRateScale.kr(bufnum));                        
-                },{});
+                // // send position message for player 1 only
+                // if (i<2,{
+                //     SendTrig.kr(Impulse.kr(30),amp,A2K.kr(((1-timestretch)*pos)+(timestretch*timestretchPos))/BufFrames.kr(bufnum)/BufRateScale.kr(bufnum));                        
+                // },{});
 
                 Out.ar(0,snd)
             }).add; 
         });
 
-        osfunThirtyThree = OSCFunc({ 
-            arg msg, time; 
-                // [time, msg].postln;
-            NetAddr("127.0.0.1", 10111).sendMsg("tt_pos",msg[2],msg[3]);  
-        },'/tr', context.server.addr);
+        // osfunThirtyThree = OSCFunc({ 
+        //     arg msg, time; 
+        //         // [time, msg].postln;
+        //     NetAddr("127.0.0.1", 10111).sendMsg("tt_pos",msg[2],msg[3]);  
+        // },'/tr', context.server.addr);
 
         playerThirtythree = Array.fill(15,{arg i;
             Synth("playerThirtythree"++i, target:context.xg);
@@ -161,7 +149,16 @@ Engine_Thirtythree : CroneEngine {
                 \hpf,msg[9],
                 \hpf_resonance,msg[10],
                 \hpflag,0,
-                \use_envelope,1
+                \use_envelope,1,
+                // turn off effects
+                \fx_strobe,0,
+                \fx_scratch,0,
+                \fx_reverse,0,
+                \fx_octaveup,0,
+                \fx_autopan,0,
+                \fx_octavedown,0,
+                \bitcrush,0,
+                \timestretch,0,
             );
         });
 
@@ -310,7 +307,7 @@ Engine_Thirtythree : CroneEngine {
         // Thirtythree Specific v0.0.1
         (0..64).do({arg i; sampleBuffThirtythree[i].free});
         (0..15).do({arg i; playerThirtythree[i].free});
-        osfunThirtyThree.free;
+        // osfunThirtyThree.free;
         // ^ Thirtythree specific
     }
 }
