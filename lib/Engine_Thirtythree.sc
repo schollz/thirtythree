@@ -64,41 +64,40 @@ Engine_Thirtythree : CroneEngine {
                     end:((sampleEnd*(rate>0))+(sampleStart*(rate<0)))*BufFrames.kr(bufnum),
                     resetPos:samplePos*BufFrames.kr(bufnum)
                 );
-                timestretchPos = Phasor.ar(
-                    trig:t_trigtime,
-                    rate:BufRateScale.kr(bufnum)*rate/timestretchSlowDown,
-                    start:((sampleStart*(rate>0))+(sampleEnd*(rate<0)))*BufFrames.kr(bufnum),
-                    end:((sampleEnd*(rate>0))+(sampleStart*(rate<0)))*BufFrames.kr(bufnum),
-                    resetPos:pos
-                );
-                timestretchWindow = Phasor.ar(
-                    trig:t_trig,
-                    rate:BufRateScale.kr(bufnum)*rate,
-                    start:timestretchPos,
-                    end:timestretchPos+((60/bpm_target/timestretchWindowBeats)/BufDur.kr(bufnum)*BufFrames.kr(bufnum)),
-                    resetPos:timestretchPos,
-                );
+                // timestretchPos = Phasor.ar(
+                //     trig:t_trigtime,
+                //     rate:BufRateScale.kr(bufnum)*rate/timestretchSlowDown,
+                //     start:((sampleStart*(rate>0))+(sampleEnd*(rate<0)))*BufFrames.kr(bufnum),
+                //     end:((sampleEnd*(rate>0))+(sampleStart*(rate<0)))*BufFrames.kr(bufnum),
+                //     resetPos:pos
+                // );
+                // timestretchWindow = Phasor.ar(
+                //     trig:t_trig,
+                //     rate:BufRateScale.kr(bufnum)*rate,
+                //     start:timestretchPos,
+                //     end:timestretchPos+((60/bpm_target/timestretchWindowBeats)/BufDur.kr(bufnum)*BufFrames.kr(bufnum)),
+                //     resetPos:timestretchPos,
+                // );
 
                 snd=BufRd.ar(2,bufnum,pos,
                     loop:0,
                     interpolation:1
                 );
-                timestretch=Lag.kr(timestretch,0.2);
-                snd=((1-timestretch)*snd)+(timestretch*BufRd.ar(2,bufnum,
-                    timestretchWindow,
-                    loop:0,
-                    interpolation:1
-                ));
+                // timestretch=Lag.kr(timestretch,0.2);
+                // snd=((1-timestretch)*snd)+(timestretch*BufRd.ar(2,bufnum,
+                //     timestretchWindow,
+                //     loop:0,
+                //     interpolation:1
+                // ));
 
                 snd = RLPF.ar(snd,Lag.kr(lpf,lpflag),lpf_resonance);
                 snd = RHPF.ar(snd,Lag.kr(hpf,hpflag),hpf_resonance);
 
                 // fx_strobe
-                snd = ((fx_strobe<1)*snd)+((fx_strobe>0)*snd*LFPulse.ar(60/bpm_target*16));
+                snd = ((fx_strobe<1)*snd)+((fx_strobe>0)*snd*LFPulse.ar(bpm_target/60*2));
 
                 // bitcrush
-                bitcrush = VarLag.kr(bitcrush,0.1,warp:\cubed);
-                snd = (snd*(1-bitcrush))+(bitcrush*Decimator.ar(snd,VarLag.kr(bitcrush_rate,1,warp:\cubed),VarLag.kr(bitcrush_bits,1,warp:\cubed)));
+                snd = (snd*(1-bitcrush))+(bitcrush*Decimator.ar(snd,bitcrush_rate,bitcrush_bits));
 
                 // manual panning
                 amp = Lag.kr(amp,ampLag)*(((use_envelope>0)*env)+(use_envelope<1));
