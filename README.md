@@ -2,6 +2,10 @@
 
 A po-33 clone for norns+grid
 
+## motivation
+
+I love the po-33 and for a long time I've wanted something similar for norns (e.g. a micro-sampler/splicer + sequencer). I tried making something similar in [abacus](https://llllllll.co/t/abacus) but I didn't have a grid so the ux was very limited and ultimately gave me a bad flow. after making [amen](https://llllllll.co/t/amen) which is a great looper+fx for me, I realized that a lot of my work could be re-used to make a splicer+sequencer. instead of designing a ux from scratch like I did for abacus, I decided to just copy the ux from the po-33. I don't like copying when it comes to art - of which the po-33 might belong. but in this case I feel the po-33 is more instrument than art and I feel warranted to do the copy to have total and complete skill transferability between instruments.
+
 ### differences between thirtythree and the po-33
 
 - thirtythree is based in the norns which has higher sound quality (48khz, 24bit, stereo samples) if thats something you want.
@@ -9,6 +13,7 @@ A po-33 clone for norns+grid
 - instead of recording, you can load a file into any bank (in `PARAMS` menu).
 - you can have multiple backups and make them quickly (<1 sec), change backup # in the `PARAMS` menu.
 - you have two choices of layouts - the classic 5x5 type layout and a compressed 4x6 layout that lets you stamp more of the thirtythree apps across the grid.
+- you can change up to four operators on a grid, and there is ~12 note polyphony shared across all of the operators.
 
 ## po-33 basics
 
@@ -55,9 +60,7 @@ A po-33 clone for norns+grid
 15. reverse
 16. none
 
-## expect bugs
+## known limitations
 
-here are some that I know will be bugs:
-
-- thirtythree doesn't store audio data in the backups - it only stores a reference to the file. (in future I want to have an option to store everything). so if you delete or move an audio file that is part of a backup, expect to see a bug. 
-- looping fx don't stack with anything.
+- backups will not restore if you move/delete the original audio. right now backups only store a reference to the audio file and not the actual audio data.
+- looping fx don't stack.
