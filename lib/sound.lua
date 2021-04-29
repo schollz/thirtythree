@@ -141,6 +141,12 @@ function Sound:play(override)
     if mode_debug then
       print("playing "..self.wav.name.." on voice "..voice.." at pos ("..s..","..e..")")
     end
+    local fx_stutter=override.fx[FX_STUTTER3]==nil and 0 or 1
+    local fx_stutter_beats=16
+    if fx_stutter==0 then
+	fx_stutter=override.fx[FX_STUTTER4]==nil and 0 or 1
+	fx_stutter_beats=24
+    end
     engine.tt_play(
       voice,-- which sampler player
       self.wav.sc_index,-- buffer number
@@ -153,7 +159,8 @@ function Sound:play(override)
       hpf,
       hpf_resonance,
       override.fx[FX_BITCRUSH]==nil and 0 or 1,
-      override.fx[FX_STROBE]==nil and 0 or 1,
+      fx_stutter,
+      fx_stutter_beats,
       override.fx[FX_AUTOPAN]==nil and 0 or 1,
       override.fx[FX_REVERSE]==nil and 0 or 1,
       override.fx[FX_OCTAVEUP]==nil and 0 or 1,
