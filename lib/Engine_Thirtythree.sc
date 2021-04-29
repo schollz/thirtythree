@@ -90,7 +90,7 @@ Engine_Thirtythree : CroneEngine {
             snd = RHPF.ar(snd,Lag.kr(hpf,hpflag),hpf_resonance);
 
             // fx_strobe
-            // snd = ((fx_strobe<1)*snd)+((fx_strobe>0)*snd*LFPulse.ar(bpm_target/60*2));
+            snd = ((fx_strobe<1)*snd)+((fx_strobe>0)*snd*(SinOsc.ar(bpm_target/60*4).range(0,1)));
 
             // manual panning
             amp = Lag.kr(amp,ampLag)*(((use_envelope>0)*env)+(use_envelope<1));
@@ -116,7 +116,7 @@ Engine_Thirtythree : CroneEngine {
             sampleBuffThirtythree[msg[1]-1] = Buffer.read(context.server,msg[2]);
         });
 
-        this.addCommand("tt_play","iifffffffff", { arg msg;
+        this.addCommand("tt_play","iiffffffffff", { arg msg;
             // lua is sending 1-index
             playerThirtythree[msg[1]-1].set(
                 \t_trig,1,
@@ -134,13 +134,13 @@ Engine_Thirtythree : CroneEngine {
                 \hpflag,0,
                 \use_envelope,1,
                 // turn off effects
-                \fx_strobe,0,
+                \fxSendBitcrush,msg[11],
+                \fx_strobe,msg[12],
                 \fx_scratch,0,
                 \fx_reverse,0,
                 \fx_octaveup,0,
                 \fx_autopan,0,
                 \fx_octavedown,0,
-                \fxSendBitcrush,msg[11],
             );
         });
 

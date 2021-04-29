@@ -113,7 +113,7 @@ function Sound:play(override)
   if override.fx == nil then 
     override.fx={}
   end
-  
+
   if is_lpf then
     hpf_resonance=1
     hpf=20
@@ -151,7 +151,8 @@ function Sound:play(override)
     lpf_resonance,
     hpf,
     hpf_resonance,
-    override.fx[FX_BITCRUSH]==nil and 0 or 1
+    override.fx[FX_BITCRUSH]==nil and 0 or 1,
+    override.fx[FX_STROBE]==nil and 0 or 1
   )
   return voice
 end
