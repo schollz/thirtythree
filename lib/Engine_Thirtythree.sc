@@ -74,7 +74,7 @@ Engine_Thirtythree : CroneEngine {
             rate = Lag.kr(rate,rateSlew);
 
             // scratch effect
-            rate = (fx_scratch<1*rate) + (fx_scratch>0*LFTri.kr(bpm_target/60*2));
+            rate = (fx_scratch<1*rate) + (fx_scratch>0*LFTri.kr(bpm_target/60*6));
 
             pos = Phasor.ar(
                 trig:t_trig,

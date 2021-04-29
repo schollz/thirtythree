@@ -28,6 +28,18 @@ function Ngen:new(o)
     self:debug("FX_LOOP on voice "..voice)
     engine.tt_fx_loop(voice,on and 1 or 0,1)
   end
+  o.engine[FX_STUTTER]=function(voice,on)
+    local beats = 0.25 
+    if on then
+      while beats*clock.get_beat_sec() > 0.15 do
+        beats = beats / 2
+      end
+      self:debug("FX_STUTTER on voice "..voice.." for "..beats.." beats")
+    else
+      self:debug("FX_STUTTER off")
+    end
+    engine.tt_fx_loop(voice,on and 1 or 0,beats)
+  end
   o.engine[FX_REVERSE]=function(voice,on)
     self:debug("FX_REVERSE on voice "..voice)
     engine.tt_fx_reverse(voice,on and 1 or 0)

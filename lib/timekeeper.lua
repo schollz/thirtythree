@@ -32,7 +32,7 @@ function Timekeeper:init()
     action=function(t)
       self.metronome_tick=not self.metronome_tick      
     end,
-    division=1/8
+    division=1/2
   }
 
   self.lattice:start()

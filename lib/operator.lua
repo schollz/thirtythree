@@ -868,7 +868,11 @@ function Operator:buttons_register()
           self:debug("switching pattern to "..b)
           self.pattern_chain={b}
           self.pattern_chain_index=1
-          self.cur_ptn_id=b
+          if self.mode_play then
+            self.pattern_chain_index=1000
+          else
+            self.cur_ptn_id=b
+          end
           self.mode_switchpattern=false
         else
           -- add to the chain
@@ -881,6 +885,7 @@ function Operator:buttons_register()
       elseif self.buttons[B_SOUND].pressed then
         -- change sound
         self.cur_snd_id=b
+        sel_adj=ADJ_TRIM
       elseif self.buttons[B_FX].pressed and self.mode_play then
         -- add to fx lock
         -- is handled in the pattern update
