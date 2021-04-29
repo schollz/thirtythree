@@ -29,10 +29,10 @@ function Ngen:new(o)
     engine.tt_fx_loop(voice,on and 1 or 0,1)
   end
   o.engine[FX_STUTTER]=function(voice,on)
-    local beats = 0.25 
+    local beats=0.25
     if on then
-      while beats*clock.get_beat_sec() > 0.15 do
-        beats = beats / 2
+      while beats*clock.get_beat_sec()>0.15 do
+        beats=beats/2
       end
       self:debug("FX_STUTTER on voice "..voice.." for "..beats.." beats")
     else

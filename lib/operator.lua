@@ -431,10 +431,10 @@ function Operator:pattern_step()
         if FX_LOOPING[fx_id]==nil then
           fx_to_play[self.cur_snd_id][fx_id]=true
         end
-        if self.mode_write then 
+        if self.mode_write then
           -- save this effect
           self.pattern[self.cur_ptn_id][self.cur_ptn_step].flock[self.cur_snd_id][fx_id]=true
-          if fx_id==FX_NONE then 
+          if fx_id==FX_NONE then
             for j=1,16 do
               self.pattern[self.cur_ptn_id][self.cur_ptn_step].flock[self.cur_snd_id][j]=false
             end
@@ -451,11 +451,11 @@ function Operator:pattern_step()
     self:debug("pattern_step: playing sound "..snd_id.." sample "..snd.id)
 
     -- check if it is already doing a looping effect
-    local is_looping = false
+    local is_looping=false
     for fx_id,fx_val in pairs(self.sound_fx_current[snd_id]) do
       if FX_LOOPING[fx_id]~=nil and fx_val then
-        is_looping = true
-        break 
+        is_looping=true
+        break
       end
     end
 
@@ -478,16 +478,16 @@ function Operator:pattern_step()
         override[k]=v
       end
       override.fx=fx_to_play[snd_id]
-      for fx_id,fx_apply in pairs(override.fx) do 
+      for fx_id,fx_apply in pairs(override.fx) do
         -- prevent it from being triggered again after sounding
         self.sound_fx_current[snd_id][fx_id]=fx_apply
       end
       snd_played=snd
-      if is_looping then 
+      if is_looping then
         -- pass override voice so that it uses sound update
         override.voice=voices:get_voice(self.id,snd_id)
-        if override.voice ~= nil then
-          voices:lock(voice,override.voice)        
+        if override.voice~=nil then
+          voices:lock(voice,override.voice)
         end
       end
       snd:play(override)
@@ -537,16 +537,16 @@ function Operator:pattern_step()
 
       -- initiate lock voice
       local lock_voice=false
-      
+
       -- turn on/off all effects
       for fx_id,fx_apply in pairs(fx_to_apply) do
 
         -- only update if its new
-        if fx_apply==self.sound_fx_current[snd_id][fx_id] then 
-          goto continue 
+        if fx_apply==self.sound_fx_current[snd_id][fx_id] then
+          goto continue
         end
 
-        -- update current 
+        -- update current
         self.sound_fx_current[snd_id][fx_id]=fx_apply
 
         -- make sure to keep voice locked if doing a looping fx
@@ -596,7 +596,7 @@ function Operator:pattern_reset()
   -- check other operators, if they are playing, then reset
   -- to their current settings
   for i,op in ipairs(ops) do
-    if op.mode_play and i~=self.id then 
+    if op.mode_play and i~=self.id then
       self.cur_ptn_step=op.cur_ptn_step
       self.cur_ptn_sync_step=op.cur_ptn_sync_step
     end
@@ -787,10 +787,10 @@ function Operator:buttons_register()
     else
       self:debug("on_press: play stopped")
       -- turn off all the sounds
-      snd_list = self:pattern_sound_list(self.cur_ptn_id)
-      for snd_id,_ in pairs(snd_list) do 
+      snd_list=self:pattern_sound_list(self.cur_ptn_id)
+      for snd_id,_ in pairs(snd_list) do
         local voice=voices:get_voice(self.id,snd_id)
-        if voice ~= nil then 
+        if voice~=nil then
           engine.tt_amp(voice,0,1)
         end
       end
@@ -967,9 +967,9 @@ function Operator:buttons_register()
           -- has sound
           return 4
         end
-      elseif self.buttons[B_RECORD].pressed then 
-        if self.sound[b][1].loaded then 
-          return 10 
+      elseif self.buttons[B_RECORD].pressed then
+        if self.sound[b][1].loaded then
+          return 10
         end
       elseif self.buttons[B_BPM].pressed then
         local val=util.linlin(0,2,1,16,self.amp_global)

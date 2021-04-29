@@ -4,7 +4,6 @@ format: lua-format.py
 	python3 lua-format.py lib/graphics.lua
 	python3 lua-format.py lib/dev.lua
 	python3 lua-format.py lib/graphics.lua
-	python3 lua-format.py lib/sound.lua
 	python3 lua-format.py lib/operator.lua
 	python3 lua-format.py lib/renderer.lua
 	python3 lua-format.py lib/gridd.lua

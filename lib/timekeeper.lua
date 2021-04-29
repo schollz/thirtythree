@@ -30,7 +30,7 @@ function Timekeeper:init()
   end
   self.lattice:new_pattern{
     action=function(t)
-      self.metronome_tick=not self.metronome_tick      
+      self.metronome_tick=not self.metronome_tick
     end,
     division=1/8
   }

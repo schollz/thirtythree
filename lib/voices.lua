@@ -44,9 +44,9 @@ end
 function Voices:get_voice(op_id,snd_id)
   snd_id=16*(op_id-1)+snd_id
   -- find the newest voice
-  local newest_voice = nil
-  local current_time=self:time() 
-  local newest_time = 100000000
+  local newest_voice=nil
+  local current_time=self:time()
+  local newest_time=100000000
   for i=3,self.max do
     if self.played[i].snd_id==snd_id and current_time-self.played[i].last_played<newest_time then
       newest_time=current_time-self.played[i].last_played
