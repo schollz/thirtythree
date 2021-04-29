@@ -24,9 +24,21 @@ function Ngen:new(o)
   o.engine["hpf"]=function(voice,hpf,resonance)
     engine.tt_hpf(voice,hpf,0.05,resonance)
   end
-  o.engine[FX_LOOP]=function(voice,on)
-    self:debug("FX_LOOP on voice "..voice)
-    engine.tt_fx_loop(voice,on and 1 or 0,1)
+  o.engine[FX_LOOP16]=function(voice,on)
+    self:debug("FX_LOOP16 on voice "..voice)
+    engine.tt_fx_loop(voice,on and 1 or 0,1/16)
+  end
+  o.engine[FX_LOOP12]=function(voice,on)
+    self:debug("FX_LOOP12 on voice "..voice)
+    engine.tt_fx_loop(voice,on and 1 or 0,1/12)
+  end
+  o.engine[FX_LOOPSHORT]=function(voice,on)
+    self:debug("FX_LOOPSHORT on voice "..voice)
+    engine.tt_fx_loop(voice,on and 1 or 0,1/32)
+  end
+  o.engine[FX_LOOPSHORTER]=function(voice,on)
+    self:debug("FX_LOOPSHORTER on voice "..voice)
+    engine.tt_fx_loop(voice,on and 1 or 0,1/48)
   end
   o.engine[FX_STUTTER]=function(voice,on)
     local beats=0.25
@@ -68,9 +80,13 @@ function Ngen:new(o)
     self:debug("FX_SCRATCH")
     engine.tt_fx_scratch(voice,on and 1 or 0)
   end
-  o.engine[FX_STROBE]=function(voice,on)
-    self:debug("FX_STROBE")
-    engine.tt_fx_strobe(voice,on and 1 or 0)
+  o.engine[FX_STUTTER4]=function(voice,on)
+    self:debug("FX_STUTTER4")
+    engine.tt_fx_stutter(voice,on and 1 or 0,1/8)
+  end
+  o.engine[FX_STUTTER3]=function(voice,on)
+    self:debug("FX_STUTTER3")
+    engine.tt_fx_stutter(voice,on and 1 or 0,1/12)
   end
   -- o.engine[FX_STUTTER]=function(voice,on,snd)
   --   if not on then
