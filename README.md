@@ -5,7 +5,7 @@ A po-33 clone for norns+grid
 ### differences between thirtythree and the po-33
 
 - thirtythree is based in the norns which has higher sound quality (48khz, 24bit, stereo samples) if thats something you want.
-- thirtythree has an effect channel for each sound. two effects were replaced. effects may act differently (especially the loopers).
+- thirtythree effects are *not global* and only apply to the current sound. each sound has its own effect parameter locks too. also there are two new effects (replacing unisons).
 - instead of recording, you can load a file into any bank (in `PARAMS` menu).
 - you can have multiple backups and make them quickly (<1 sec), change backup # in the `PARAMS` menu.
 - you have two choices of layouts - the classic 5x5 type layout and a compressed 4x6 layout that lets you stamp more of the thirtythree apps across the grid.
