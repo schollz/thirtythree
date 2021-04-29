@@ -8,6 +8,7 @@ function Timekeeper:new(o)
 end
 
 function Timekeeper:init()
+  self.metronome_val=0
   self.metronome_tick=false
   self.bpm_current=0
   self.lattice=lattice:new({
@@ -21,7 +22,14 @@ function Timekeeper:init()
       action=function(t)
         ops[i]:pattern_step()
         if sel_operator==i then
-          self.metronome_tick=not self.metronome_tick
+          if ops[i].mode_play and ops[i].cur_ptn_step==1 then 
+            self.metronome_val=0
+          else
+            self.metronome_val = self.metronome_val+1
+          end
+          if self.metronome_val%2==0 then 
+            self.metronome_tick=not self.metronome_tick
+          end            
           graphics:update()
         end
       end,

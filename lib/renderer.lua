@@ -87,7 +87,7 @@ function Renderer:zoom(filename,i,zoom)
   local window={self.rendered[filename].window[1],self.rendered[filename].window[2]}
   local p=self.rendered[filename].loop_points[i]
   local di=math.max(p-window[1],window[2]-p)
-  if zoom>=0 and self.rendered[filename].zoom<15 then
+  if zoom>=0 and self.rendered[filename].zoom<16 then
     print("Renderer:zoom zooming in")
     self.rendered[filename].zoom=self.rendered[filename].zoom+1
     window={p-di/1.5,p+di/1.5}
