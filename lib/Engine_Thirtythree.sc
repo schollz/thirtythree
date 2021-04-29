@@ -40,16 +40,17 @@ Engine_Thirtythree : CroneEngine {
         });
 
         SynthDef("playerThirtythree",{ 
-            arg bufnum, amp=0, ampLag=0,t_trig=0,t_trigtime=0,fadeout=0.05,
+            arg bufnum, amp=0, ampLag=0, t_trig=0,fadeout=0.05,
             sampleStart=0,sampleEnd=1,samplePos=0,
             rate=0,rateSlew=0,bpm_sample=1,bpm_target=1,
             fxSendBitcrush=0,fxOutBitcrush,
+            fxloop_trig,fxloop_size=1,
             fx_scratch=0,fx_strobe=0,vinyl=0,loop=0,
             pan=0,lpf=20000,lpflag=0,hpf=10,hpflag=0,lpf_resonance=1,hpf_resonance=1,
             use_envelope=1,fx_reverse=0,fx_autopan=0,fx_octaveup=0,fx_octavedown=0;
 
             // vars
-            var snd,pos,timestretchPos,timestretchWindow,env;
+            var snd,pos,pos2,sampleStart2,sampleEnd2,env;
 
             env=EnvGen.ar(
                 Env.new(
@@ -82,7 +83,19 @@ Engine_Thirtythree : CroneEngine {
                 end:((sampleEnd*(rate>0))+(sampleStart*(rate<0)))*BufFrames.kr(bufnum),
                 resetPos:samplePos*BufFrames.kr(bufnum)
             );
-            snd=BufRd.ar(2,bufnum,pos,
+
+            sampleStart2 = Gate.kr(pos,1-fxloop_trig);
+            sampleEnd2 = (sampleStart2+ArrayMin.kr([60/bpm_target/BufDur.kr(bufnum)*BufFrames.kr(bufnum)*fxloop_size,BufFrames.kr(bufnum)]).at(0));
+            pos2=Phasor.ar(
+                trig:t_trig,
+                rate:BufRateScale.kr(bufnum)*rate,
+                start:((sampleStart2*(rate>0))+(sampleEnd2*(rate<0))),
+                end:((sampleEnd2*(rate>0))+(sampleStart2*(rate<0))),
+                resetPos:sampleStart2
+            );
+
+            snd=BufRd.ar(2,bufnum,
+                (pos*(1-fxloop_trig))+(pos2*fxloop_trig),
                 loop:0,
                 interpolation:1
             );
@@ -122,6 +135,7 @@ Engine_Thirtythree : CroneEngine {
                 \t_trig,1,
                 \bufnum,sampleBuffThirtythree[msg[2]-1],
                 \amp,msg[3],
+                \ampLag,0,
                 \rate,msg[4],
                 \rateSlew,0,
                 \samplePos,msg[5],
@@ -193,13 +207,12 @@ Engine_Thirtythree : CroneEngine {
             );
         });
 
-        this.addCommand("tt_fx_loop","iffff", { arg msg;
+        this.addCommand("tt_fx_loop","iff", { arg msg;
             // lua is sending 1-index
             playerThirtythree[msg[1]-1].set(
-                \samplePos,msg[2],
-                \sampleStart,msg[3],
-                \sampleEnd,msg[4],
-                \use_envelope,msg[5], // effectively used to turn on and off
+                \fxloop_trig,msg[2],
+                \use_envelope,1-msg[2],
+                \fxloop_size,msg[3],
             );
         });
 

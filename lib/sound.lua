@@ -130,15 +130,13 @@ function Sound:play(override)
   end
   if mode_debug then
     print("playing "..self.wav.name.." on voice "..voice.." at pos ("..s..","..e..")")
-    print(voice,-- which sampler player
-      self.wav.sc_index,-- buffer number
-      amp,
-      self.pitch_base+self.pitch,
-      pitch.transpose_rate(self.pitch_base+self.pitch),
-      s,
-    e)
-    print("fx")
-    print(override.fx[FX_OCTAVE_UP]==nil and 0 or 1)
+    -- print(voice,-- which sampler player
+    --   self.wav.sc_index,-- buffer number
+    --   amp,
+    --   self.pitch_base+self.pitch,
+    --   pitch.transpose_rate(self.pitch_base+self.pitch),
+    --   s,
+    -- e)
   end
   engine.tt_play(
     voice,-- which sampler player

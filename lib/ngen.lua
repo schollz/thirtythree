@@ -24,6 +24,10 @@ function Ngen:new(o)
   o.engine["hpf"]=function(voice,hpf,resonance)
     engine.tt_hpf(voice,hpf,0.05,resonance)
   end
+  o.engine[FX_LOOP]=function(voice,on)
+    self:debug("FX_LOOP on voice "..voice)
+    engine.tt_fx_loop(voice,on and 1 or 0,1)
+  end
   o.engine[FX_REVERSE]=function(voice,on)
     self:debug("FX_REVERSE on voice "..voice)
     engine.tt_fx_reverse(voice,on and 1 or 0)

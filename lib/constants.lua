@@ -44,6 +44,13 @@ FX_RETRIGGER=14
 FX_REVERSE=15
 FX_NONE=16
 
+-- looping fx are special
+FX_LOOPING={}
+FX_LOOPING[FX_LOOP]=true
+FX_LOOPING[FX_SCRATCH]=true
+FX_LOOPING[FX_STUTTER]=true
+
+
 PO33_LAYOUT={}
 -- classic ~5x5
 PO33_LAYOUT[1]={

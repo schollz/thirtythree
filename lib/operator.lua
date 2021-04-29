@@ -428,7 +428,9 @@ function Operator:pattern_step()
     for i=B_BUTTON_FIRST,B_BUTTON_LAST do
       local fx_id=i-B_BUTTON_FIRST+1
       if self.buttons[i].pressed then
-        fx_to_play[self.cur_snd_id][fx_id]=true
+        if FX_LOOPING[fx_id]==nil then
+          fx_to_play[self.cur_snd_id][fx_id]=true
+        end
         if self.mode_write then 
           -- save this effect
           self.pattern[self.cur_ptn_id][self.cur_ptn_step].flock[self.cur_snd_id][fx_id]=true
@@ -454,7 +456,7 @@ function Operator:pattern_step()
     if not snd.loaded then
       self:debug("not loaded!")
     end
-    if snd.loaded and not self.sound_prevent[snd_id] then
+    if snd.loaded and (not self.sound_prevent[snd_id]) then
       -- override with parameter locks
       local override={}
       for k,v in pairs(self.pattern[self.cur_ptn_id][self.cur_ptn_step].plock[snd_id].modified) do
@@ -509,7 +511,8 @@ function Operator:pattern_step()
           end
         end
       end
-      -- apply fx ot the voice
+
+      -- apply fx to the voice
 
       -- initiate lock voice
       local lock_voice=false
@@ -518,13 +521,18 @@ function Operator:pattern_step()
       for fx_id,fx_apply in pairs(fx_to_apply) do
 
         -- only update if its new
-        if fx_apply==self.sound_fx_current[snd_id][fx_id] then goto continue end
+        if fx_apply==self.sound_fx_current[snd_id][fx_id] then 
+          if FX_LOOPING[fx_id]~=nil and fx_apply and self.cur_ptn_step>1 then 
+            self.sound_prevent[snd_id]=true -- continue preventing
+          end
+          goto continue 
+        end
 
         -- update current 
         self.sound_fx_current[snd_id][fx_id]=fx_apply
 
         -- do a sound prevention for specific effects
-        if (fx_id==FX_LOOP or fx_id==FX_STUTTER) and fx_apply then
+        if FX_LOOPING[fx_id]~=nil and fx_apply then
           lock_voice=true
           self.sound_prevent[snd_id]=true
         end
@@ -750,6 +758,14 @@ function Operator:buttons_register()
       self:pattern_reset()
     else
       self:debug("on_press: play stopped")
+      -- turn off all the sounds
+      snd_list = self:pattern_sound_list(self.cur_ptn_id)
+      for snd_id,_ in pairs(snd_list) do 
+        local voice=voices:get_voice(self.id,snd_id)
+        if voice ~= nil then 
+          engine.tt_amp(voice,0,1)
+        end
+      end
     end
     self.mode_play=not self.mode_play
   end
