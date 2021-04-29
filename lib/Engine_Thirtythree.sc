@@ -55,7 +55,7 @@ Engine_Thirtythree : CroneEngine {
             env=EnvGen.ar(
                 Env.new(
                     levels: [0,1,1,0], 
-                    times: [0.01,(sampleEnd-sampleStart)*(BufDur.kr(bufnum)/(BufRateScale.kr(bufnum)*rate))-fadeout-0.01-0.01,fadeout],
+                    times: [0.01,(sampleEnd-sampleStart)*(BufDur.kr(bufnum))-fadeout-0.01-0.01,fadeout],
                     curve:\sine,
                 ), 
                 gate: t_trig,
@@ -112,7 +112,7 @@ Engine_Thirtythree : CroneEngine {
                 level:amp,
             );
 
-            Out.ar(fxOutBitcrush,snd*fxSendBitcrush);
+            // Out.ar(fxOutBitcrush,snd*fxSendBitcrush);
             Out.ar(0,snd*(1-fxSendBitcrush))
         }).add; 
 
@@ -156,6 +156,7 @@ Engine_Thirtythree : CroneEngine {
                 \fx_octaveup,msg[15],
                 \fx_octavedown,msg[16],
                 \fx_scratch,0,
+                \fxloop_trig,0,
             );
         });
 

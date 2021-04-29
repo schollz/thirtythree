@@ -766,6 +766,8 @@ function Operator:buttons_register()
           engine.tt_amp(voice,0,1)
         end
       end
+      engine.tt_amp(1,0,1)
+      engine.tt_amp(2,0,1)
     end
     self.mode_play=not self.mode_play
   end
