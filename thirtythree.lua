@@ -72,8 +72,10 @@ function startup()
   check_and_install_aubioonset()
 
   -- TODO: initialize operators
-  ops[1]=operator:new()
+  ops[1]=operator:new({id=1})
   ops[1]:init()
+  ops[2]=operator:new({id=2})
+  ops[2]:init()
 
   -- after initializing operators, intialize time keeper
   timekeeper:init()
