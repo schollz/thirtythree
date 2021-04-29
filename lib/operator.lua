@@ -478,10 +478,17 @@ function Operator:pattern_step()
         override[k]=v
       end
       override.fx=fx_to_play[snd_id]
+      for fx_id,fx_apply in pairs(override.fx) do 
+        -- prevent it from being triggered again after sounding
+        self.sound_fx_current[snd_id][fx_id]=fx_apply
+      end
       snd_played=snd
       if is_looping then 
         -- pass override voice so that it uses sound update
         override.voice=voices:get_voice(self.id,snd_id)
+        if override.voice ~= nil then
+          voices:lock(voice,override.voice)        
+        end
       end
       snd:play(override)
       snds_played[snd_id]=true
@@ -542,13 +549,12 @@ function Operator:pattern_step()
         -- update current 
         self.sound_fx_current[snd_id][fx_id]=fx_apply
 
-        -- do a sound prevention for specific effects
+        -- make sure to keep voice locked if doing a looping fx
         if FX_LOOPING[fx_id]~=nil and fx_apply then
           lock_voice=true
-          self.sound_prevent[snd_id]=true
         end
 
-        -- send the sound played, in case it is needed for the fx (e.g. for the looping)
+        -- apply the effect
         if fx_id==FX_NONE then
           nofx=true
         elseif fx_id==FX_RETRIGGER then
@@ -572,6 +578,8 @@ function Operator:pattern_step()
         end
         ::continue::
       end
+
+      -- finished with effects
       -- lock voice so it doesn't get stolen while effect is going
       -- (or unlock it if the effect has disappeared)
       if not nofx then
