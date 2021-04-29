@@ -449,14 +449,24 @@ function Operator:pattern_step()
   local snds_played={}
   for snd_id,snd in pairs(self.pattern[self.cur_ptn_id][self.cur_ptn_step].snd) do
     self:debug("pattern_step: playing sound "..snd_id.." sample "..snd.id)
-    -- TODO: check if should skip sound (i.e. if using loop effect or stutter effect)
+
+    -- check if it is already doing a looping effect
+    local is_looping = false
+    for fx_id,fx_val in pairs(self.sound_fx_current[snd_id]) do
+      if FX_LOOPING[fx_id]~=nil and fx_val then
+        is_looping = true
+        break 
+      end
+    end
+
     if self.sound_prevent[snd_id]==true then
       self:debug("sound prevented!")
     end
     if not snd.loaded then
       self:debug("not loaded!")
     end
-    if snd.loaded and (not self.sound_prevent[snd_id]) then
+    -- if snd.loaded and (not self.sound_prevent[snd_id]) then
+    if snd.loaded then
       -- override with parameter locks
       local override={}
       for k,v in pairs(self.pattern[self.cur_ptn_id][self.cur_ptn_step].plock[snd_id].modified) do
@@ -469,6 +479,10 @@ function Operator:pattern_step()
       end
       override.fx=fx_to_play[snd_id]
       snd_played=snd
+      if is_looping then 
+        -- pass override voice so that it uses sound update
+        override.voice=voices:get_voice(self.id,snd_id)
+      end
       snd:play(override)
       snds_played[snd_id]=true
       if self.cur_snd_id==snd_id and (not self.buttons[B_WRITE].pressed) then
@@ -522,9 +536,6 @@ function Operator:pattern_step()
 
         -- only update if its new
         if fx_apply==self.sound_fx_current[snd_id][fx_id] then 
-          if FX_LOOPING[fx_id]~=nil and fx_apply and self.cur_ptn_step>1 then 
-            self.sound_prevent[snd_id]=true -- continue preventing
-          end
           goto continue 
         end
 

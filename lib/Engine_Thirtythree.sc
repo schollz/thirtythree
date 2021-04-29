@@ -162,17 +162,17 @@ Engine_Thirtythree : CroneEngine {
             );
         });
 
-	this.addCommand("tt_update","ifff", { arg msg;
+	   this.addCommand("tt_update","iff", { arg msg;
             // lua is sending 1-index
             playerThirtythree[msg[1]-1].set(
                 \t_trig,1,
-		\env_trig,1,
+		        \env_trig,1,
                 \samplePos,msg[2],
-                \sampleStart,msg[3],
-                \sampleEnd,msg[4],
+                \sampleStart,msg[2],
+                \sampleEnd,msg[3],
             );
 	
-	});
+    	});
 
         this.addCommand("tt_amp","iff", { arg msg;
             // lua is sending 1-index

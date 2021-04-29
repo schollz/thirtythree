@@ -123,39 +123,43 @@ function Sound:play(override)
   end
 
   -- get new voice
+  do_update=false
   if voice==nil then
     voice=voices:new_voice(self.op_id,self.snd_id,(e-s)*self.wav.duration)
   elseif voice==1 then -- main voice
     voice=voices:get_main()
+  else
+    -- entered previous voice, just do update
+    do_update=true
   end
-  if mode_debug then
-    print("playing "..self.wav.name.." on voice "..voice.." at pos ("..s..","..e..")")
-    -- print(voice,-- which sampler player
-    --   self.wav.sc_index,-- buffer number
-    --   amp,
-    --   self.pitch_base+self.pitch,
-    --   pitch.transpose_rate(self.pitch_base+self.pitch),
-    --   s,
-    -- e)
+  if do_update then
+    if mode_debug then
+      print("updating "..self.wav.name.." on voice "..voice.." at pos ("..s..","..e..")")
+    end
+    engine.tt_update(voice,s,e)
+  else
+    if mode_debug then
+      print("playing "..self.wav.name.." on voice "..voice.." at pos ("..s..","..e..")")
+    end
+    engine.tt_play(
+      voice,-- which sampler player
+      self.wav.sc_index,-- buffer number
+      amp*ops[self.op_id].amp_global,
+      pitch.transpose_rate(self.pitch_base+self.pitch),
+      s,
+      e,
+      lpf,
+      lpf_resonance,
+      hpf,
+      hpf_resonance,
+      override.fx[FX_BITCRUSH]==nil and 0 or 1,
+      override.fx[FX_STROBE]==nil and 0 or 1,
+      override.fx[FX_AUTOPAN]==nil and 0 or 1,
+      override.fx[FX_REVERSE]==nil and 0 or 1,
+      override.fx[FX_OCTAVE_UP]==nil and 0 or 1,
+      override.fx[FX_OCTAVE_DOWN]==nil and 0 or 1
+    )
   end
-  engine.tt_play(
-    voice,-- which sampler player
-    self.wav.sc_index,-- buffer number
-    amp*ops[self.op_id].amp_global,
-    pitch.transpose_rate(self.pitch_base+self.pitch),
-    s,
-    e,
-    lpf,
-    lpf_resonance,
-    hpf,
-    hpf_resonance,
-    override.fx[FX_BITCRUSH]==nil and 0 or 1,
-    override.fx[FX_STROBE]==nil and 0 or 1,
-    override.fx[FX_AUTOPAN]==nil and 0 or 1,
-    override.fx[FX_REVERSE]==nil and 0 or 1,
-    override.fx[FX_OCTAVE_UP]==nil and 0 or 1,
-    override.fx[FX_OCTAVE_DOWN]==nil and 0 or 1
-  )
   return voice
 end
 
