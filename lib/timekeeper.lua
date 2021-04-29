@@ -22,13 +22,18 @@ function Timekeeper:init()
       action=function(t)
         ops[i]:pattern_step()
         if sel_operator==i then
-          self.metronome_tick=not self.metronome_tick
           graphics:update()
         end
       end,
       division=1/8
     }
   end
+  self.lattice:new_pattern{
+    action=function(t)
+      self.metronome_tick=not self.metronome_tick      
+    end,
+    division=1/8
+  }
 
   self.lattice:start()
 end
