@@ -27,7 +27,7 @@ function Dev:new(o)
   -- ops[1]:sound_load(16,sel_filename)
 
 
-  ops[1].cur_snd_id=10
+  ops[1].cur_snd_id=16
   sel_adj=ADJ_TRIM
   -- snapshot:backup()
   snapshot:restore()

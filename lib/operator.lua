@@ -408,31 +408,43 @@ function Operator:pattern_step()
     end
   end
 
-  -- determine effects to play with sound
+
+  -- determine effects to play with sound from parameter locks
   local fx_to_play={}
+  for i=1,16 do
+    fx_to_play[i]={}
+  end
   for snd_id,snd in pairs(self.pattern[self.cur_ptn_id][self.cur_ptn_step].snd) do
-    fx_to_play[snd_id]={}
-    if self.cur_snd_id==snd_id then
-      if self.buttons[B_FX].pressed  then
-        -- if FX are pressed, only apply those
-        for i=B_BUTTON_FIRST,B_BUTTON_LAST do
-          local fx_id=i-B_BUTTON_FIRST+1
-          if self.buttons[i].pressed then
-            fx_to_play[snd_id][fx_id]=true
+    -- if no FX are pressed, apply FX from parameter locks
+    for fx_id,dofx in pairs(self.pattern[self.cur_ptn_id][self.cur_ptn_step].flock[snd_id]) do
+      if dofx then
+        fx_to_play[snd_id][fx_id]=true
+      end
+    end
+  end
+
+  -- special case: punch-in effects into the current sound
+  if self.buttons[B_FX].pressed then
+    for i=B_BUTTON_FIRST,B_BUTTON_LAST do
+      local fx_id=i-B_BUTTON_FIRST+1
+      if self.buttons[i].pressed then
+        fx_to_play[self.cur_snd_id][fx_id]=true
+        if self.mode_write then 
+          -- save this effect
+          self.pattern[self.cur_ptn_id][self.cur_ptn_step].flock[self.cur_snd_id][fx_id]=true
+          if fx_id==FX_NONE then 
+            for j=1,16 do
+              self.pattern[self.cur_ptn_id][self.cur_ptn_step].flock[self.cur_snd_id][j]=false
+            end
           end
-        end
-      else
-        -- if no FX are pressed, apply FX from parameter locks
-        for fx_id,_ in pairs(self.pattern[self.cur_ptn_id][self.cur_ptn_step].flock[snd_id]) do
-          fx_to_play[snd_id][fx_id]=true
         end
       end
     end
   end
 
-
   -- play sounds associated with step
   local snd_played=nil
+  local snds_played={}
   for snd_id,snd in pairs(self.pattern[self.cur_ptn_id][self.cur_ptn_step].snd) do
     self:debug("pattern_step: playing sound "..snd_id.." sample "..snd.id)
     -- TODO: check if should skip sound (i.e. if using loop effect or stutter effect)
@@ -456,6 +468,7 @@ function Operator:pattern_step()
       override.fx=fx_to_play[snd_id]
       snd_played=snd
       snd:play(override)
+      snds_played[snd_id]=true
       if self.cur_snd_id==snd_id and (not self.buttons[B_WRITE].pressed) then
         renderer:expand(snd.wav.filename,snd.s,snd.e)
       end
@@ -463,11 +476,13 @@ function Operator:pattern_step()
   end
 
   local snd_list=self:pattern_sound_list(self.cur_ptn_id)
-  -- update sound with fx/parameter locks for any sound thats doing stuff in the pattern
+
+  -- update sound with parameter locks for any sound thats doing stuff in the pattern
   for snd_id,_ in pairs(snd_list) do
     self.pattern[self.cur_ptn_id][self.cur_ptn_step].plock[snd_id]:play_if_locked()
   end
 
+  -- update any current playing sounds with fx
   for snd_id,snd in pairs(snd_list) do
     self.sound_prevent[snd_id]=false
     local nofx=false
@@ -488,20 +503,19 @@ function Operator:pattern_step()
         end
       else
         -- if no FX are pressed, apply FX from parameter locks
-        for fx_id,_ in pairs(self.pattern[self.cur_ptn_id][self.cur_ptn_step].flock[snd_id]) do
-          fx_to_apply[fx_id]=true
+        for fx_id,dofx in pairs(self.pattern[self.cur_ptn_id][self.cur_ptn_step].flock[snd_id]) do
+          if dofx then
+            fx_to_apply[fx_id]=true
+          end
         end
       end
       -- apply fx ot the voice
+
+      -- initiate lock voice
       local lock_voice=false
       
       -- turn on/off all effects
       for fx_id,fx_apply in pairs(fx_to_apply) do
-
-        -- skip ones that were played with the sound
-        if fx_to_play[snd_id]~=nil then 
-          if fx_to_play[snd_id][fx_id]~=nil then goto continue end 
-        end
 
         -- only update if its new
         if fx_apply==self.sound_fx_current[snd_id][fx_id] then goto continue end
@@ -543,13 +557,6 @@ function Operator:pattern_step()
       -- (or unlock it if the effect has disappeared)
       if not nofx then
         voices:lock(voice,lock_voice)
-      else
-        if self.mode_write then
-          -- remove all fx
-          for i=1,16 do
-            self.pattern[self.cur_ptn_id][self.cur_ptn_step].flock[snd_id][i]=nil
-          end
-        end
       end
     end
   end
@@ -858,10 +865,7 @@ function Operator:buttons_register()
         self.cur_snd_id=b
       elseif self.buttons[B_FX].pressed and self.mode_play then
         -- add to fx lock
-        if self.mode_write then
-          self.pattern[self.cur_ptn_id][self.cur_ptn_step].flock[self.cur_snd_id][b]=true
-        end
-        -- rest is handled in the pattern update
+        -- is handled in the pattern update
       elseif self.buttons[B_RECORD].pressed then
         if params:get("load sounds")==2 then
           -- open file

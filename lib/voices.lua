@@ -43,12 +43,17 @@ end
 -- get_voice returns the voice currently being used for a sound
 function Voices:get_voice(op_id,snd_id)
   snd_id=16*(op_id-1)+snd_id
+  -- find the newest voice
+  local newest_voice = nil
+  local current_time=self:time() 
+  local newest_time = 100000000
   for i=3,self.max do
-    if self.played[i].snd_id==snd_id then
-      return i
+    if self.played[i].snd_id==snd_id and current_time-self.played[i].last_played<newest_time then
+      newest_time=current_time-self.played[i].last_played
+      newest_voice=i
     end
   end
-  return nil
+  return newest_voice
 end
 
 function Voices:lock(voice,lockit)
@@ -65,7 +70,7 @@ function Voices:new_voice(op_id,snd_id,duration)
 
   -- fade it out if its playing
   for i=3,self.max do
-    if self.played[i].snd_id==snd_id and current_time-self.played[i].last_played<1 then
+    if self.played[i].snd_id==snd_id then
       -- turn this voice down
       engine.tt_amp(i,0,0.2)
       self.played[i].snd_id=0 -- reset it

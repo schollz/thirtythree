@@ -29,7 +29,7 @@ function Ngen:new(o)
     engine.tt_fx_reverse(voice,on and 1 or 0)
   end
   o.engine[FX_BITCRUSH]=function(voice,on)
-    self:debug("FX_BITCRUSH")
+    self:debug("FX_BITCRUSH on voice "..voice)
     engine.tt_bitcrush(voice,on and 1 or 0,6,4000)
   end
   o.engine[FX_TIMESTRETCH]=function(voice,on)
