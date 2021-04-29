@@ -563,7 +563,7 @@ function Operator:pattern_step()
             self.cur_ptn_step=math.random(1,16)
           end
         elseif fx_id==FX_68 then
-          if fx_apply then 
+          if fx_apply then
             timekeeper.pattern[self.id]:set_swing(66)
           else
             timekeeper.pattern[self.id]:set_swing(self.swing)

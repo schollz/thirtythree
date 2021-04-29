@@ -47,8 +47,8 @@ FX_NONE=16
 
 -- looping fx are special
 FX_LOOPING={}
-for i=1,16 do 
-  FX_LOOPING[i]=false 
+for i=1,16 do
+  FX_LOOPING[i]=false
 end
 FX_LOOPING[FX_LOOP16]=true
 FX_LOOPING[FX_LOOP12]=true
