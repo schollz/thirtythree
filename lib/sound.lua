@@ -156,8 +156,8 @@ function Sound:play(override)
       override.fx[FX_STROBE]==nil and 0 or 1,
       override.fx[FX_AUTOPAN]==nil and 0 or 1,
       override.fx[FX_REVERSE]==nil and 0 or 1,
-      override.fx[FX_OCTAVE_UP]==nil and 0 or 1,
-      override.fx[FX_OCTAVE_DOWN]==nil and 0 or 1
+      override.fx[FX_OCTAVEUP]==nil and 0 or 1,
+      override.fx[FX_OCTAVEDOWN]==nil and 0 or 1
     )
   end
   return voice

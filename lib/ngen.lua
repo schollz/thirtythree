@@ -52,12 +52,12 @@ function Ngen:new(o)
     self:debug("FX_TIMESTRETCH")
     engine.tt_fx_timestretch(voice,on and 1 or 0,4,4)
   end
-  o.engine[FX_OCTAVE_UP]=function(voice,on)
-    self:debug("FX_OCTAVE_UP")
+  o.engine[FX_OCTAVEUP]=function(voice,on)
+    self:debug("FX_OCTAVEUP")
     engine.tt_fx_octaveup(voice,on and 1 or 0)
   end
-  o.engine[FX_OCTAVE_DOWN]=function(voice,on)
-    self:debug("FX_OCTAVE_DOWN")
+  o.engine[FX_OCTAVEDOWN]=function(voice,on)
+    self:debug("FX_OCTAVEDOWN")
     engine.tt_fx_octavedown(voice,on and 1 or 0)
   end
   o.engine[FX_AUTOPAN]=function(voice,on)

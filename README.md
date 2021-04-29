@@ -1,21 +1,21 @@
 # thirtythree
+
 A po-33 clone for norns+grid
 
-## other
+### differences between thirtythree and the po-33
 
-- [ ] make bus for strobe + bitcrush + compressor fx
+thirtythree is based in the norns which has much higher sound quality (48khz, 24bit, stereo samples) if thats something you want.
 
-## norns special
+thirtythree has different effects than the po-33. the main reason is that some of the po-33 effects were too advanced for me (like the looping) and also because I wanted to include different effects (like autopan) and also because I wanted to have *stackable* effects (so more than one effect can be triggered simultaneously). 
 
-- [x] menu to change layout
-- [x] menu to change to "classic mode" (8-bit, 24k sample rate)
-- [x] menu option to change snapshot number
-- [x] load sounds via recording (classic) or from files (norns only)
+thirtythree has an effect channel for each sound.
+
+- thirtythree has high fidelity sound (48khz 24bit stereo samples)
+- thirtythree uses *stackable* effects (so more than one effect can occur)
 
 ## po-33 basics
 
 - [ ] hip+impractical ui on main screen
-- [ ] show clock
 - [x] melodic and drum sounds
 - [x] record with <kbd>record</kbd>+<kbd>1-16</kbd> (option to load files instead in parameters)
 - [x] select sound with <kbd>sound</kbd>+<kbd>1-16</kbd>
@@ -28,7 +28,7 @@ A po-33 clone for norns+grid
 - [x] adjust trim (start+end) with <kbd>E2</kbd> and <kbd>E3</kbd>
 - [x] delete sound with <kbd>record</kbd>+<kbd>sound</kbd>
 - [ ] copy slice with <kbd>write</kbd>+<kbd>sound</kbd>+<kbd>9-16</kbd>+<kbd>1-16</kbd>
-- [ ] add effects with <kbd>fx</kbd>+<kbd>1-16</kbd> (see below for progress)
+- [x] add effects with <kbd>fx</kbd>+<kbd>1-16</kbd>
 - [x] change swing with <kbd>bpm</kbd>+<kbd>K3</kbd>
 - [x] change tempo tapping <kbd>bpm</kbd>
 - [x] change tempo with <kbd>bpm</kbd>+<kbd>K3</kbd>
@@ -61,6 +61,6 @@ A po-33 clone for norns+grid
 
 
 
-## stretch
+## Future 
 
 - [ ] full backup (to copy over the sounds and everything to a new folder)
