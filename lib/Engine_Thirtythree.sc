@@ -45,7 +45,7 @@ Engine_Thirtythree : CroneEngine {
             rate=0,rateSlew=0,bpm_sample=1,bpm_target=1,
             fxSendBitcrush=0,fxOutBitcrush,
             fxloop_trig,fxloop_beats=1,
-            fx_scratch=0,fx_strobe=0,vinyl=0,loop=0,
+            fx_scratch=0,fx_stutter=0,fx_stutter_beats=1/16,vinyl=0,loop=0,
             pan=0,lpf=20000,lpflag=0,hpf=10,hpflag=0,lpf_resonance=1,hpf_resonance=1,
             use_envelope=1,env_trig=0,
 	    fx_reverse=0,fx_autopan=0,fx_octaveup=0,fx_octavedown=0;
@@ -103,8 +103,8 @@ Engine_Thirtythree : CroneEngine {
             snd = RLPF.ar(snd,Lag.kr(lpf,lpflag),lpf_resonance);
             snd = RHPF.ar(snd,Lag.kr(hpf,hpflag),hpf_resonance);
 
-            // fx_strobe
-            snd = ((fx_strobe<1)*snd)+((fx_strobe>0)*snd*(SinOsc.ar(bpm_target/60*4).range(0,1)));
+            // fx_stutter
+            snd = ((fx_stutter<1)*snd)+((fx_stutter>0)*snd*(SinOsc.ar(bpm_target/60*fx_stutter_beats).range(0,1)));
 
             // manual panning
             amp = Lag.kr(amp,ampLag)*(((use_envelope>0)*env)+(use_envelope<1));
@@ -130,7 +130,7 @@ Engine_Thirtythree : CroneEngine {
             sampleBuffThirtythree[msg[1]-1] = Buffer.read(context.server,msg[2]);
         });
 
-        this.addCommand("tt_play","iiffffffffffffff", { arg msg;
+        this.addCommand("tt_play","iifffffffffffffff", { arg msg;
             // lua is sending 1-index
             playerThirtythree[msg[1]-1].set(
                 \t_trig,1,
@@ -152,11 +152,12 @@ Engine_Thirtythree : CroneEngine {
                 \use_envelope,1,
                 // turn off effects
                 \fxSendBitcrush,msg[11],
-                \fx_strobe,msg[12],
-                \fx_autopan,msg[13],
-                \fx_reverse,msg[14],
-                \fx_octaveup,msg[15],
-                \fx_octavedown,msg[16],
+                \fx_stutter,msg[12],
+                \fx_stutter_beats,msg[13],
+                \fx_autopan,msg[14],
+                \fx_reverse,msg[15],
+                \fx_octaveup,msg[16],
+                \fx_octavedown,msg[17],
                 \fx_scratch,0,
                 \fxloop_trig,0,
             );
@@ -288,10 +289,11 @@ Engine_Thirtythree : CroneEngine {
             );
         });
 
-        this.addCommand("tt_fx_strobe","if", { arg msg;
+        this.addCommand("tt_fx_stutter","iff", { arg msg;
             // lua is sending 1-index
             playerThirtythree[msg[1]-1].set(
-                \fx_strobe,msg[2],
+                \fx_stutter,msg[2],
+                \fx_stutter_beats,msg[3],
             );
         });
 
