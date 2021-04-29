@@ -30,7 +30,7 @@ function Ngen:new(o)
   end
   o.engine[FX_BITCRUSH]=function(voice,on)
     self:debug("FX_BITCRUSH")
-    engine.tt_bitcrush(voice,on and 1 or 0,8,12000)
+    engine.tt_bitcrush(voice,on and 1 or 0,6,4000)
   end
   o.engine[FX_TIMESTRETCH]=function(voice,on)
     self:debug("FX_TIMESTRETCH")

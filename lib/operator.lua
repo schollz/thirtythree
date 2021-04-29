@@ -408,6 +408,29 @@ function Operator:pattern_step()
     end
   end
 
+  -- determine effects to play with sound
+  local fx_to_play={}
+  for snd_id,snd in pairs(self.pattern[self.cur_ptn_id][self.cur_ptn_step].snd) do
+    fx_to_play[snd_id]={}
+    if self.cur_snd_id==snd_id then
+      if self.buttons[B_FX].pressed  then
+        -- if FX are pressed, only apply those
+        for i=B_BUTTON_FIRST,B_BUTTON_LAST do
+          local fx_id=i-B_BUTTON_FIRST+1
+          if self.buttons[i].pressed then
+            fx_to_play[snd_id][fx_id]=true
+          end
+        end
+      else
+        -- if no FX are pressed, apply FX from parameter locks
+        for fx_id,_ in pairs(self.pattern[self.cur_ptn_id][self.cur_ptn_step].flock[snd_id]) do
+          fx_to_play[snd_id][fx_id]=true
+        end
+      end
+    end
+  end
+
+
   -- play sounds associated with step
   local snd_played=nil
   for snd_id,snd in pairs(self.pattern[self.cur_ptn_id][self.cur_ptn_step].snd) do
@@ -430,6 +453,7 @@ function Operator:pattern_step()
         end
         override[k]=v
       end
+      override.fx=fx_to_play[snd_id]
       snd_played=snd
       snd:play(override)
       if self.cur_snd_id==snd_id and (not self.buttons[B_WRITE].pressed) then
@@ -470,15 +494,27 @@ function Operator:pattern_step()
       end
       -- apply fx ot the voice
       local lock_voice=false
-      -- turn off all effects
+      
+      -- turn on/off all effects
       for fx_id,fx_apply in pairs(fx_to_apply) do
+
+        -- skip ones that were played with the sound
+        if fx_to_play[snd_id]~=nil then 
+          if fx_to_play[snd_id][fx_id]~=nil then goto continue end 
+        end
+
         -- only update if its new
         if fx_apply==self.sound_fx_current[snd_id][fx_id] then goto continue end
 
+        -- update current 
+        self.sound_fx_current[snd_id][fx_id]=fx_apply
+
+        -- do a sound prevention for specific effects
         if (fx_id==FX_LOOP or fx_id==FX_STUTTER) and fx_apply then
           lock_voice=true
           self.sound_prevent[snd_id]=true
         end
+
         -- send the sound played, in case it is needed for the fx (e.g. for the looping)
         if fx_id==FX_NONE then
           nofx=true

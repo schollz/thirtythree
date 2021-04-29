@@ -107,7 +107,13 @@ function Sound:play(override)
     if override.is_lpf~=nil then
       is_lpf=override.is_lpf
     end
+  else
+    override={}
   end
+  if override.fx == nil then 
+    override.fx={}
+  end
+  
   if is_lpf then
     hpf_resonance=1
     hpf=20
@@ -131,6 +137,8 @@ function Sound:play(override)
       pitch.transpose_rate(self.pitch_base+self.pitch),
       s,
     e)
+    print("fx")
+    print(override.fx[FX_BITCRUSH]==nil and 0 or 1)
   end
   engine.tt_play(
     voice,-- which sampler player
@@ -142,7 +150,8 @@ function Sound:play(override)
     lpf,
     lpf_resonance,
     hpf,
-    hpf_resonance
+    hpf_resonance,
+    override.fx[FX_BITCRUSH]==nil and 0 or 1
   )
   return voice
 end
