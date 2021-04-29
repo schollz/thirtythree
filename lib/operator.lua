@@ -592,6 +592,15 @@ end
 function Operator:pattern_reset()
   self.cur_ptn_step=0
   self.cur_ptn_sync_step=-1 -- resets the sync
+
+  -- check other operators, if they are playing, then reset
+  -- to their current settings
+  for i,op in ipairs(ops) do
+    if op.mode_play and i~=self.id then 
+      self.cur_ptn_step=op.cur_ptn_step
+      self.cur_ptn_sync_step=op.cur_ptn_sync_step
+    end
+  end
 end
 
 function Operator:pattern_sound_list(ptn_id)
