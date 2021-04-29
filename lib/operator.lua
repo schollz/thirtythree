@@ -916,6 +916,10 @@ function Operator:buttons_register()
           -- has sound
           return 4
         end
+      elseif self.buttons[B_RECORD].pressed then 
+        if self.sound[b][1].loaded then 
+          return 10 
+        end
       elseif self.buttons[B_BPM].pressed then
         local val=util.linlin(0,2,1,16,self.amp_global)
         if b<=val then

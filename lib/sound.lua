@@ -138,7 +138,7 @@ function Sound:play(override)
       s,
     e)
     print("fx")
-    print(override.fx[FX_BITCRUSH]==nil and 0 or 1)
+    print(override.fx[FX_OCTAVE_UP]==nil and 0 or 1)
   end
   engine.tt_play(
     voice,-- which sampler player
@@ -152,7 +152,11 @@ function Sound:play(override)
     hpf,
     hpf_resonance,
     override.fx[FX_BITCRUSH]==nil and 0 or 1,
-    override.fx[FX_STROBE]==nil and 0 or 1
+    override.fx[FX_STROBE]==nil and 0 or 1,
+    override.fx[FX_AUTOPAN]==nil and 0 or 1,
+    override.fx[FX_REVERSE]==nil and 0 or 1,
+    override.fx[FX_OCTAVE_UP]==nil and 0 or 1,
+    override.fx[FX_OCTAVE_DOWN]==nil and 0 or 1
   )
   return voice
 end

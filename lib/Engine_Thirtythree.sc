@@ -95,7 +95,7 @@ Engine_Thirtythree : CroneEngine {
             // manual panning
             amp = Lag.kr(amp,ampLag)*(((use_envelope>0)*env)+(use_envelope<1));
             snd = Balance2.ar(snd[0],snd[1],
-                pan+SinOsc.kr(60/bpm_target*16,mul:fx_autopan*0.5),
+                pan+SinOsc.kr(bpm_target/60/2,mul:fx_autopan*0.8),
                 level:amp,
             );
 
@@ -116,13 +116,14 @@ Engine_Thirtythree : CroneEngine {
             sampleBuffThirtythree[msg[1]-1] = Buffer.read(context.server,msg[2]);
         });
 
-        this.addCommand("tt_play","iiffffffffff", { arg msg;
+        this.addCommand("tt_play","iiffffffffffffff", { arg msg;
             // lua is sending 1-index
             playerThirtythree[msg[1]-1].set(
                 \t_trig,1,
                 \bufnum,sampleBuffThirtythree[msg[2]-1],
                 \amp,msg[3],
                 \rate,msg[4],
+                \rateSlew,0,
                 \samplePos,msg[5],
                 \sampleStart,msg[5],
                 \sampleEnd,msg[6],
@@ -136,11 +137,11 @@ Engine_Thirtythree : CroneEngine {
                 // turn off effects
                 \fxSendBitcrush,msg[11],
                 \fx_strobe,msg[12],
+                \fx_autopan,msg[13],
+                \fx_reverse,msg[14],
+                \fx_octaveup,msg[15],
+                \fx_octavedown,msg[16],
                 \fx_scratch,0,
-                \fx_reverse,0,
-                \fx_octaveup,0,
-                \fx_autopan,0,
-                \fx_octavedown,0,
             );
         });
 
@@ -224,6 +225,7 @@ Engine_Thirtythree : CroneEngine {
             // lua is sending 1-index
             playerThirtythree[msg[1]-1].set(
                 \fx_octaveup,msg[2],
+                \rateSlew,1,
             );
         });
 
@@ -231,6 +233,7 @@ Engine_Thirtythree : CroneEngine {
             // lua is sending 1-index
             playerThirtythree[msg[1]-1].set(
                 \fx_octavedown,msg[2],
+                \rateSlew,1,
             );
         });
 
