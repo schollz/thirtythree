@@ -72,6 +72,7 @@ function Operator:init()
 
   -- operator "global" parameters
   self.amp_global=1.0
+  self.swing=50
 
   self:buttons_register()
 
@@ -428,7 +429,7 @@ function Operator:pattern_step()
     for i=B_BUTTON_FIRST,B_BUTTON_LAST do
       local fx_id=i-B_BUTTON_FIRST+1
       if self.buttons[i].pressed then
-        if FX_LOOPING[fx_id]==nil then
+        if not FX_LOOPING[fx_id] then
           fx_to_play[self.cur_snd_id][fx_id]=true
         end
         if self.mode_write then
@@ -453,7 +454,7 @@ function Operator:pattern_step()
     -- check if it is already doing a looping effect
     local is_looping=false
     for fx_id,fx_val in pairs(self.sound_fx_current[snd_id]) do
-      if FX_LOOPING[fx_id]~=nil and fx_val then
+      if FX_LOOPING[fx_id] and fx_val then
         is_looping=true
         break
       end
@@ -550,7 +551,7 @@ function Operator:pattern_step()
         self.sound_fx_current[snd_id][fx_id]=fx_apply
 
         -- make sure to keep voice locked if doing a looping fx
-        if FX_LOOPING[fx_id]~=nil and fx_apply then
+        if FX_LOOPING[fx_id] and fx_apply then
           lock_voice=true
         end
 
@@ -559,19 +560,13 @@ function Operator:pattern_step()
           nofx=true
         elseif fx_id==FX_RETRIGGER then
           if fx_apply then
-            self:debug("FX_RETRIGGER")
-            self.cur_ptn_step=1
-          end
-        elseif fx_id==FX_JUMP then
-          if fx_apply then
-            self:debug("FX_JUMP")
             self.cur_ptn_step=math.random(1,16)
           end
-        elseif fx_id==FX_GHOST then
-          if fx_apply then
-            if math.random()<0.3 then
-              self.sound_prevent[snd_id]=true -- skip the next sound
-            end
+        elseif fx_id==FX_68 then
+          if fx_apply then 
+            timekeeper.pattern[self.id]:set_swing(66)
+          else
+            timekeeper.pattern[self.id]:set_swing(self.swing)
           end
         else
           ngen:fx(snd,fx_id,fx_apply)

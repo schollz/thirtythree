@@ -144,8 +144,8 @@ function Sound:play(override)
     local fx_stutter=override.fx[FX_STUTTER3]==nil and 0 or 1
     local fx_stutter_beats=16
     if fx_stutter==0 then
-	fx_stutter=override.fx[FX_STUTTER4]==nil and 0 or 1
-	fx_stutter_beats=24
+    	fx_stutter=override.fx[FX_STUTTER4]==nil and 0 or 1
+    	fx_stutter_beats=24
     end
     engine.tt_play(
       voice,-- which sampler player

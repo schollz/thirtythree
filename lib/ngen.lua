@@ -40,29 +40,13 @@ function Ngen:new(o)
     self:debug("FX_LOOPSHORTER on voice "..voice)
     engine.tt_fx_loop(voice,on and 1 or 0,1/48)
   end
-  o.engine[FX_STUTTER]=function(voice,on)
-    local beats=0.25
-    if on then
-      while beats*clock.get_beat_sec()>0.15 do
-        beats=beats/2
-      end
-      self:debug("FX_STUTTER on voice "..voice.." for "..beats.." beats")
-    else
-      self:debug("FX_STUTTER off")
-    end
-    engine.tt_fx_loop(voice,on and 1 or 0,beats)
-  end
-  o.engine[FX_REVERSE]=function(voice,on)
-    self:debug("FX_REVERSE on voice "..voice)
-    engine.tt_fx_reverse(voice,on and 1 or 0)
+  o.engine[FX_AUTOPAN]=function(voice,on)
+    self:debug("FX_AUTOPAN")
+    engine.tt_fx_autopan(voice,on and 1 or 0)
   end
   o.engine[FX_BITCRUSH]=function(voice,on)
     self:debug("FX_BITCRUSH on voice "..voice)
     engine.tt_bitcrush(voice,on and 1 or 0,6,4000)
-  end
-  o.engine[FX_TIMESTRETCH]=function(voice,on)
-    self:debug("FX_TIMESTRETCH")
-    engine.tt_fx_timestretch(voice,on and 1 or 0,4,4)
   end
   o.engine[FX_OCTAVEUP]=function(voice,on)
     self:debug("FX_OCTAVEUP")
@@ -72,14 +56,6 @@ function Ngen:new(o)
     self:debug("FX_OCTAVEDOWN")
     engine.tt_fx_octavedown(voice,on and 1 or 0)
   end
-  o.engine[FX_AUTOPAN]=function(voice,on)
-    self:debug("FX_AUTOPAN")
-    engine.tt_fx_autopan(voice,on and 1 or 0)
-  end
-  o.engine[FX_SCRATCH]=function(voice,on)
-    self:debug("FX_SCRATCH")
-    engine.tt_fx_scratch(voice,on and 1 or 0)
-  end
   o.engine[FX_STUTTER4]=function(voice,on)
     self:debug("FX_STUTTER4")
     engine.tt_fx_stutter(voice,on and 1 or 0,1/8)
@@ -87,6 +63,18 @@ function Ngen:new(o)
   o.engine[FX_STUTTER3]=function(voice,on)
     self:debug("FX_STUTTER3")
     engine.tt_fx_stutter(voice,on and 1 or 0,1/12)
+  end
+  o.engine[FX_SCRATCH]=function(voice,on)
+    self:debug("FX_SCRATCH on voice "..voice)
+    engine.tt_fx_scratch(voice,on and 1 or 0,1/16)
+  end
+  o.engine[FX_SCRATCHFAST]=function(voice,on)
+    self:debug("FX_SCRATCHFAST on voice "..voice)
+    engine.tt_fx_scratch(voice,on and 1 or 0,1/24)
+  end
+  o.engine[FX_REVERSE]=function(voice,on)
+    self:debug("FX_REVERSE on voice "..voice)
+    engine.tt_fx_reverse(voice,on and 1 or 0)
   end
   -- o.engine[FX_STUTTER]=function(voice,on,snd)
   --   if not on then

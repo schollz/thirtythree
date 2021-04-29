@@ -45,7 +45,8 @@ Engine_Thirtythree : CroneEngine {
             rate=0,rateSlew=0,bpm_sample=1,bpm_target=1,
             fxSendBitcrush=0,fxOutBitcrush,
             fxloop_trig,fxloop_beats=1,
-            fx_scratch=0,fx_stutter=0,fx_stutter_beats=1/16,vinyl=0,loop=0,
+            fx_scratch=0,fx_scratch_beats=1,
+            fx_stutter=0,fx_stutter_beats=1/16,vinyl=0,loop=0,
             pan=0,lpf=20000,lpflag=0,hpf=10,hpflag=0,lpf_resonance=1,hpf_resonance=1,
             use_envelope=1,env_trig=0,
 	    fx_reverse=0,fx_autopan=0,fx_octaveup=0,fx_octavedown=0;
@@ -75,7 +76,7 @@ Engine_Thirtythree : CroneEngine {
             rate = Lag.kr(rate,rateSlew);
 
             // scratch effect
-            rate = (fx_scratch<1*rate) + (fx_scratch>0*LFTri.kr(bpm_target/60*6));
+            rate = (fx_scratch<1*rate) + (fx_scratch>0*LFTri.kr(60/bpm_target*fx_scratch_beats));
 
             pos = Phasor.ar(
                 trig:t_trig,
@@ -282,10 +283,11 @@ Engine_Thirtythree : CroneEngine {
             );
         });
 
-        this.addCommand("tt_fx_scratch","if", { arg msg;
+        this.addCommand("tt_fx_scratch","iff", { arg msg;
             // lua is sending 1-index
             playerThirtythree[msg[1]-1].set(
                 \fx_scratch,msg[2],
+                \fx_scratch_beats,msg[3],
             );
         });
 

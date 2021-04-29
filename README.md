@@ -4,19 +4,15 @@ A po-33 clone for norns+grid
 
 ### differences between thirtythree and the po-33
 
-thirtythree is based in the norns which has much higher sound quality (48khz, 24bit, stereo samples) if thats something you want.
-
-thirtythree has different effects than the po-33. the main reason is that some of the po-33 effects were too advanced for me (like the looping) and also because I wanted to include different effects (like autopan) and also because I wanted to have *stackable* effects (so more than one effect can be triggered simultaneously). 
-
-thirtythree has an effect channel for each sound.
-
-- thirtythree has high fidelity sound (48khz 24bit stereo samples)
-- thirtythree uses *stackable* effects (so more than one effect can occur)
+- thirtythree is based in the norns which has higher sound quality (48khz, 24bit, stereo samples) if thats something you want.
+- thirtythree has an effect channel for each sound. two effects were replaced. effects may act differently (especially the loopers).
+- instead of recording, you can load a file into any bank (in `PARAMS` menu).
+- you can have multiple backups and make them quickly (<1 sec), change backup # in the `PARAMS` menu.
+- you have two choices of layouts - the classic 5x5 type layout and a compressed 4x6 layout that lets you stamp more of the thirtythree apps across the grid.
 
 ## po-33 basics
 
-- [ ] hip+impractical ui on main screen
-- [x] melodic and drum sounds
+- [x] melodic (buttons 1-8) and drum splicing (buttons 9-16)
 - [x] record with <kbd>record</kbd>+<kbd>1-16</kbd> (option to load files instead in parameters)
 - [x] select sound with <kbd>sound</kbd>+<kbd>1-16</kbd>
 - [x] write mode activated with <kb>write</kbd>
@@ -42,25 +38,26 @@ thirtythree has an effect channel for each sound.
 
 ## effects
 
-- [ ] loop 16
-- [ ] loop 12 (now "?")
-- [ ] loop short (now "?")
-- [ ] loop shorter (now "?")
-- [ ] unison (now "bitcrush")
-- [ ] unison low (now "timestretch")
-- [ ] octave up
-- [ ] octave down
-- [ ] stutter 4
-- [ ] stutter 3 (now "autopan")
-- [ ] scratch
-- [ ] scratch fast (now "ghost")
-- [ ] 6/8 quantize
-- [ ] retrigger pattern
-- [ ] reverse
-- [ ] none
+1. loop 16
+2. loop 12 
+3. loop short
+4. loop shorter 
+5. ~~unison~~ autopan
+6. ~~unison low~~ bitcrush
+7. octave up
+8. octave down
+9. stutter 4
+10. stutter 3 
+11. scratch
+12. scratch fast 
+13. 6/8 quantize
+14. retrigger pattern
+15. reverse
+16. none
 
+## expect bugs
 
+here are some that I know will be bugs:
 
-## Future 
-
-- [ ] full backup (to copy over the sounds and everything to a new folder)
+- thirtythree doesn't store audio data in the backups - it only stores a reference to the file. (in future I want to have an option to store everything). so if you delete or move an audio file that is part of a backup, expect to see a bug. 
+- looping fx don't stack with anything.
