@@ -55,8 +55,8 @@ I love the po-33 and for a long time I've wanted something similar for norns (e.
 10. stutter 3 
 11. scratch
 12. scratch fast 
-13. 6/8 quantize
-14. retrigger pattern
+13. 6/8 quantize (global effect)
+14. retrigger pattern (global effect)
 15. reverse
 16. none
 
@@ -64,3 +64,4 @@ I love the po-33 and for a long time I've wanted something similar for norns (e.
 
 - backups will not restore if you move/delete the original audio. right now backups only store a reference to the audio file and not the actual audio data.
 - looping fx don't stack.
+- later I might try to get 6/8 and retrigger to not be global
