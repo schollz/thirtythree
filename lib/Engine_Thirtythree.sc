@@ -76,7 +76,7 @@ Engine_Thirtythree : CroneEngine {
             rate = Lag.kr(rate,rateSlew);
 
             // scratch effect
-            rate = (fx_scratch<1*rate) + (fx_scratch>0*LFTri.kr(bpm_target/60/fx_scratch_beats));
+            rate = (fx_scratch<1*rate) + (fx_scratch>0*SinOsc.kr(bpm_target/60/fx_scratch_beats));
 
             pos = Phasor.ar(
                 trig:t_trig,
@@ -95,17 +95,23 @@ Engine_Thirtythree : CroneEngine {
                 end:((sampleEnd2*(rate>0))+(sampleStart2*(rate<0))),
                 resetPos:sampleStart2
             );
-
-            snd=BufRd.ar(2,bufnum,
-                (pos*(1-fxloop_trig))+(pos2*fxloop_trig),
+            fxloop_trig=Lag.kr(fxloop_trig,0.2);
+            snd=(BufRd.ar(2,bufnum,
+                pos,
                 loop:0,
                 interpolation:4
-            );
+            )*(1-fxloop_trig))+(BufRd.ar(2,bufnum,
+                pos2,
+                loop:0,
+                interpolation:4
+            )*fxloop_trig);
             snd = RLPF.ar(snd,Lag.kr(lpf,lpflag),lpf_resonance);
             snd = RHPF.ar(snd,Lag.kr(hpf,hpflag),hpf_resonance);
 
             // fx_stutter
-            snd = ((fx_stutter<1)*snd)+((fx_stutter>0)*snd*(SinOsc.ar(bpm_target/60/fx_stutter_beats).range(0,1)));
+            // snd = ((fx_stutter<1)*snd)+((fx_stutter>0)*snd*(SinOsc.ar(bpm_target/60/fx_stutter_beats).range(0,1)));
+            fx_stutter = Lag.kr(fx_stutter,0.1);
+            snd = snd*((1-fx_stutter)+(fx_stutter*(SinOsc.ar(bpm_target/60/fx_stutter_beats).range(0,1))));
 
             // manual panning
             amp = Lag.kr(amp,ampLag)*(((use_envelope>0)*env)+(use_envelope<1));
