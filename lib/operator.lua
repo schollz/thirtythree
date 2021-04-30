@@ -468,7 +468,7 @@ function Operator:pattern_step()
       self:debug("not loaded!")
     end
     -- if snd.loaded and (not self.sound_prevent[snd_id]) then
-    if snd.loaded and snd_id ~= self.skip_sound_once then
+    if snd.loaded and snd_id~=self.skip_sound_once then
       -- override with parameter locks
       local override={}
       for k,v in pairs(self.pattern[self.cur_ptn_id][self.cur_ptn_step].plock[snd_id].modified) do
@@ -950,9 +950,9 @@ function Operator:buttons_register()
         self:sound_play_from_press()
         if self.mode_play and self.buttons[B_WRITE].pressed and self.cur_ptn_step>0 then
           -- put current sound onto closest step
-          local closest_beat = self.cur_ptn_step+timekeeper:closer_beat()
-          if closest_beat > 16 then 
-            closest_beat = 1 
+          local closest_beat=self.cur_ptn_step+timekeeper:closer_beat()
+          if closest_beat>16 then
+            closest_beat=1
           end
           self.skip_sound_once=self.cur_snd_id
           self.pattern[self.cur_ptn_id][closest_beat].snd[self.cur_snd_id]=self:sound_clone(self.cur_snd_id,self.cur_smpl_id)
