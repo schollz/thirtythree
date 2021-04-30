@@ -46,7 +46,7 @@ function Ngen:new(o)
   end
   o.engine[FX_BITCRUSH]=function(voice,on)
     self:debug("FX_BITCRUSH on voice "..voice)
-    engine.tt_bitcrush(voice,on and 1 or 0,6,4000)
+    engine.tt_bitcrush(voice,on and 1 or 0,8,12000)
   end
   o.engine[FX_OCTAVEUP]=function(voice,on)
     self:debug("FX_OCTAVEUP")
@@ -58,19 +58,19 @@ function Ngen:new(o)
   end
   o.engine[FX_STUTTER4]=function(voice,on)
     self:debug("FX_STUTTER4")
-    engine.tt_fx_stutter(voice,on and 1 or 0,1/2)
+    engine.tt_fx_stutter(voice,on and 1 or 0,1/4)
   end
   o.engine[FX_STUTTER3]=function(voice,on)
     self:debug("FX_STUTTER3")
-    engine.tt_fx_stutter(voice,on and 1 or 0,1/3)
+    engine.tt_fx_stutter(voice,on and 1 or 0,1/6)
   end
   o.engine[FX_SCRATCH]=function(voice,on)
     self:debug("FX_SCRATCH on voice "..voice)
-    engine.tt_fx_scratch(voice,on and 1 or 0,1/4)
+    engine.tt_fx_scratch(voice,on and 1 or 0,1/2)
   end
   o.engine[FX_SCRATCHFAST]=function(voice,on)
     self:debug("FX_SCRATCHFAST on voice "..voice)
-    engine.tt_fx_scratch(voice,on and 1 or 0,1/6)
+    engine.tt_fx_scratch(voice,on and 1 or 0,1/3)
   end
   o.engine[FX_REVERSE]=function(voice,on)
     self:debug("FX_REVERSE on voice "..voice)

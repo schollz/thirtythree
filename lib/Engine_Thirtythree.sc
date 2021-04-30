@@ -23,7 +23,7 @@ Engine_Thirtythree : CroneEngine {
         context.server.sync;
 
         SynthDef("fxSynDefBitcrush",{
-            arg inBus,bitcrush_bits=6,bitcrush_rate=4000;
+            arg inBus,bitcrush_bits=8,bitcrush_rate=10000;
             var snd = In.ar(inBus,2);
             snd = Decimator.ar(snd,bitcrush_rate,bitcrush_bits);
             Out.ar(0,snd);
@@ -105,7 +105,7 @@ Engine_Thirtythree : CroneEngine {
             snd = RHPF.ar(snd,Lag.kr(hpf,hpflag),hpf_resonance);
 
             // fx_stutter
-            snd = ((fx_stutter<1)*snd)+((fx_stutter>0)*snd*(SinOsc.ar(bpm_target/60*fx_stutter_beats).range(0,1)));
+            snd = ((fx_stutter<1)*snd)+((fx_stutter>0)*snd*(SinOsc.ar(bpm_target/60/fx_stutter_beats).range(0,1)));
 
             // manual panning
             amp = Lag.kr(amp,ampLag)*(((use_envelope>0)*env)+(use_envelope<1));
@@ -114,7 +114,7 @@ Engine_Thirtythree : CroneEngine {
                 level:amp,
             );
 
-            // Out.ar(fxOutBitcrush,snd*fxSendBitcrush);
+            Out.ar(fxOutBitcrush,snd*fxSendBitcrush);
             Out.ar(0,snd*(1-fxSendBitcrush))
         }).add; 
 
