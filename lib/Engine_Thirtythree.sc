@@ -286,6 +286,9 @@ Engine_Thirtythree : CroneEngine {
             playerThirtythree[msg[1]-1].set(
                 \fx_scratch,msg[2],
                 \fx_scratch_beats,msg[3],
+                \fxloop_trig,msg[2],
+                \use_envelope,1-msg[2],
+                \fxloop_beats,1,
             );
         });
 

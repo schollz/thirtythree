@@ -418,7 +418,7 @@ function Operator:pattern_step()
   for snd_id,snd in pairs(self.pattern[self.cur_ptn_id][self.cur_ptn_step].snd) do
     -- if no FX are pressed, apply FX from parameter locks
     for fx_id,dofx in pairs(self.pattern[self.cur_ptn_id][self.cur_ptn_step].flock[snd_id]) do
-      if dofx then
+      if dofx and not FX_LOOPING[fx_id] then
         fx_to_play[snd_id][fx_id]=true
       end
     end
@@ -541,7 +541,6 @@ function Operator:pattern_step()
 
       -- turn on/off all effects
       for fx_id,fx_apply in pairs(fx_to_apply) do
-
         -- only update if its new
         if fx_apply==self.sound_fx_current[snd_id][fx_id] then
           goto continue
