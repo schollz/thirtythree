@@ -481,7 +481,10 @@ function Operator:pattern_step()
       override.fx=fx_to_play[snd_id]
       for fx_id,fx_apply in pairs(override.fx) do
         -- prevent it from being triggered again after sounding
-        self.sound_fx_current[snd_id][fx_id]=fx_apply
+        -- but only take care of ones that can be sounded
+        if fx_id~=FX_RETRIGGER and fx_id~=FX_68 and FX_LOOPING[fx_id]==false then
+          self.sound_fx_current[snd_id][fx_id]=fx_apply
+        end
       end
       snd_played=snd
       if is_looping then
@@ -565,8 +568,10 @@ function Operator:pattern_step()
           end
         elseif fx_id==FX_68 then
           if fx_apply then
+            self:debug("6/8 TIME")
             timekeeper.pattern[self.id]:set_swing(66)
           else
+            self:debug("4/4 TIME")
             timekeeper.pattern[self.id]:set_swing(self.swing)
           end
         else
