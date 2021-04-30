@@ -3,7 +3,7 @@
 --
 
 
--- mode_debug=true
+mode_debug=true
 
 --json
 print(_VERSION)

@@ -592,7 +592,8 @@ end
 
 function Operator:pattern_reset()
   self.cur_ptn_step=0
-  self.cur_ptn_sync_step=-1 -- resets the sync
+  self.cur_ptn_sync_step=0 -- resets the sync
+  self.pattern_chain_index=1
 
   -- check other operators, if they are playing, then reset
   -- to their current settings
@@ -898,8 +899,10 @@ function Operator:buttons_register()
           self.pattern_chain={b}
           self.pattern_chain_index=1
           if self.mode_play then
+            self:debug("playing this pattern next")
             self.pattern_chain_index=1000
           else
+            self:debug("updating pattern")
             self.cur_ptn_id=b
           end
           self.mode_switchpattern=false
