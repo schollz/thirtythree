@@ -66,6 +66,7 @@ function Operator:init()
   self.cur_ptn_step=0
   self.cur_ptn_sync_step=-1
   self.cur_fx_id={}
+  self.skip_sound_once=0
 
   -- filter
   self.cur_filter_number=51 -- [1,101]
@@ -467,7 +468,7 @@ function Operator:pattern_step()
       self:debug("not loaded!")
     end
     -- if snd.loaded and (not self.sound_prevent[snd_id]) then
-    if snd.loaded then
+    if snd.loaded and snd_id ~= self.skip_sound_once then
       -- override with parameter locks
       local override={}
       for k,v in pairs(self.pattern[self.cur_ptn_id][self.cur_ptn_step].plock[snd_id].modified) do
@@ -588,6 +589,7 @@ function Operator:pattern_step()
       end
     end
   end
+  self.skip_sound_once=0
 end
 
 function Operator:pattern_reset()
@@ -948,10 +950,14 @@ function Operator:buttons_register()
         -- play this sample in sound, without effects
         self:sound_play_from_press()
         if self.mode_play and self.buttons[B_WRITE].pressed and self.cur_ptn_step>0 then
-          -- put current sound onto current playing step
-          self.pattern[self.cur_ptn_id][self.cur_ptn_step].snd[self.cur_snd_id]=self:sound_clone(self.cur_snd_id,self.cur_smpl_id)
-          self:pattern_remove_plocks(self.cur_ptn_id,self.cur_ptn_step,self.cur_snd_id)
-          -- TODO (stretch goal): actually, put current sound onto *closest* playing step
+          -- put current sound onto closest step
+          local closest_beat = self.cur_ptn_step+timekeeper:closer_beat()
+          if closest_beat > 16 then 
+            closest_beat = 1 
+          end
+          self.skip_sound_once=self.cur_snd_id
+          self.pattern[self.cur_ptn_id][closest_beat].snd[self.cur_snd_id]=self:sound_clone(self.cur_snd_id,self.cur_smpl_id)
+          self:pattern_remove_plocks(self.cur_ptn_id,closest_beat,self.cur_snd_id)
         end
       end
     end

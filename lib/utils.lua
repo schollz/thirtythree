@@ -44,7 +44,9 @@ function os.capture(cmd,raw)
   return s
 end
 
-
+function os.time2()
+  return clock.get_beats()*clock.get_beat_sec()
+end
 
 function _list_files(d,files,recursive)
   -- list files in a flat table
