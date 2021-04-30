@@ -60,7 +60,7 @@ Engine_Thirtythree : CroneEngine {
                     times: [0.01,(sampleEnd-sampleStart)*(BufDur.kr(bufnum))-fadeout-0.01-0.01,fadeout],
                     curve:\sine,
                 ), 
-                gate: env_trig,
+                gate: t_trig,
             );
 
             // reverse effect
@@ -76,7 +76,7 @@ Engine_Thirtythree : CroneEngine {
             rate = Lag.kr(rate,rateSlew);
 
             // scratch effect
-            rate = (fx_scratch<1*rate) + (fx_scratch>0*LFTri.kr(60/bpm_target*fx_scratch_beats));
+            rate = (fx_scratch<1*rate) + (fx_scratch>0*LFTri.kr(bpm_target/60/fx_scratch_beats));
 
             pos = Phasor.ar(
                 trig:t_trig,
@@ -99,7 +99,7 @@ Engine_Thirtythree : CroneEngine {
             snd=BufRd.ar(2,bufnum,
                 (pos*(1-fxloop_trig))+(pos2*fxloop_trig),
                 loop:0,
-                interpolation:1
+                interpolation:4
             );
             snd = RLPF.ar(snd,Lag.kr(lpf,lpflag),lpf_resonance);
             snd = RHPF.ar(snd,Lag.kr(hpf,hpflag),hpf_resonance);
@@ -135,7 +135,6 @@ Engine_Thirtythree : CroneEngine {
             // lua is sending 1-index
             playerThirtythree[msg[1]-1].set(
                 \t_trig,1,
-		\env_trig,1,
                 \bufnum,sampleBuffThirtythree[msg[2]-1],
                 \amp,msg[3],
                 \ampLag,0,
@@ -168,7 +167,6 @@ Engine_Thirtythree : CroneEngine {
             // lua is sending 1-index
             playerThirtythree[msg[1]-1].set(
                 \t_trig,1,
-		        \env_trig,1,
                 \samplePos,msg[2],
                 \sampleStart,msg[2],
                 \sampleEnd,msg[3],

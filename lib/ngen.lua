@@ -26,19 +26,19 @@ function Ngen:new(o)
   end
   o.engine[FX_LOOP16]=function(voice,on)
     self:debug("FX_LOOP16 on voice "..voice)
-    engine.tt_fx_loop(voice,on and 1 or 0,1/16)
+    engine.tt_fx_loop(voice,on and 1 or 0,1/4)
   end
   o.engine[FX_LOOP12]=function(voice,on)
     self:debug("FX_LOOP12 on voice "..voice)
-    engine.tt_fx_loop(voice,on and 1 or 0,1/12)
+    engine.tt_fx_loop(voice,on and 1 or 0,1/3)
   end
   o.engine[FX_LOOPSHORT]=function(voice,on)
     self:debug("FX_LOOPSHORT on voice "..voice)
-    engine.tt_fx_loop(voice,on and 1 or 0,1/32)
+    engine.tt_fx_loop(voice,on and 1 or 0,1/8)
   end
   o.engine[FX_LOOPSHORTER]=function(voice,on)
     self:debug("FX_LOOPSHORTER on voice "..voice)
-    engine.tt_fx_loop(voice,on and 1 or 0,1/48)
+    engine.tt_fx_loop(voice,on and 1 or 0,1/12)
   end
   o.engine[FX_AUTOPAN]=function(voice,on)
     self:debug("FX_AUTOPAN")
@@ -58,19 +58,19 @@ function Ngen:new(o)
   end
   o.engine[FX_STUTTER4]=function(voice,on)
     self:debug("FX_STUTTER4")
-    engine.tt_fx_stutter(voice,on and 1 or 0,1/8)
+    engine.tt_fx_stutter(voice,on and 1 or 0,1/2)
   end
   o.engine[FX_STUTTER3]=function(voice,on)
     self:debug("FX_STUTTER3")
-    engine.tt_fx_stutter(voice,on and 1 or 0,1/12)
+    engine.tt_fx_stutter(voice,on and 1 or 0,1/3)
   end
   o.engine[FX_SCRATCH]=function(voice,on)
     self:debug("FX_SCRATCH on voice "..voice)
-    engine.tt_fx_scratch(voice,on and 1 or 0,1/16)
+    engine.tt_fx_scratch(voice,on and 1 or 0,1/4)
   end
   o.engine[FX_SCRATCHFAST]=function(voice,on)
     self:debug("FX_SCRATCHFAST on voice "..voice)
-    engine.tt_fx_scratch(voice,on and 1 or 0,1/24)
+    engine.tt_fx_scratch(voice,on and 1 or 0,1/6)
   end
   o.engine[FX_REVERSE]=function(voice,on)
     self:debug("FX_REVERSE on voice "..voice)

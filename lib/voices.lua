@@ -57,6 +57,9 @@ function Voices:get_voice(op_id,snd_id)
 end
 
 function Voices:lock(voice,lockit)
+  if voice == nil then 
+    do return end 
+  end
   self.played[voice].locked=lockit
 end
 
