@@ -68,5 +68,5 @@ I love the po-33 and for a long time I've wanted something similar for norns (e.
 
 ## todo
 
-- [ ] bug in setting pitch for melodic - it seems all pitch!
-- [ ] add optional loading of specific breaks "<filename>.wav.breaks"
+- TODO: bug in setting pitch for melodic - it seems all pitch!
+- TODO: add optional loading of specific breaks "<filename>.wav.breaks"

@@ -564,7 +564,6 @@ function Operator:pattern_step()
         elseif fx_id==FX_RETRIGGER then
           if fx_apply then
             self:debug("RETRIGGER")
-            -- TODO: make sure its possible to turn OFF retrigger
             self.cur_ptn_step=math.random(1,16)
           end
         elseif fx_id==FX_68 then
