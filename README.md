@@ -65,3 +65,7 @@ I love the po-33 and for a long time I've wanted something similar for norns (e.
 - backups will not restore if you move/delete the original audio. right now backups only store a reference to the audio file and not the actual audio data.
 - looping fx don't stack.
 - later I might try to get 6/8 and retrigger to not be global
+
+## todo
+
+- [ ] bug in setting pitch for melodic - it seems all pitch!
