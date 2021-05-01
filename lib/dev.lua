@@ -33,13 +33,13 @@ function Dev:new(o)
   -- sel_filename="/home/we/dust/audio/breakbeat/bpm120/beats8_bpm120_adt_120_drum_break_vinylised.wav"
   -- ops[1]:sound_load(11,sel_filename)
 
-  sel_filename="/home/we/dust/code/thirtythree/defaults/yelidek_kit.wav"
-  ops[1]:sound_load(16,sel_filename)
+  -- sel_filename="/home/we/dust/code/thirtythree/defaults/yelidek_kit.wav"
+  -- ops[1]:sound_load(16,sel_filename)
 
-  ops[1].cur_snd_id=16
+  ops[1].cur_snd_id=9
   sel_adj=ADJ_TRIM
   -- -- snapshot:backup()
-  -- snapshot:restore()
+  snapshot:restore()
   return o
 end
 

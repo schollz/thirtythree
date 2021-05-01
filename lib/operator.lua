@@ -174,10 +174,9 @@ end
 --
 function Operator:sound_current_name()
   if self.sound[self.cur_snd_id][1].wav ~= nil then 
-    return self.sound[self.cur_snd_id][1].wav.name 
-  else
-    return "not loaded"
+    do return self.sound[self.cur_snd_id][1].wav.name end
   end
+  return ""
 end
 
 function Operator:sound_initialize(snd_id)
@@ -438,14 +437,37 @@ function Operator:pattern_step()
       local fx_id=i-B_BUTTON_FIRST+1
       if self.buttons[i].pressed then
         if not FX_LOOPING[fx_id] then
+          -- play fx
           fx_to_play[self.cur_snd_id][fx_id]=true
+          -- play fx globally
+          if params:get("fx global")==2 then
+            self:debug("applying fx "..fx_id.." to all")
+            for snd_id2=1,16 do 
+              fx_to_play[snd_id2][fx_id]=true
+            end
+          end
         end
         if self.mode_write then
-          -- save this effect
+          -- save this fx
           self.pattern[self.cur_ptn_id][self.cur_ptn_step].flock[self.cur_snd_id][fx_id]=true
+          -- save this fx globally
+          if params:get("fx global")==2 then
+            for snd_id2=1,16 do 
+               self.pattern[self.cur_ptn_id][self.cur_ptn_step].flock[snd_id2][fx_id]=true
+            end
+          end
           if fx_id==FX_NONE then
+            -- erase fx
             for j=1,16 do
               self.pattern[self.cur_ptn_id][self.cur_ptn_step].flock[self.cur_snd_id][j]=false
+            end
+            -- erase fx globally
+            if params:get("fx global")==2 then
+              for snd_id2=1,16 do 
+                for j=1,16 do
+                   self.pattern[self.cur_ptn_id][self.cur_ptn_step].flock[snd_id2][j]=false
+                 end
+              end
             end
           end
         end
@@ -486,13 +508,17 @@ function Operator:pattern_step()
         end
         override[k]=v
       end
-      override.fx=fx_to_play[snd_id]
+      override.fx={}
+      if not fx_to_play[snd_id][FX_NONE] then
+        override.fx=fx_to_play[snd_id]
+      end
       for fx_id,fx_apply in pairs(override.fx) do
         -- prevent it from being triggered again after sounding
         -- but only take care of ones that can be sounded
         if fx_id~=FX_RETRIGGER and fx_id~=FX_68 and FX_LOOPING[fx_id]==false then
           self.sound_fx_current[snd_id][fx_id]=fx_apply
         end
+        self:debug("playing fx "..fx_id.." on sound "..snd_id)
       end
       snd_played=snd
       if is_looping then
@@ -528,7 +554,7 @@ function Operator:pattern_step()
       for i=1,16 do
         fx_to_apply[i]=false
       end
-      if self.buttons[B_FX].pressed and self.cur_snd_id==snd_id then
+      if self.buttons[B_FX].pressed and (self.cur_snd_id==snd_id or params:get("fx global")==2) then
         -- if FX are pressed, only apply those
         for i=B_BUTTON_FIRST,B_BUTTON_LAST do
           local fx_id=i-B_BUTTON_FIRST+1
