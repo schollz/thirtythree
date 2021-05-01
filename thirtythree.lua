@@ -24,6 +24,7 @@ sel_looppoint=1
 sel_adj=ADJ_NONE
 sel_parm=PARM_NONE
 sel_files=false
+global_blink=1
 ops={} -- operators
 
 -- engine

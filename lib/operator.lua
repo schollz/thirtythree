@@ -172,6 +172,13 @@ end
 --
 -- sound functions
 --
+function Operator:sound_current_name()
+  if self.sound[self.cur_snd_id][1].wav ~= nil then 
+    return self.sound[self.cur_snd_id][1].wav.name 
+  else
+    return "not loaded"
+  end
+end
 
 function Operator:sound_initialize(snd_id)
   self.sound[snd_id]={}
@@ -973,7 +980,7 @@ function Operator:buttons_register()
         -- if sound pressed, show if this button has sound loaded / is active sound
         if self.cur_snd_id==b then
           -- active sound
-          return 10
+          return 15*global_blink
         elseif self.sound[b][1].loaded then
           -- has sound
           return 4
@@ -991,7 +998,7 @@ function Operator:buttons_register()
         -- if pattern pressed, show if this button has pattern / is active pattern
         if self.cur_ptn_id==b then
           -- active pattern
-          return 10
+          return 15*global_blink
         elseif self:pattern_has_sound(b) then
           -- has pattern
           return 7

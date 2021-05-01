@@ -69,4 +69,8 @@ I love the po-33 and for a long time I've wanted something similar for norns (e.
 ## todo
 
 - TODO: bug in setting pitch for melodic - it seems all pitch!
-- TODO: add optional loading of specific breaks "<filename>.wav.breaks"
+- ~~TODO: add optional loading of specific breaks "<filename>.wav.breaks"~~
+- TODO: add blinking (for non varibright)
+- TODO: option for global fx?
+- TODO: option for number of operators
+- TODO: save parameters

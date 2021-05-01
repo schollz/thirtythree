@@ -109,7 +109,7 @@ function Graphics:metro_icon(tick,x,y)
   if startup_done and ops[sel_operator].buttons[B_BPM].pressed then
     screen.text(params:get("clock_tempo")..", swing="..timekeeper:get_swing(sel_operator).."%")
   else
-    screen.text(params:get("clock_tempo"))
+    screen.text(params:get("clock_tempo").." "..ops[sel_operator]:sound_current_name())
   end
 end
 

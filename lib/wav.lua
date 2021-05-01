@@ -70,8 +70,9 @@ function Wav:get(filename)
       self:debug("reading file: "..filename..".onsets")
       onset_string = os.read_file(filename..".onsets")
     else
-      self:debug("using aubioonset: "..cmd)
       cmd="aubioonset -i "..filename.." -B 4096 -H 2048 -t 0.3 -M 0.3"
+      self:debug("using aubioonset: "..cmd)
+      onset_string = os.capture(cmd)
     end
     onsets = {0}
     for substring in onset_string:gmatch("%S+") do
