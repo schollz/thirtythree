@@ -8,9 +8,7 @@ function Voices:new(o)
   self.__index=self
   o.max=15
   o.played={}
-  for i=1,o.max do
-    o.played[i]={snd_id=0,last_played=os.clock(),locked=false,duration=0}
-  end
+  o:reset()
   o.pos=0
   o.main=1
 
@@ -30,8 +28,11 @@ function Voices:new(o)
   return o
 end
 
-function Voices:time()
-  return clock.get_beat_sec()*clock.get_beats()
+
+function Voices:reset()
+  for i=1,self.max do
+    self.played[i]={snd_id=0,last_played=0,locked=false,duration=0}
+  end
 end
 
 function Voices:get_main()
@@ -45,7 +46,7 @@ function Voices:get_voice(op_id,snd_id)
   snd_id=16*(op_id-1)+snd_id
   -- find the newest voice
   local newest_voice=nil
-  local current_time=self:time()
+  local current_time=os.time2()
   local newest_time=100000000
   for i=3,self.max do
     if self.played[i].snd_id==snd_id and current_time-self.played[i].last_played<newest_time then
@@ -66,7 +67,7 @@ end
 -- new_voice will make a new voice for a sound, fading out previous sound
 function Voices:new_voice(op_id,snd_id,duration)
   local snd_id=16*(op_id-1)+snd_id
-  local current_time=self:time()
+  local current_time=os.time2()
   local voice=0
   local voice_oldest=1
   local longest_duration=-1
@@ -103,7 +104,7 @@ function Voices:new_voice(op_id,snd_id,duration)
     do return end
   end
 
-  self.played[voice]={snd_id=snd_id,last_played=os.clock(),locked=false,duration=duration}
+  self.played[voice]={snd_id=snd_id,last_played=os.time2(),locked=false,duration=duration}
   return voice
 end
 

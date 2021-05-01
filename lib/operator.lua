@@ -647,11 +647,17 @@ function Operator:pattern_reset()
 
   -- check other operators, if they are playing, then reset
   -- to their current settings
+  local others_playing=false
   for i,op in ipairs(ops) do
     if op.mode_play and i~=self.id then
+      others_playing=true
       self.cur_ptn_step=op.cur_ptn_step
       self.cur_ptn_sync_step=op.cur_ptn_sync_step
     end
+  end
+  if not others_playing then 
+    self:debug("hard restart")
+    timekeeper:hard_restart()
   end
 end
 

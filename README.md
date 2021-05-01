@@ -70,7 +70,7 @@ I love the po-33 and for a long time I've wanted something similar for norns (e.
 
 - TODO: race condition in the bpm
 - TODO: option for number of operators
-- TODO: funking the beat (6/8 or retrigger) of an operator sometimes gets it out of sync with others
+- TODO: 6/8 beat fx might cause operators to get out of sync
 - ~~TODO: addding pitch parameter locks to melodic samples doesn't work off the beat of the melodic sample~~
 - ~~TODO: add optional loading of specific breaks "<filename>.wav.breaks"~~
 - ~~TODO: add blinking (for non varibright)~~

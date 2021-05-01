@@ -80,4 +80,11 @@ function Timekeeper:reset()
   end
 end
 
+function Timekeeper:hard_restart()
+  print("reseting lattice")
+  self.lattice:hard_restart()
+  print("reseting voices")
+  voices:reset()
+end
+
 return Timekeeper
