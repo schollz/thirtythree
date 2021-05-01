@@ -59,11 +59,16 @@ function Wav:get(filename)
     self.files[filename].sc_index=self.sc_index
 
     -- onset detection
-    cmd="aubioonset -i "..filename.." -B 4096 -H 2048 -t 0.3 -M 0.3"
-    onset_string = os.capture(cmd)
-    if mode_debug then 
-      print(cmd)
-      print("aubioonset: "..onset_string)
+    local onset_string = ""
+    if util.file_exists(filename..".onsets") then 
+      onset_string = os.read_file(filename..".onsets")
+    else
+      cmd="aubioonset -i "..filename.." -B 4096 -H 2048 -t 0.3 -M 0.3"
+      onset_string = os.capture(cmd)
+      if mode_debug then 
+        print(cmd)
+        print("aubioonset: "..onset_string)
+      end
     end
     onsets = {}
     for substring in onset_string:gmatch("%S+") do
