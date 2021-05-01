@@ -64,7 +64,7 @@ function Operator:init()
   self.cur_smpl_id=1
   self.cur_ptn_id=1
   self.cur_ptn_step=0
-  self.cur_ptn_sync_step=-1
+  self.cur_ptn_sync_step=0
   self.cur_fx_id={}
   self.skip_sound_once=0
 
@@ -371,7 +371,6 @@ end
 -- pattern functions
 --
 function Operator:pattern_step()
-  self.cur_ptn_sync_step=self.cur_ptn_sync_step+1
   -- update the tempo each step (if needed)
   if clock.get_tempo()~=self.bpm then
     self.bpm=clock.get_tempo()
@@ -388,9 +387,11 @@ function Operator:pattern_step()
 
   -- increase step
   self.cur_ptn_step=self.cur_ptn_step+1
+  self.cur_ptn_sync_step=self.cur_ptn_sync_step+1
+  self:debug("cur_ptn_step: "..self.cur_ptn_step)
 
   -- jump to next pattern or return to beginning
-  if self.cur_ptn_step>16 or self.cur_ptn_sync_step%16==0 then
+  if self.cur_ptn_step>16 or self.cur_ptn_sync_step>16 then
     -- goto next pattern
     self.pattern_chain_index=self.pattern_chain_index+1
     if self.pattern_chain_index>#self.pattern_chain then
@@ -398,6 +399,7 @@ function Operator:pattern_step()
     end
     self.cur_ptn_id=self.pattern_chain[self.pattern_chain_index]
     self.cur_ptn_step=1
+    self.cur_ptn_sync_step=1
     self:debug("continuing with pattern "..self.cur_ptn_id)
   end
 
