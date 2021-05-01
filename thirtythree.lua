@@ -33,7 +33,6 @@ engine.name="Thirtythree"
 -- individual libraries
 lattice=include("thirtythree/lib/lattice")
 fileselect=require "fileselect"
-pitch=include("lib/pitch")
 lock=include("lib/lock")
 graphics_=include("lib/graphics")
 graphics=graphics_:new()
