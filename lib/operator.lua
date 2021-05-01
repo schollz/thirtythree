@@ -630,6 +630,7 @@ function Operator:pattern_reset()
   self.cur_ptn_step=0
   self.cur_ptn_sync_step=0 -- resets the sync
   self.pattern_chain_index=1
+  self.cur_ptn_id=self.pattern_chain[1]
 
   -- check other operators, if they are playing, then reset
   -- to their current settings
