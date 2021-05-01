@@ -5,6 +5,12 @@
 
 local Wav={}
 
+function Wav:debug(s)
+  if mode_debug then
+    print("wav: "..s)
+  end
+end
+
 function Wav:new(o)
   o=o or {}
   setmetatable(o,self)
@@ -61,30 +67,24 @@ function Wav:get(filename)
     -- onset detection
     local onset_string = ""
     if util.file_exists(filename..".onsets") then 
+      self:debug("reading file: "..filename..".onsets")
       onset_string = os.read_file(filename..".onsets")
     else
+      self:debug("using aubioonset: "..cmd)
       cmd="aubioonset -i "..filename.." -B 4096 -H 2048 -t 0.3 -M 0.3"
-      onset_string = os.capture(cmd)
-      if mode_debug then 
-        print(cmd)
-        print("aubioonset: "..onset_string)
-      end
     end
-    onsets = {}
+    onsets = {0}
     for substring in onset_string:gmatch("%S+") do
       local onset=tonumber(substring)/self.files[filename].duration
-      if mode_debug then
-        print(tonumber(substring),self.files[filename].duration,onset)
+      if onset ~= 0 then
+        if onset==nil then
+          print("error with onset")
+        end
+        self:debug(tonumber(substring),self.files[filename].duration,onset)
+        table.insert(onsets, onset)
       end
-      if onset==nil then
-        print("error with onset")
-      end
-      table.insert(onsets, onset)
     end
     table.insert(onsets,1.0)
-    if onsets[1] ~= 0 then
-      table.insert(onsets,0,1)
-    end
     self.files[filename].onsets={}
     for i,_ in ipairs(onsets) do
       if i>1 then
