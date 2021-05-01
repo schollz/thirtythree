@@ -54,8 +54,8 @@ function Timekeeper:closer_beat()
   local next=last+beat_length
   local current=os.time2()
   print(last,current,next)
-  if current-last < next-current then 
-    return 0 
+  if current-last<next-current then
+    return 0
   else
     return 1
   end

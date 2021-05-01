@@ -86,3 +86,14 @@ function list_files(d,recurisve)
   end
   return _list_files(d,{},recursive)
 end
+
+function os.read_file(filename)
+  if not util.file_exists(filename) then
+    do return end
+  end
+
+  local f=io.open(filename,"rb")
+  local content=f:read("*all")
+  f:close()
+  return content
+end
