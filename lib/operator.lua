@@ -75,6 +75,8 @@ function Operator:init()
   self.amp_global=1.0
   self.swing=50
 
+  self.cur_scale=5
+
   self:buttons_register()
 
   self:debug("initialized operator")
@@ -267,7 +269,20 @@ end
 
 function Operator:pitch_set(d)
   self.pitch=util.clamp(self.pitch+math.sign(d),-12,12)
-  self:parameter_update_sounds_and_locks("pitch",self.pitch)
+  -- determine pitch based on the scale
+  local note = 0
+  if self.pitch ~= 0 then 
+    local notes = MusicUtil.generate_scale_of_length(36,self.cur_scale,60)
+    local ind=0 
+    for i,n in ipairs(notes) do 
+      if n==60 then 
+        ind=i
+        break
+      end
+    end
+    note=notes[self.pitch+ind] -- note relative to a fixed root of "C"
+  end
+  self:parameter_update_sounds_and_locks("pitch",note)
 end
 
 function Operator:filter_draw()

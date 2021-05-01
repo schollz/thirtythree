@@ -31,6 +31,7 @@ ops={} -- operators
 engine.name="Thirtythree"
 
 -- individual libraries
+MusicUtil = require "musicutil"
 lattice=include("thirtythree/lib/lattice")
 fileselect=require "fileselect"
 lock=include("lib/lock")
