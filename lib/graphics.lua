@@ -35,7 +35,7 @@ function Graphics:alert(msg,seconds)
     clock.cancel(self.alert_clock_id)
   end
   self.alert_msg=msg
-  self.dirty=true
+  redraw()
   self.alert_clock_id=clock.run(function()
     clock.sleep(seconds or 2)
     self.alert_msg=nil

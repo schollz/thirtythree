@@ -74,7 +74,6 @@ function Operator:init()
   -- operator "global" parameters
   self.amp_global=1.0
   self.swing=50
-
   self.cur_scale=1
 
   self:buttons_register()
@@ -223,7 +222,9 @@ function Operator:sound_play_from_press(override)
   -- show sound
   local snd=self.sound[self.cur_snd_id][self.cur_smpl_id]
   if snd.loaded then
-    renderer:expand(snd.wav.filename,snd.s,snd.e)
+    if sel_operator==self.id then
+      renderer:expand(snd.wav.filename,snd.s,snd.e)
+    end
     snd:play(override)
   end
 end
@@ -545,7 +546,7 @@ function Operator:pattern_step()
       end
       snd:play(override)
       snds_played[snd_id]=true
-      if self.cur_snd_id==snd_id and (not self.buttons[B_WRITE].pressed) then
+      if self.cur_snd_id==snd_id and (not self.buttons[B_WRITE].pressed) and self.id==sel_operator then
         renderer:expand(snd.wav.filename,snd.s,snd.e)
       end
     end

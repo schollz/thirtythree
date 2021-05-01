@@ -56,15 +56,6 @@ Engine_Thirtythree : CroneEngine {
             // vars
             var snd,pos,pos2,sampleStart2,sampleEnd2,env;
 
-            env=EnvGen.ar(
-                Env.new(
-                    levels: [0,1,1,0], 
-                    times: [0.01,(sampleEnd-sampleStart)*(BufDur.kr(bufnum))-fadeout-0.01-0.01,fadeout],
-                    curve:\sine,
-                ), 
-                gate: t_trig,
-            );
-
             // pitch 
             // rate = rate*pitchToRate[48+Index.kr(pitchBase.asInteger+pitchAdj.asInteger];
             rate = rate*Index.kr(
@@ -87,19 +78,31 @@ Engine_Thirtythree : CroneEngine {
             // scratch effect
             rate = (fx_scratch<1*rate) + (fx_scratch>0*SinOsc.kr(bpm_target/60/fx_scratch_beats));
 
+            // final rate 
+            rate = BufRateScale.kr(bufnum)*rate;
+
+            env=EnvGen.ar(
+                Env.new(
+                    levels: [0,1,1,0], 
+                    times: [0.005,(sampleEnd-sampleStart)*(BufFrames.kr(bufnum)/48000/rate.abs)-fadeout-0.005,fadeout],
+                    curve:\sine,
+                ), 
+                gate: t_trig,
+            );
+
             pos = Phasor.ar(
                 trig:t_trig,
-                rate:BufRateScale.kr(bufnum)*rate,
+                rate:rate,
                 start:((sampleStart*(rate>0))+(sampleEnd*(rate<0)))*BufFrames.kr(bufnum),
                 end:((sampleEnd*(rate>0))+(sampleStart*(rate<0)))*BufFrames.kr(bufnum),
                 resetPos:samplePos*BufFrames.kr(bufnum)
             );
 
             sampleStart2 = Gate.kr(pos,1-fxloop_trig);
-            sampleEnd2 = (sampleStart2+ArrayMin.kr([60/bpm_target/BufDur.kr(bufnum)*BufFrames.kr(bufnum)*fxloop_beats,BufFrames.kr(bufnum)]).at(0));
+            sampleEnd2 = (sampleStart2+ArrayMin.kr([60/bpm_target/(1/48000/Gate.kr(rate.abs,1-fxloop_trig))*fxloop_beats,BufFrames.kr(bufnum)]).at(0));
             pos2=Phasor.ar(
                 trig:fxloop_trig,
-                rate:BufRateScale.kr(bufnum)*rate,
+                rate:rate,
                 start:((sampleStart2*(rate>0))+(sampleEnd2*(rate<0))),
                 end:((sampleEnd2*(rate>0))+(sampleStart2*(rate<0))),
                 resetPos:sampleStart2

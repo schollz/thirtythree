@@ -72,11 +72,11 @@ function startup()
   graphics:alert("loading")
   check_and_install_aubioonset()
 
-  -- TODO: initialize operators
-  ops[1]=operator:new({id=1})
-  ops[1]:init()
-  ops[2]=operator:new({id=2})
-  ops[2]:init()
+  -- initialize operators
+  for i=1,4 do 
+    ops[i]=operator:new({id=i})
+    ops[i]:init()
+  end
 
   -- after initializing operators, intialize time keeper
   timekeeper:init()
@@ -157,7 +157,7 @@ end
 local ani1=1
 
 function redraw()
-  if sel_files then
+  if sel_files or (not startup_done) then
     -- don't interupt file selection
     do return end
   end
