@@ -99,16 +99,13 @@ function Sound:play(override)
   local lpf_resonance=self.resonance
   local hpf_resonance=self.resonance
   local is_lpf=self.is_lpf
-  local pitch=self.pitch+self.pitch_base
+  local pitch=self.pitch
   print("pitch",self.pitch_base,self.pitch,pitch)
   if override~=nil then
     voice=override.voice
     s=override.s or s
     e=override.e or e
-    if override.pitch~=nil then 
-      pitch=self.pitch_base+pitch
-      print("pitchoveride",self.pitch_base,override.pitch,pitch)
-    end
+    pitch=override.pitch or pitch
     amp=override.amp or amp
     if override.is_lpf~=nil then
       is_lpf=override.is_lpf
@@ -157,7 +154,8 @@ function Sound:play(override)
       voice,-- which sampler player
       self.wav.sc_index,-- buffer number
       amp*ops[self.op_id].amp_global,
-      pitch_to_rate(pitch),
+      self.pitch_base,
+      pitch,
       s,
       e,
       lpf,
