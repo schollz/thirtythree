@@ -66,7 +66,11 @@ Engine_Thirtythree : CroneEngine {
             );
 
             // pitch 
-            rate = rate*pitchToRate[48+pitchBase+pitchAdj];
+            // rate = rate*pitchToRate[48+Index.kr(pitchBase.asInteger+pitchAdj.asInteger];
+            rate = rate*Index.kr(
+                LocalBuf.newFrom(pitchToRate),
+                48+pitchBase+pitchAdj,
+            );
 
             // reverse effect
             rate = ((fx_reverse<1)*rate)+((fx_reverse>0)*rate.neg);

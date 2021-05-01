@@ -14,6 +14,7 @@ end
 json=require("cjson")
 
 -- globals
+MusicUtil = require "musicutil"
 include("lib/parameters")
 include("lib/constants")
 include("lib/utils")
@@ -31,7 +32,6 @@ ops={} -- operators
 engine.name="Thirtythree"
 
 -- individual libraries
-MusicUtil = require "musicutil"
 lattice=include("thirtythree/lib/lattice")
 fileselect=require "fileselect"
 lock=include("lib/lock")

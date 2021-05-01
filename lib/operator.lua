@@ -75,7 +75,7 @@ function Operator:init()
   self.amp_global=1.0
   self.swing=50
 
-  self.cur_scale=5
+  self.cur_scale=1
 
   self:buttons_register()
 
@@ -192,7 +192,12 @@ function Operator:sound_initialize(snd_id)
     end
     local pitch=0
     if snd_id<=8 then
-      pitch=INVERTED_KEYBOARD[smpl_id]-9
+       -- pitch=INVERTED_KEYBOARD[smpl_id]-9
+      if self.cur_scale==nil then 
+        self.cur_scale=1
+      end
+      local scale=MusicUtil.generate_scale_of_length(0,self.cur_scale,96)
+      pitch=scale[INVERTED_KEYBOARD_MAP[smpl_id]+27]-60
     end
     self.sound[snd_id][smpl_id]=sound:new({
       id=smpl_id,
@@ -272,15 +277,8 @@ function Operator:pitch_set(d)
   -- determine pitch based on the scale
   local note = 0
   if self.pitch ~= 0 then 
-    local notes = MusicUtil.generate_scale_of_length(36,self.cur_scale,60)
-    local ind=0 
-    for i,n in ipairs(notes) do 
-      if n==60 then 
-        ind=i
-        break
-      end
-    end
-    note=notes[self.pitch+ind] -- note relative to a fixed root of "C"
+    local notes = MusicUtil.generate_scale_of_length(0,self.cur_scale,96)
+    note=notes[36+self.pitch]-60 -- note relative to a fixed root of "C"
   end
   self:parameter_update_sounds_and_locks("pitch",note)
 end
