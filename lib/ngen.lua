@@ -17,7 +17,7 @@ function Ngen:new(o)
   end
   o.engine["pitch"]=function(voice,pitch)
     self:debug("pitch on voice "..voice)
-    engine.tt_rate(voice,pitch_to_rate(pitch),0.05)
+    engine.tt_pitch(voice,pitch,0.05)
   end
   o.engine["lpf"]=function(voice,lpf,resonance)
     engine.tt_lpf(voice,lpf,0.05,resonance)

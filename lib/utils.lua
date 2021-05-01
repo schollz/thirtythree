@@ -122,3 +122,13 @@ assert(pitch_to_rate(1)==16/15)
 assert(pitch_to_rate(12)==2)
 assert(pitch_to_rate(-12)==1/2)
 assert(pitch_to_rate(-1)==15/8/2)
+
+
+local all_scale_names={}
+for i = 1, #MusicUtil.SCALES do
+  table.insert(all_scale_names, string.lower(MusicUtil.SCALES[i].name))
+end
+
+function scale_names()
+  return all_scale_names
+end

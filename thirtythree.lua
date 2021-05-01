@@ -14,6 +14,7 @@ end
 json=require("cjson")
 
 -- globals
+MusicUtil = require "musicutil"
 include("lib/parameters")
 include("lib/constants")
 include("lib/utils")

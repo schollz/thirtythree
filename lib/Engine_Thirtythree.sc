@@ -8,6 +8,7 @@ Engine_Thirtythree : CroneEngine {
     var playerThirtythree;
     var fxBusBitcrush;
     var fxSynBitcrush;
+    var pitchToRate;
     // var osfunThirtyThree;
     // Thirtythree ^
 
@@ -17,7 +18,7 @@ Engine_Thirtythree : CroneEngine {
 
     alloc {
         // Thirtythree specific v0.0.1
-
+        pitchToRate = [0.0625,0.066666666666667,0.0703125,0.075,0.078125,0.083333333333333,0.087890625,0.09375,0.1,0.10416666666667,0.11111111111111,0.1171875,0.125,0.13333333333333,0.140625,0.15,0.15625,0.16666666666667,0.17578125,0.1875,0.2,0.20833333333333,0.22222222222222,0.234375,0.25,0.26666666666667,0.28125,0.3,0.3125,0.33333333333333,0.3515625,0.375,0.4,0.41666666666667,0.44444444444444,0.46875,0.5,0.53333333333333,0.5625,0.6,0.625,0.66666666666667,0.703125,0.75,0.8,0.83333333333333,0.88888888888889,0.9375,1.0,1.0666666666667,1.125,1.2,1.25,1.3333333333333,1.40625,1.5,1.6,1.6666666666667,1.7777777777778,1.875,2.0,2.1333333333333,2.25,2.4,2.5,2.6666666666667,2.8125,3.0,3.2,3.3333333333333,3.5555555555556,3.75,4.0,4.2666666666667,4.5,4.8,5.0,5.3333333333333,5.625,6.0,6.4,6.6666666666667,7.1111111111111,7.5,8.0,8.5333333333333,9.0,9.6,10.0,10.666666666667,11.25,12.0,12.8,13.333333333333,14.222222222222,15.0,16.0];
         fxBusBitcrush = Bus.audio(context.server, 2);
 
         context.server.sync;
@@ -41,6 +42,7 @@ Engine_Thirtythree : CroneEngine {
 
         SynthDef("playerThirtythree",{ 
             arg bufnum, amp=0, ampLag=0, t_trig=0,fadeout=0.05,
+            pitchBase=0,pitchAdj=0,
             sampleStart=0,sampleEnd=1,samplePos=0,
             rate=0,rateSlew=0,bpm_sample=1,bpm_target=1,
             fxSendBitcrush=0,fxOutBitcrush,
@@ -49,7 +51,7 @@ Engine_Thirtythree : CroneEngine {
             fx_stutter=0,fx_stutter_beats=1/16,vinyl=0,loop=0,
             pan=0,lpf=20000,lpflag=0,hpf=10,hpflag=0,lpf_resonance=1,hpf_resonance=1,
             use_envelope=1,env_trig=0,
-	    fx_reverse=0,fx_autopan=0,fx_octaveup=0,fx_octavedown=0;
+	        fx_reverse=0,fx_autopan=0,fx_octaveup=0,fx_octavedown=0;
 
             // vars
             var snd,pos,pos2,sampleStart2,sampleEnd2,env;
@@ -61,6 +63,13 @@ Engine_Thirtythree : CroneEngine {
                     curve:\sine,
                 ), 
                 gate: t_trig,
+            );
+
+            // pitch 
+            // rate = rate*pitchToRate[48+Index.kr(pitchBase.asInteger+pitchAdj.asInteger];
+            rate = rate*Index.kr(
+                LocalBuf.newFrom(pitchToRate),
+                48+pitchBase+pitchAdj,
             );
 
             // reverse effect
@@ -137,33 +146,35 @@ Engine_Thirtythree : CroneEngine {
             sampleBuffThirtythree[msg[1]-1] = Buffer.read(context.server,msg[2]);
         });
 
-        this.addCommand("tt_play","iifffffffffffffff", { arg msg;
+        this.addCommand("tt_play","iifiifffffffffffff", { arg msg;
             // lua is sending 1-index
             playerThirtythree[msg[1]-1].set(
                 \t_trig,1,
                 \bufnum,sampleBuffThirtythree[msg[2]-1],
                 \amp,msg[3],
                 \ampLag,0,
-                \rate,msg[4],
+                \rate,1,
                 \rateSlew,0,
-                \samplePos,msg[5],
-                \sampleStart,msg[5],
-                \sampleEnd,msg[6],
-                \lpf,msg[7],
-                \lpf_resonance,msg[8],
+                \pitchBase,msg[4],
+                \pitchAdj,msg[5],
+                \samplePos,msg[6],
+                \sampleStart,msg[6],
+                \sampleEnd,msg[7],
+                \lpf,msg[8],
+                \lpf_resonance,msg[9],
                 \lpflag,0,
-                \hpf,msg[9],
-                \hpf_resonance,msg[10],
+                \hpf,msg[10],
+                \hpf_resonance,msg[11],
                 \hpflag,0,
                 \use_envelope,1,
                 // turn off effects
-                \fxSendBitcrush,msg[11],
-                \fx_stutter,msg[12],
-                \fx_stutter_beats,msg[13],
-                \fx_autopan,msg[14],
-                \fx_reverse,msg[15],
-                \fx_octaveup,msg[16],
-                \fx_octavedown,msg[17],
+                \fxSendBitcrush,msg[12],
+                \fx_stutter,msg[13],
+                \fx_stutter_beats,msg[14],
+                \fx_autopan,msg[15],
+                \fx_reverse,msg[16],
+                \fx_octaveup,msg[17],
+                \fx_octavedown,msg[18],
                 \fx_scratch,0,
                 \fxloop_trig,0,
             );
@@ -188,10 +199,10 @@ Engine_Thirtythree : CroneEngine {
             );
         });
 
-        this.addCommand("tt_rate","iff", { arg msg;
+        this.addCommand("tt_pitch","iif", { arg msg;
             // lua is sending 1-index
             playerThirtythree[msg[1]-1].set(
-                \rate,msg[2],
+                \pitchAdj,msg[2],
                 \rateSlew,msg[3],
             );
         });
@@ -323,6 +334,7 @@ Engine_Thirtythree : CroneEngine {
         (0..15).do({arg i; playerThirtythree[i].free});
         fxSynBitcrush.free;
         fxBusBitcrush.free;
+        pitchToRate.free;
         // osfunThirtyThree.free;
         // ^ Thirtythree specific
     }
