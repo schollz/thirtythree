@@ -22,7 +22,7 @@ function Sound:new(o)
   o.e=o.e or 1
   o.pitch_base=o.pitch_base or 0
   o.pitch=0
-  o.amp=o.amp or 1
+  o.amp=o.amp or 0.5
   o.lpf=o.lpf or 20000
   o.hpf=o.hpf or 20
   o.resonance=o.resonance or 1
