@@ -405,7 +405,7 @@ function Operator:pattern_step()
   self:debug("cur_ptn_step: "..self.cur_ptn_step)
 
   -- jump to next pattern or return to beginning
-  if self.cur_ptn_step>16 or self.cur_ptn_sync_step>16 then
+  if self.cur_ptn_step>16 or self.cur_ptn_sync_step%16==1 then
     -- goto next pattern
     self.pattern_chain_index=self.pattern_chain_index+1
     if self.pattern_chain_index>#self.pattern_chain then
@@ -413,7 +413,6 @@ function Operator:pattern_step()
     end
     self.cur_ptn_id=self.pattern_chain[self.pattern_chain_index]
     self.cur_ptn_step=1
-    self.cur_ptn_sync_step=1
     self:debug("continuing with pattern "..self.cur_ptn_id)
   end
 
