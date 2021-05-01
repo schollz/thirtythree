@@ -51,7 +51,7 @@ Engine_Thirtythree : CroneEngine {
             fx_stutter=0,fx_stutter_beats=1/16,vinyl=0,loop=0,
             pan=0,lpf=20000,lpflag=0,hpf=10,hpflag=0,lpf_resonance=1,hpf_resonance=1,
             use_envelope=1,env_trig=0,
-	    fx_reverse=0,fx_autopan=0,fx_octaveup=0,fx_octavedown=0;
+	        fx_reverse=0,fx_autopan=0,fx_octaveup=0,fx_octavedown=0;
 
             // vars
             var snd,pos,pos2,sampleStart2,sampleEnd2,env;
@@ -192,14 +192,6 @@ Engine_Thirtythree : CroneEngine {
             playerThirtythree[msg[1]-1].set(
                 \amp,msg[2],
                 \ampLag,msg[3],
-            );
-        });
-
-        this.addCommand("tt_rate","iff", { arg msg;
-            // lua is sending 1-index
-            playerThirtythree[msg[1]-1].set(
-                \rate,msg[2],
-                \rateSlew,msg[3],
             );
         });
 
