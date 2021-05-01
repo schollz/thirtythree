@@ -540,7 +540,10 @@ function Operator:pattern_step()
 
   -- update sound with parameter locks for any sound thats doing stuff in the pattern
   for snd_id,_ in pairs(snd_list) do
-    self.pattern[self.cur_ptn_id][self.cur_ptn_step].plock[snd_id]:play_if_locked()
+    -- only update if the sound hasn't been played already
+    if snds_played[snd_id]==nil then
+      self.pattern[self.cur_ptn_id][self.cur_ptn_step].plock[snd_id]:play_if_locked()
+    end
   end
 
   -- update any current playing sounds with fx

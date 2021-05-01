@@ -99,19 +99,19 @@ function Sound:play(override)
   local lpf_resonance=self.resonance
   local hpf_resonance=self.resonance
   local is_lpf=self.is_lpf
-  print("pitch",self.pitch_base,self.pitch)
-  local pitch=self.pitch_base+self.pitch
+  local pitch=self.pitch+self.pitch_base
+  print("pitch",self.pitch_base,self.pitch,pitch)
   if override~=nil then
     voice=override.voice
     s=override.s or s
     e=override.e or e
+    if override.pitch~=nil then 
+      pitch=self.pitch_base+pitch
+      print("pitchoveride",self.pitch_base,override.pitch,pitch)
+    end
     amp=override.amp or amp
     if override.is_lpf~=nil then
       is_lpf=override.is_lpf
-    end
-    if override.pitch ~= nil then 
-      print("pitchOVERRIDE",self.pitch_base,self.pitch,override.pitch,pitch)
-      pitch = self.pitch_base+override.pitch 
     end
   else
     override={}
