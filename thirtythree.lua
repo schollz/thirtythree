@@ -205,7 +205,7 @@ function redraw()
     ops[sel_operator]:volume_draw()
     ops[sel_operator]:pitch_draw()
   else
-    -- screen.display_png(_path.code.."thirtythree/img/oh.png",4,20)
+    graphics:main_screen()
   end
 
   -- metronome icon
