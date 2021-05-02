@@ -3,7 +3,7 @@
 --
 
 
-mode_debug=true
+mode_debug=false
 
 --json
 print(_VERSION)
@@ -127,6 +127,7 @@ function updater(c)
       local_idle_count=0
     end
   end
+  gridd:update()
 end
 
 function enc(k,d)
