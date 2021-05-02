@@ -15,7 +15,13 @@ I love the po-33 and for a long time I've wanted something similar for norns (e.
 
 ### differences between po-33 and thirtythree.
 
-thirtythree is based in the norns which has higher sound quality (48khz, 24bit, stereo samples). thirtythree effects *optionally* global (see `PARAMS` menu). each sound has its own effect parameter locks too. also there are two new effects (replacing unisons). instead of recording, you can load a file into any bank (see `PARAMS` menu). you can have multiple backups change backup # in the `PARAMS` menu. you have two choices of layouts (see above) - the classic 5x5 type layout and a compressed 4x6 layout that lets you stamp more of the thirtythree apps across the grid. you can change up to four operators on a grid, and there is ~12 note polyphony shared across all of the operators.
+- thirtythree is based in the norns which has higher sound quality (48khz, 24bit, stereo samples). 
+- thirtythree fx are sound-specific (see `PARAMS` menu to toggle to be global). 
+- thirtythree fx *stack* (except looping fx) so multiple fx can be applied simultanouesly.
+- in addition to recording from line-in, you can also load a file into any bank (see `PARAMS` menu). 
+- you can have multiple backups change backup # in the `PARAMS` menu. 
+- you have two choices of layouts (see nrloe) - the classic 5x5 type layout and a compressed 4x6 layout that lets you stamp more of the thirtythree apps across the grid. 
+- you can chain up to four operators on a grid, and there is ~12 note polyphony shared across all of the operators.
 
 ### po-33 basics
 
