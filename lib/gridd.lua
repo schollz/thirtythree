@@ -31,26 +31,21 @@ function Gridd:new(o)
     end
   end
 
-
-  -- grid refreshing
-  m.grid_refresh=metro.init()
-  m.fps=25
-  m.grid_refresh.time=1/m.fps
   m.grid_blink=0
-  m.grid_refresh.event=function()
-    if m.grid_on then
-      m.grid_blink = m.grid_blink + 1
-      if m.grid_blink > m.fps/4 then 
-        m.grid_blink=0
-        global_blink = 1 - global_blink
-      end
-      m:grid_redraw()
-    end
-  end
-  m.grid_refresh:start()
 
   print("loaded grid")
   return m
+end
+
+function Gridd:update()
+  if self.grid_on then
+    self.grid_blink = self.grid_blink + 1
+    if self.grid_blink > 7 then 
+      self.grid_blink=0
+      global_blink = 1 - global_blink
+    end
+    self:grid_redraw()
+  end
 end
 
 

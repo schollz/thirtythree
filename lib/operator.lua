@@ -857,7 +857,6 @@ function Operator:buttons_register()
     end
     if not self.mode_play then
       self:debug("on_press: play activated")
-      self:pattern_reset()
     else
       self:debug("on_press: play stopped")
       -- turn off all the sounds
@@ -872,6 +871,9 @@ function Operator:buttons_register()
       engine.tt_amp(2,0,1)
     end
     self.mode_play=not self.mode_play
+    if self.mode_play then
+      self:pattern_reset()
+    end
   end
   self.buttons[B_PLAY].light=function()
     if self.mode_play then
