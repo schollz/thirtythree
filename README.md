@@ -47,6 +47,10 @@ thirtythree is based in the norns which has higher sound quality (48khz, 24bit, 
 
 when in the "trim" mode, you can use E2 or E3 to jog the endpoints. use E1 to zoom in to the last endpoint moved.
 
+here are the two possible layouts available to stamp the grid with:
+
+![layouts](https://user-images.githubusercontent.com/6550035/116799476-8ce85580-aaae-11eb-9b38-2d9c2ea6f179.jpg)
+
 ### thirtythree effects
 
 1. loop 16
