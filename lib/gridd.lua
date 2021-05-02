@@ -91,12 +91,14 @@ function Gridd:get_visual()
   end
 
 
-  for _,op in pairs(ops) do
-    for i=B_FIRST,B_LAST do
-      local r,c=op.buttons[i].pos()
-      local l=op.buttons[i].light()
-      if l~=nil then
-        self.visual[r][c]=l
+  for op_id,op in pairs(ops) do
+    if op_id <= params:get("operators") then
+      for i=B_FIRST,B_LAST do
+        local r,c=op.buttons[i].pos()
+        local l=op.buttons[i].light()
+        if l~=nil then
+          self.visual[r][c]=l
+        end
       end
     end
   end

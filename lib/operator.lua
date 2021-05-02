@@ -774,6 +774,11 @@ function Operator:buttons_register()
   for i=1,23 do
     self.buttons[i]={pressed=false,time_press=0}
     self.buttons[i].press=function(on)
+      -- only allow buttons from available operators
+      if params:get("operators")<self.id then 
+        do return end 
+      end
+
       -- register current operator
       sel_operator=self.id
       self.buttons[i].pressed=on

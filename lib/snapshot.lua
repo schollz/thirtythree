@@ -8,17 +8,19 @@ function Snapshot:new(o)
 end
 
 
-function Snapshot:backup()
+function Snapshot:backup(snapshot_num)
   graphics:alert("saving")
   local t1=clock.get_beat_sec()*clock.get_beats()
-  local filename=_path.data.."thirtythree/save"..params:get("snapshot")..".json"
+  local filename=_path.data.."thirtythree/save"..(snapshot_num~=nil and snapshot_num or params:get("snapshot"))..".json"
   print("saving to ")
   local data={}
 
   -- operator data
   data.ops={}
   for i,op in ipairs(ops) do
-    data.ops[i]=op:marshal()
+    if i<=params:get("operators") then
+      data.ops[i]=op:marshal()
+    end
   end
   local f=io.open(filename,"w+")
 
@@ -32,10 +34,10 @@ function Snapshot:backup()
   graphics:alert("saved in "..t2.." s")
 end
 
-function Snapshot:restore()
+function Snapshot:restore(snapshot_num)
   graphics:alert("loading")
   local t1=clock.get_beat_sec()*clock.get_beats()
-  local filename=_path.data.."thirtythree/save"..params:get("snapshot")..".json"
+  local filename=_path.data.."thirtythree/save"..(snapshot_num~=nil and snapshot_num or params:get("snapshot"))..".json"
   if not util.file_exists(filename) then
     print("no save file to load")
     do return end
@@ -65,9 +67,11 @@ function Snapshot:restore()
 
   -- unmarshal each operator
   for i,_ in ipairs(data.ops) do
-    ops[i]=operator:new()
-    ops[i]:init()
-    ops[i]:unmarshal(data.ops[i])
+    if i<=params:get("operators") then
+      ops[i]=operator:new()
+      ops[i]:init()
+      ops[i]:unmarshal(data.ops[i])
+    end
   end
 
   local t2=math.floor((clock.get_beat_sec()*clock.get_beats()-t1)*100)/100

@@ -89,3 +89,4 @@ here are the two possible layouts available to stamp the grid with:
 - [ ] save when idle
 - [ ] show pattern id
 - [ ] show alert when chaining pattern
+- [ ] allow togggling number of operators
