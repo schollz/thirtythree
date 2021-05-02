@@ -4,7 +4,17 @@
 
 A po-33 clone for norns+grid
 
-I love the po-33 and for a long time I've wanted something similar for norns (e.g. a micro-sampler/splicer + sequencer). I tried making something similar in [abacus](https://llllllll.co/t/abacus) but I didn't have a grid so the ux was very limited and ultimately gave me a bad flow. after making [amen](https://llllllll.co/t/amen) which is a great looper+fx for me, I realized that a lot of my work could be re-used to make a splicer+sequencer. instead of designing a ux from scratch like I did for abacus, I decided to just copy the ux from the po-33. I don't like copying when it comes to art - of which the po-33 might belong. but in this case I feel the po-33 is more instrument than art and I feel warranted to do the copy to have total and complete skill transferability between instruments.
+I love the po-33 and for a long time I've wanted something similar for norns (e.g. a micro-sampler/splicer + sequencer). I tried making something similar in [abacus](https://llllllll.co/t/abacus) but I didn't have a grid so the ux was very limited and ultimately gave me a bad flow. after making [amen](https://llllllll.co/t/amen) which is a great looper+fx for me, I realized that a lot of my work could be re-used to make a splicer+sequencer too. instead of designing a ux from scratch like I did for abacus, I decided to just copy the ux from the po-33 to have complete skill transferability between instruments (much like you would have between two pianos or two saxophones). however there are some key differences:
+
+- thirtythree is based in the norns which has higher sound quality (48khz, 24bit, stereo samples), though higher is not always better :)
+- thirtythree fx are sound-specific (see `PARAMS` menu to toggle to be global like in the po-33). 
+- thirtythree fx *stack* (except looping fx) so multiple fx can be applied simultanouesly.
+- in addition to recording from line-in, you can also load a file into any bank (see `PARAMS` menu). 
+- you can have multiple backups of yoru data (see the `PARAMS` menu). 
+- you have two choices of layouts (see the `PARAMS` menu) - the classic 5x5 type layout and a compressed 4x6 layout that lets you stamp more of the thirtythree apps across the grid. 
+- you can chain up to four operators on a grid, and there is ~12 note polyphony shared across all of the operators.
+- thirtythree doesn't save instantaneously like the po-33 does. you can save manually using the key combo (below) or wait for the auto-save to occur (which occurs after idling for ~3 seconds).
+
 
 ## requirements
 
@@ -13,19 +23,8 @@ I love the po-33 and for a long time I've wanted something similar for norns (e.
 
 ## documentation
 
-### differences between po-33 and thirtythree.
 
-- thirtythree is based in the norns which has higher sound quality (48khz, 24bit, stereo samples). 
-- thirtythree fx are sound-specific (see `PARAMS` menu to toggle to be global). 
-- thirtythree fx *stack* (except looping fx) so multiple fx can be applied simultanouesly.
-- in addition to recording from line-in, you can also load a file into any bank (see `PARAMS` menu). 
-- you can have multiple backups change backup # in the `PARAMS` menu. 
-- you have two choices of layouts (see nrloe) - the classic 5x5 type layout and a compressed 4x6 layout that lets you stamp more of the thirtythree apps across the grid. 
-- you can chain up to four operators on a grid, and there is ~12 note polyphony shared across all of the operators.
-
-### po-33 basics
-
-[the official guide](https://teenage.engineering/guides/po-33/en) for the po-33 explains the usage for this app. basics:
+[the official guide](https://teenage.engineering/guides/po-33/en) for the po-33 explains the usage for this app as thirtythree follows all of the same key combos. basics:
 
 - [x] melodic (buttons 1-8) and drum splicing (buttons 9-16)
 - [x] record with <kbd>record</kbd>+<kbd>1-16</kbd> (option to load files instead in parameters)
@@ -59,6 +58,8 @@ here are the two possible layouts available to stamp the grid with:
 
 ### thirtythree effects
 
+the fx are the same, except unison effects replaced by stereo auto-panning and a bitcrush. some fx stack (looping / scratching do not).
+
 1. loop 16
 2. loop 12 
 3. loop short
@@ -86,7 +87,4 @@ here are the two possible layouts available to stamp the grid with:
 
 ## todo
 
-- [x] save when idle
-- [x] show pattern id
-- [ ] show alert when chaining pattern
-- [x] allow togggling number of operators
+- [ ] show alert when chaining pattern / add to ui?
