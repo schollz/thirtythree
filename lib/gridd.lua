@@ -12,6 +12,7 @@ function Gridd:new(o)
 
   -- initiate the grid
   m.grid_on=true
+  local grid = util.file_exists(_path.code.."midigrid") and include "midigrid/lib/mg_128" or grid
   m.g=grid.connect()
   m.g.key=function(x,y,z)
     if m.grid_on then
