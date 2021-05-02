@@ -50,7 +50,7 @@ I love the po-33 and for a long time I've wanted something similar for norns (e.
 - [x] backup data with <kbd>write</kbd>+<kbd>sound</kbd>+<kbd>play</kbd>
 - [x] restore data with <kbd>write</kbd>+<kbd>sound</kbd>+<kbd>record</kbd>
 
-when in the "trim" mode, you can use E2 or E3 to jog the endpoints. use E1 to zoom in to the last endpoint moved.
+when in the "trim" mode, you can use E2 or E3 to jog the endpoints. use E1 to zoom in to the last endpoint moved. in the tone or filter mode, you can adjust things with just E2 or E3.
 
 here are the two possible layouts available to stamp the grid with:
 
