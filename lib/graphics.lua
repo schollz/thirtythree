@@ -12,16 +12,6 @@ function Graphics:new(o)
   o.alert_clock_id=nil
   o.alert_msg=""
   o.dirty=false
-  o.fps=30
-  clock.run(function()
-    while true do
-      if o.dirty then
-        o.dirty=false
-        redraw()
-      end
-      clock.sleep(1/o.fps)
-    end
-  end)
   return o
 end
 

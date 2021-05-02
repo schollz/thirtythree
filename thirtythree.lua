@@ -94,6 +94,10 @@ function updater(c)
     print("starting up")
     clock.run(startup)
   end
+  if graphics.dirty then 
+    graphics.dirty=false
+    redraw()
+  end
 end
 
 function enc(k,d)
