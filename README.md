@@ -83,3 +83,9 @@ here are the two possible layouts available to stamp the grid with:
 - sometimes there is race condition in the bpm, if you get wacko pattern stepping, restart. so far I haven't been able to reproduce consistently.
 - using 6/8 beat fx might cause operators to get out of sync. operators will try to stay in sync, but if this happens, stop all the patterns and start them again.
 
+
+## todo
+
+- [ ] save when idle
+- [ ] show pattern id
+- [ ] show alert when chaining pattern
