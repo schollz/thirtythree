@@ -35,13 +35,13 @@ function Snapshot:backup(snapshot_num)
 end
 
 function Snapshot:restore(snapshot_num)
-  graphics:alert("loading")
   local t1=clock.get_beat_sec()*clock.get_beats()
   local filename=_path.data.."thirtythree/save"..(snapshot_num~=nil and snapshot_num or params:get("snapshot"))..".json"
   if not util.file_exists(filename) then
     print("no save file to load")
     do return end
   end
+  graphics:alert("loading")
 
   local f=io.open(filename,"rb")
   local content=f:read("*all")

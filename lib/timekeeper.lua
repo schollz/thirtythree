@@ -20,7 +20,7 @@ function Timekeeper:init()
 
   -- TODO: allow different operators to select divisions
   self.pattern={}
-  for i,_ in ipairs(ops) do
+  for i=1,4 do
     self.pattern[i]=self.lattice:new_pattern{
       action=function(t)
         ops[i]:pattern_step()

@@ -75,6 +75,7 @@ function Operator:init()
   self.amp_global=1.0
   self.swing=50
   self.cur_scale=1
+  self.last_button_press=os.time2()
 
   self:buttons_register()
 
@@ -778,6 +779,14 @@ function Operator:buttons_register()
       if params:get("operators")<self.id then 
         do return end 
       end
+
+      -- if in write mode and something happens, need to update
+      if self.mode_write then 
+        if i >= B_BUTTON_FIRST and i<= B_BUTTON_LAST then 
+          global_is_changed=true
+        end
+      end
+      self.last_button_press=os.time2()
 
       -- register current operator
       sel_operator=self.id

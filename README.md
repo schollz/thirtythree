@@ -86,7 +86,7 @@ here are the two possible layouts available to stamp the grid with:
 
 ## todo
 
-- [ ] save when idle
-- [ ] show pattern id
+- [x] save when idle
+- [x] show pattern id
 - [ ] show alert when chaining pattern
-- [ ] allow togggling number of operators
+- [x] allow togggling number of operators

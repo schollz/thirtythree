@@ -26,6 +26,8 @@ sel_adj=ADJ_NONE
 sel_parm=PARM_NONE
 sel_files=false
 global_blink=1
+global_is_changed=false
+local_idle_count=0
 ops={} -- operators
 
 -- engine
@@ -87,6 +89,8 @@ function startup()
   dev_=include("lib/dev")
   dev=dev_:new()
   startup_done=true
+
+  snapshot:restore("default")
 end
 
 function updater(c)
@@ -97,6 +101,31 @@ function updater(c)
   if graphics.dirty then 
     graphics.dirty=false
     redraw()
+  end
+  -- check idling
+  if global_is_changed then
+    local is_idle=true
+    local current_time=os.time2()
+    for i=1,params:get("operators") do
+      if ops[i].mode_play then 
+        is_idle=false 
+        break
+      end 
+      if current_time-ops[i].last_button_press<3 and current_time-ops[i].last_button_press>0 then 
+        is_idle=false 
+        break
+      end
+    end
+    if is_idle then 
+      local_idle_count = local_idle_count + 1
+      if local_idle_count > 7 then
+        global_is_changed=false
+        print("IDLE")
+        snapshot:backup("default")
+      end
+    else
+      local_idle_count=0
+    end
   end
 end
 
