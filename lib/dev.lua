@@ -36,13 +36,13 @@ function Dev:new(o)
   for i=1,4 do
     sel_filename="/home/we/dust/code/thirtythree/defaults/yelidek_kit.wav"
     ops[i]:sound_load(16,sel_filename)
-    -- sel_filename="/home/we/dust/code/thirtythree/defaults/steinway_c.wav"
-    -- ops[i]:sound_load(1,sel_filename)
+    sel_filename="/home/we/dust/code/thirtythree/defaults/steinway_c.wav"
+    ops[i]:sound_load(1,sel_filename)
     ops[i].cur_snd_id=16
   end
 
   sel_adj=ADJ_TRIM
-  -- -- snapshot:backup()
+  -- snapshot:backup()
   -- snapshot:restore()
   return o
 end
