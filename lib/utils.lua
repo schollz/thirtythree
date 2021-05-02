@@ -26,8 +26,8 @@ function check_and_install_aubioonset()
   if not util.file_exists("/usr/bin/aubioonset") then
     print("installing aubio-tools")
     os.execute("sudo apt install -y aubio-tools")
-    os.execute("sudo chmod +x ".._path.code.."thirtythree/default/aubio/aubioonset")
-    os.execute("sudo cp ".._path.code.."thirtythree/default/aubio/aubioonset /usr/bin/aubioonset")
+    os.execute("sudo chmod +x ".._path.code.."thirtythree/defaults/aubio/aubioonset")
+    os.execute("sudo cp ".._path.code.."thirtythree/defaults/aubio/aubioonset /usr/bin/aubioonset")
   else
     print("aubio tools installed")
   end
