@@ -853,7 +853,7 @@ function Operator:buttons_register()
   end
   self.buttons[B_PLAY].on_press=function()
     if self.buttons[B_WRITE].pressed and self.buttons[B_SOUND].pressed then
-      snapshot:backup()
+      snapshot:backup(DEFAULT_SAVE)
       do return end
     end
     if not self.mode_play then
@@ -904,7 +904,7 @@ function Operator:buttons_register()
   end
   self.buttons[B_RECORD].on_press=function()
     if self.buttons[B_WRITE].pressed and self.buttons[B_SOUND].pressed then
-      snapshot:restore()
+      snapshot:restore(DEFAULT_SAVE)
     end
   end
   self.buttons[B_RECORD].off_press=function()

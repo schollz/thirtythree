@@ -90,7 +90,7 @@ function startup()
   dev=dev_:new()
   startup_done=true
 
-  snapshot:restore("default")
+  snapshot:restore(DEFAULT_SAVE)
 end
 
 function updater(c)
@@ -121,7 +121,7 @@ function updater(c)
       if local_idle_count > 7 then
         global_is_changed=false
         print("IDLE")
-        snapshot:backup("default")
+        snapshot:backup(DEFAULT_SAVE)
       end
     else
       local_idle_count=0

@@ -18,20 +18,19 @@ function Snapshot:init()
 
   params.action_write=function(filename,name)
     self:debug("writing "..filename.." also known as "..name)
-    self:backup(0,filename..".json")
+    self:backup(filename..".json")
   end
 
   params.action_read=function(filename)
     self:debug("loading "..filename)
-    self:restore(0,filename..".json")
+    self:restore(filename..".json")
   end
 
 end
 
-function Snapshot:backup(snapshot_num,filename)
+function Snapshot:backup(filename)
   graphics:alert("saving")
   local t1=clock.get_beat_sec()*clock.get_beats()
-  filename = filename or _path.data.."thirtythree/save"..(snapshot_num~=nil and snapshot_num or params:get("snapshot"))..".json"
   print("saving to ")
   local data={}
 
@@ -54,9 +53,8 @@ function Snapshot:backup(snapshot_num,filename)
   graphics:alert("saved in "..t2.." s")
 end
 
-function Snapshot:restore(snapshot_num,filename)
+function Snapshot:restore(filename)
   local t1=clock.get_beat_sec()*clock.get_beats()
-  filename = filename or _path.data.."thirtythree/save"..(snapshot_num~=nil and snapshot_num or params:get("snapshot"))..".json"
   if not util.file_exists(filename) then
     print("no save file to load")
     do return end

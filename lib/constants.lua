@@ -1,3 +1,6 @@
+-- other
+DEFAULT_SAVE=_path.data.."thirtythree/default.json"
+
 -- button constants
 B_FIRST=1
 B_LAST=23
