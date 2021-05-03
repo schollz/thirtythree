@@ -6,7 +6,7 @@ function Voices:new(o)
   o=o or {}
   setmetatable(o,self)
   self.__index=self
-  o.max=10
+  o.max=12
   o.played={}
   o:reset()
   o.pos=0
