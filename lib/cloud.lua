@@ -20,7 +20,7 @@ function Cloud:init()
   self:debug("initializing cloud")
   local current_time=os.time2()
   if not util.file_exists(_path.code.."norns.online") then
-    print("need to donwload norns.online")
+    print("need to download norns.online")
     do return end
   end
 
@@ -50,11 +50,24 @@ function Cloud:init()
       do return end
     end
 
-    -- find pset associated with this
 
     -- choose data name
     -- (here dataname is from the selector)
     local dataname=share.trim_prefix(x,names_dir)
+
+    -- find pset associated with this
+    local pset_name,ext=dataname:match"([^.]*).(.*)"
+    if ext~="json" then
+      print("must have json")
+      do return end
+    end
+
+    local pset_file=snapshot:pset_from_name(pset_name)
+    if pset_file==nil then
+      print("could not find pset file")
+      do return end
+    end
+
     params:set("share_message","uploading...")
     _menu.redraw()
     print("uploading "..x.." as "..dataname)
@@ -64,12 +77,13 @@ function Cloud:init()
     target=x
     uploader:upload{dataname=dataname,pathtofile=pathtofile,target=target}
 
-    -- find the pset and upload it as temporary name
+    -- upload pset
+    -- TODO: check whether this is indeed the full path?
+    pathtofile=pset_file
+    target="/dev/shm/temp.pset"
+    uploader:upload{dataname=dataname,pathtofile=pathtofile,target=target}
 
-    -- loop through thirtythree-XX.pset and find which has the name dataname
-
-    -- when downloading, loop through the psets and find which has the last name available
-
+    -- upload sounds
     sounds=snapshot:list_sounds(x)
     for _,snd_file in ipairs(sounds) do
       if not string.find(snd_file,"code/thirtythree") then
@@ -100,6 +114,11 @@ function Cloud:init()
     params:set("share_message","downloading...")
     _menu.redraw()
     local msg=share.download_from_virtual_directory(x)
+
+    -- move the temporary pset file to any free slot in the psets
+    local pset_name=snapshot:pset_next()
+    os.execute("mv /dev/shm/temp.pset "..pset_name)
+
     params:set("share_message",msg)
   end)
   params:add{type='binary',name='refresh directory',id='share_refresh',behavior='momentary',action=function(v)
