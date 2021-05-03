@@ -913,6 +913,7 @@ function Operator:buttons_register()
       local fname=recorder:recorded_file()
       if fname~=nil then
         -- there was a recording, load it into the currenet sound
+	-- TODO: go through patterns and erase any instance of this sound?
         self:sound_load(self.cur_snd_id,fname)
       end
     end
