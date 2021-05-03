@@ -138,7 +138,7 @@ Engine_Thirtythree : CroneEngine {
 
         context.server.sync;
 
-        playerThirtythree = Array.fill(15,{arg i;
+        playerThirtythree = Array.fill(10,{arg i;
             // Synth("playerThirtythree"++i,[\fxOutBitcrush,fxBusBitcrush],target:context.xg);
             Synth("playerThirtythree",[\fxOutBitcrush,fxBusBitcrush.index],target:context.xg);
         });
@@ -211,7 +211,7 @@ Engine_Thirtythree : CroneEngine {
         });
 
         this.addCommand("tt_bpm","f", { arg msg; 
-            (0..15).do({arg i; 
+            (0..10).do({arg i; 
                 playerThirtythree[i].set(
                     \bpm_target,msg[1],
                 );
@@ -334,7 +334,7 @@ Engine_Thirtythree : CroneEngine {
     free {
         // Thirtythree Specific v0.0.1
         (0..64).do({arg i; sampleBuffThirtythree[i].free});
-        (0..15).do({arg i; playerThirtythree[i].free});
+        (0..10).do({arg i; playerThirtythree[i].free});
         fxSynBitcrush.free;
         fxBusBitcrush.free;
         pitchToRate.free;

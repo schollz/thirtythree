@@ -141,7 +141,7 @@ function Sound:play(override)
     engine.tt_update(voice,s,e)
   else
     if mode_debug then
-      print("playing "..self.wav.name.." on voice "..voice.." at pos ("..s..","..e..")")
+      print("playing "..self.wav.name.." on voice "..voice.." at pos ("..s..","..e..") for "..(e-s)*self.wav.duration)
     end
     local fx_stutter=override.fx[FX_STUTTER3]==nil and 0 or 1
     local fx_stutter_beats=1/6

@@ -62,7 +62,7 @@ function Gridd:grid_key(x,y,z)
 end
 
 function Gridd:key_press(row,col,on)
-  self:debug("row="..row.." col="..col)
+  -- self:debug("row="..row.." col="..col)
   for _,op in pairs(ops) do
     for i=B_FIRST,B_LAST do
       local r,c=op.buttons[i].pos()

@@ -143,7 +143,7 @@ function Operator:unmarshal(content)
     ptn_step=p[3]
     snd_id=p[4]
     if p[1]=="snd" then
-      self.pattern[ptn_id][ptn_step].snd[snd_id]=sound:new()
+      self.pattern[ptn_id][ptn_step].snd[snd_id]=sound:new({op_id=self.id})
       self.pattern[ptn_id][ptn_step].snd[snd_id]:unmarshal(p[5])
     elseif p[1]=="plock" then
       self.pattern[ptn_id][ptn_step].plock[snd_id]:unmarshal(p[5])
@@ -200,9 +200,9 @@ function Operator:sound_initialize(snd_id)
       pitch=scale[INVERTED_KEYBOARD_MAP[smpl_id]+27]-60
     end
     self.sound[snd_id][smpl_id]=sound:new({
+      op_id=self.id,
       id=smpl_id,
       snd_id=snd_id,
-      op_id=self.id,
       s=s,
       e=e,
       melodic=snd_id<9,
@@ -232,6 +232,7 @@ end
 
 function Operator:sound_clone(snd_id,smpl_id)
   local o=self.sound[snd_id][smpl_id]:dump()
+  o.op_id=self.id
   o.pitch_base=o.pitch_base+o.pitch -- rebase the pitch
   return sound:new(o)
 end
@@ -403,7 +404,7 @@ function Operator:pattern_step()
   -- increase step
   self.cur_ptn_step=self.cur_ptn_step+1
   self.cur_ptn_sync_step=self.cur_ptn_sync_step+1
-  self:debug("cur_ptn_step: "..self.cur_ptn_step)
+  -- self:debug("cur_ptn_step: "..self.cur_ptn_step)
 
   -- jump to next pattern or return to beginning
   if self.cur_ptn_step>16 or self.cur_ptn_sync_step%16==1 then
@@ -495,7 +496,7 @@ function Operator:pattern_step()
   local snd_played=nil
   local snds_played={}
   for snd_id,snd in pairs(self.pattern[self.cur_ptn_id][self.cur_ptn_step].snd) do
-    self:debug("pattern_step: playing sound "..snd_id.." sample "..snd.id)
+    -- self:debug("pattern_step: playing sound "..snd_id.." sample "..snd.id)
 
     -- check if it is already doing a looping effect
     local is_looping=false
@@ -796,13 +797,13 @@ function Operator:buttons_register()
         if recorder.is_recording then
           do return end
         end
-        self:debug("buttons_register: button "..i.." pressed on")
+        -- self:debug("buttons_register: button "..i.." pressed on")
         self.buttons[i].time_press=os.clock()
         if self.buttons[i].on_press~=nil then
           self.buttons[i].on_press()
         end
       else
-        self:debug("buttons_register: button "..i.." pressed off")
+        -- self:debug("buttons_register: button "..i.." pressed off")
         local cur_time=os.clock()
         if cur_time-self.buttons[i].time_press<0.04 and self.buttons[i].on_short_press~=nil then
           -- long press
@@ -870,10 +871,10 @@ function Operator:buttons_register()
       engine.tt_amp(1,0,1)
       engine.tt_amp(2,0,1)
     end
-    self.mode_play=not self.mode_play
-    if self.mode_play then
+    if not self.mode_play then
       self:pattern_reset()
     end
+    self.mode_play=not self.mode_play
   end
   self.buttons[B_PLAY].light=function()
     if self.mode_play then
