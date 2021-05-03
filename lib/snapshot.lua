@@ -52,6 +52,33 @@ function Snapshot:pset_next()
   end
 end
 
+-- pset_from_name returns the name of the pset associated with its name
+-- e.g. "AA" might return thirtythree-03.pset if that one has that name
+function Snapshot:pset_from_name(name)
+  -- look in all the files in the data folder
+  fnames=list_files(_path.data.."thirtythree/",false)
+  for _,fname in ipairs(fnames) do
+    local found_name=self:pset_name(fname)
+    if found_name==name then
+      do return fname end
+    end
+  end
+end
+
+function Snapshot:pset_name(pset_filename)
+  file=io.open(pset_filename,"r")
+  io.input(file)
+  local first_line=io.read()
+  io.close(file)
+  if not string.find(first_line,"-- ") then
+    do return end
+  end
+  if string.sub(first_line,1,3)=="-- " then
+    local name=string.sub(first_line,4)
+    return name
+  end
+end
+
 function Snapshot:list_sounds(filename)
   if not util.file_exists(filename) then
     print("no save file to load")
