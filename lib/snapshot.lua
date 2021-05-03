@@ -56,7 +56,7 @@ end
 -- e.g. "AA" might return thirtythree-03.pset if that one has that name
 function Snapshot:pset_from_name(name)
   -- look in all the files in the data folder
-  fnames=list_files(_path.data.."thirtythree/",false)
+  fnames=os.list_files(_path.data.."thirtythree/",false)
   for _,fname in ipairs(fnames) do
     local found_name=self:pset_name(fname)
     if found_name==name then

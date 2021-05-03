@@ -48,7 +48,7 @@ function os.time2()
   return clock.get_beats()*clock.get_beat_sec()
 end
 
-function _list_files(d,files,recursive)
+function os._list_files(d,files,recursive)
   -- list files in a flat table
   if d=="." or d=="./" then
     d=""
@@ -80,11 +80,11 @@ function _list_files(d,files,recursive)
   return files
 end
 
-function list_files(d,recurisve)
+function os.list_files(d,recurisve)
   if recursive==nil then
     recursive=false
   end
-  return _list_files(d,{},recursive)
+  return os._list_files(d,{},recursive)
 end
 
 function os.read_file(filename)
