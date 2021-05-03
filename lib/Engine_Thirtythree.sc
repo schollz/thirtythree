@@ -9,6 +9,8 @@ Engine_Thirtythree : CroneEngine {
     var fxBusBitcrush;
     var fxSynBitcrush;
     var pitchToRate;
+    var sampleTransitionL;
+    var sampleTransitionR;
     // var osfunThirtyThree;
     // Thirtythree ^
 
@@ -40,8 +42,15 @@ Engine_Thirtythree : CroneEngine {
             Buffer.new(context.server);
         });
 
+        sampleTransitionL = Array.fill(12, { arg i; 
+            Buffer.alloc(context.server,48000 * 0.05, 1); 
+        });
+        sampleTransitionR = Array.fill(12, { arg i; 
+            Buffer.alloc(context.server,48000 * 0.05, 1); 
+        });
+
         SynthDef("playerThirtythree",{ 
-            arg bufnum, amp=0, ampLag=0, t_trig=0,fadeout=0.05,
+            arg bufnum,bufLnum,bufRnum, amp=0, ampLag=0, t_trig=0,fadeout=0.05,
             pitchBase=0,pitchAdj=0,
             sampleStart=0,sampleEnd=1,samplePos=0,
             rate=0,rateSlew=0,bpm_sample=1,bpm_target=1,
@@ -51,7 +60,8 @@ Engine_Thirtythree : CroneEngine {
             fx_stutter=0,fx_stutter_beats=1/16,vinyl=0,loop=0,
             pan=0,lpf=20000,lpflag=0,hpf=10,hpflag=0,lpf_resonance=1,hpf_resonance=1,
             use_envelope=1,env_trig=0,
-	        fx_reverse=0,fx_autopan=0,fx_octaveup=0,fx_octavedown=0;
+	        fx_reverse=0,fx_autopan=0,fx_octaveup=0,fx_octavedown=0,
+            delayAmp=0;
 
             // vars
             var snd,pos,pos2,sampleStart2,sampleEnd2,env,bFrames;
@@ -100,25 +110,33 @@ Engine_Thirtythree : CroneEngine {
                 resetPos:samplePos*bFrames
             );
 
-            sampleStart2 = Gate.kr(pos,1-fxloop_trig);
-            sampleEnd2 = (sampleStart2+ArrayMin.kr([60/bpm_target/(1/48000/Gate.kr(rate.abs,1-fxloop_trig))*fxloop_beats,bFrames]).at(0));
-            pos2=Phasor.ar(
-                trig:fxloop_trig,
-                rate:rate,
-                start:((sampleStart2*(rate>0))+(sampleEnd2*(rate<0))),
-                end:((sampleEnd2*(rate>0))+(sampleStart2*(rate<0))),
-                resetPos:sampleStart2
-            );
-            fxloop_trig=Lag.kr(fxloop_trig,0.2);
-            snd=(BufRd.ar(2,bufnum,
+            snd = BufRd.ar(2,bufnum,
                 pos,
                 loop:0,
                 interpolation:4
-            )*(1-fxloop_trig))+(BufRd.ar(2,bufnum,
-                pos2,
-                loop:0,
-                interpolation:1
-            )*fxloop_trig);
+            );
+            snd = (snd*(1-delayAmp))+BufDelayN.ar([bufLnum,bufRnum], snd, delayTime:0.05, mul:delayAmp);
+
+            // sampleStart2 = Gate.kr(pos,1-fxloop_trig);
+            // sampleEnd2 = (sampleStart2+ArrayMin.kr([60/bpm_target/(1/48000/Gate.kr(rate.abs,1-fxloop_trig))*fxloop_beats,bFrames]).at(0));
+            // pos2=Phasor.ar(
+            //     trig:fxloop_trig,
+            //     rate:rate,
+            //     start:((sampleStart2*(rate>0))+(sampleEnd2*(rate<0))),
+            //     end:((sampleEnd2*(rate>0))+(sampleStart2*(rate<0))),
+            //     resetPos:sampleStart2
+            // );
+            // fxloop_trig=Lag.kr(fxloop_trig,0.2);
+            // snd=(BufRd.ar(2,bufnum,
+            //     pos,
+            //     loop:0,
+            //     interpolation:4
+            // )*(1-fxloop_trig))+(BufRd.ar(2,bufnum,
+            //     pos2,
+            //     loop:0,
+            //     interpolation:1
+            // )*fxloop_trig);
+            
             snd = RLPF.ar(snd,Lag.kr(lpf,lpflag),lpf_resonance);
             snd = RHPF.ar(snd,Lag.kr(hpf,hpflag),hpf_resonance);
 
@@ -142,7 +160,7 @@ Engine_Thirtythree : CroneEngine {
 
         playerThirtythree = Array.fill(12,{arg i;
             // Synth("playerThirtythree"++i,[\fxOutBitcrush,fxBusBitcrush],target:context.xg);
-            Synth("playerThirtythree",[\fxOutBitcrush,fxBusBitcrush.index],target:context.xg);
+            Synth("playerThirtythree",[\fxOutBitcrush,fxBusBitcrush.index,\bufLnum,sampleTransitionL[i].bufnum,\bufRnum,sampleTransitionR[i].bufnum],target:context.xg);
         });
         
         this.addCommand("tt_load","is", { arg msg;
@@ -340,6 +358,8 @@ Engine_Thirtythree : CroneEngine {
         fxSynBitcrush.free;
         fxBusBitcrush.free;
         pitchToRate.free;
+        sampleTransitionL.free;
+        sampleTransitionR.free;
         // osfunThirtyThree.free;
         // ^ Thirtythree specific
     }
