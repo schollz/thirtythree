@@ -15,15 +15,24 @@ function Snapshot:new(o)
 end
 
 function Snapshot:init()
+  os.execute("mkdir -p ".._path.data.."thirtythree/backups/")
 
   params.action_write=function(filename,name)
     self:debug("writing "..filename.." also known as "..name)
-    self:backup(filename..".json")
+    self:backup(_path.data.."thirtythree/backups/"..name..".json")
   end
 
   params.action_read=function(filename)
     self:debug("loading "..filename)
-    self:restore(filename..".json")
+    file = io.open(filename, "r")
+    io.input(file) 
+    local first_line=io.read()
+    io.close(file)
+    self:debug(first_line)
+    local name = string.sub(first_line,4)
+    print(name)
+    self:debug("also known as '"..name.."'")
+    self:restore(_path.data.."thirtythree/backups/"..name..".json")
   end
 
 end
