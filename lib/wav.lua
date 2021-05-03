@@ -44,7 +44,13 @@ function Wav:unmarshal(content)
   end
 end
 
-
+function Wav:filenames()
+  local fnames={}
+  for fname,_ in pairs(self.files) do 
+    table.insert(fnames,fname)
+  end
+  return fnames
+end
 
 function Wav:load(filename)
   if self.files[filename] ~= nil then
@@ -81,7 +87,7 @@ function Wav:get(filename)
         if onset==nil then
           print("error with onset")
         end
-        self:debug(tonumber(substring),self.files[filename].duration,onset)
+        -- self:debug(tonumber(substring),self.files[filename].duration,onset)
         table.insert(onsets, onset)
       end
     end
@@ -90,7 +96,7 @@ function Wav:get(filename)
     for i,_ in ipairs(onsets) do
       if i>1 then
         self.files[filename].onsets[i-1]={onsets[i-1],onsets[i]}
-        print(i-1,onsets[i-1],onsets[i])
+        -- print(i-1,onsets[i-1],onsets[i])
       end
     end
 

@@ -57,6 +57,8 @@ sound=include("lib/sound")
 operator=include("lib/operator")
 snapshot_=include("lib/snapshot")
 snapshot=snapshot_:new()
+cloud_=include("lib/cloud")
+cloud=cloud_:new()
 
 function init()
   -- start updater
@@ -71,6 +73,10 @@ end
 
 function startup()
   startup_initiated=true
+  
+  -- initialize cloud
+  cloud:init()
+
   graphics:alert("loading")
   check_and_install_aubioonset()
 
@@ -91,6 +97,8 @@ function startup()
   startup_done=true
 
   snapshot:restore(DEFAULT_SAVE)
+
+  cloud:reset()
 end
 
 function updater(c)

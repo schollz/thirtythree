@@ -18,29 +18,67 @@ function Snapshot:init()
   os.execute("mkdir -p ".._path.data.."thirtythree/backups/")
 
   params.action_write=function(filename,name)
+    if name==nil then 
+      do return end 
+    end
     self:debug("writing "..filename.." also known as "..name)
     self:backup(_path.data.."thirtythree/backups/"..name..".json")
   end
 
   params.action_read=function(filename)
-    self:debug("loading "..filename)
     file = io.open(filename, "r")
     io.input(file) 
     local first_line=io.read()
     io.close(file)
-    self:debug(first_line)
     local name = string.sub(first_line,4)
-    print(name)
-    self:debug("also known as '"..name.."'")
-    self:restore(_path.data.."thirtythree/backups/"..name..".json")
+    if string.sub(first_line,1,3)=="-- " then
+      self:debug("loading "..filename)
+      self:debug(first_line)
+      self:debug("also known as '"..name.."'")
+      self:restore(_path.data.."thirtythree/backups/"..name..".json")
+      cloud:reset()
+    end
   end
 
+end
+
+
+function Snapshot:list_sounds(filename)
+  if not util.file_exists(filename) then
+    print("no save file to load")
+    do return end
+  end
+  graphics:alert("loading")
+
+  local f=io.open(filename,"rb")
+  local content=f:read("*all")
+  f:close()
+
+  local data=json.decode(content)
+  if data==nil then
+    print("error loading data")
+    do return end
+  end
+  if data.wav==nil then
+    print("error loading wav")
+    do return end
+  end
+
+  -- unmarshal wav data
+  local wav_temp=wav_:new()
+  wav_temp:unmarshal(data.wav)
+  filenames=wav_temp:filenames()
+  self:debug("found files in "..filename)
+  for _, fname in ipairs(filenames) do 
+    self:debug(fname)
+  end
+  return filenames
 end
 
 function Snapshot:backup(filename)
   graphics:alert("saving")
   local t1=clock.get_beat_sec()*clock.get_beats()
-  print("saving to ")
+  print("saving to "..filename)
   local data={}
 
   -- operator data

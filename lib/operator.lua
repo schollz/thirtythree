@@ -85,9 +85,9 @@ end
 function Operator:marshal()
   local data={}
   for k,v in pairs(self) do
-    print(k,v)
+    -- print(k,v)
     if k~="buttons" and k~="pattern" and k~="sound" and k~="sound_prevent" and k~="mode_write" and k~="mode_play" and k~="sound_fx_current" then
-      self:debug("encoding "..k)
+      -- self:debug("encoding "..k)
       data[k]=json.encode(v)
     end
   end
