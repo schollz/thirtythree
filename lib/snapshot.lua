@@ -18,19 +18,19 @@ function Snapshot:init()
   os.execute("mkdir -p ".._path.data.."thirtythree/backups/")
 
   params.action_write=function(filename,name)
-    if name==nil then 
-      do return end 
+    if name==nil then
+      do return end
     end
     self:debug("writing "..filename.." also known as "..name)
     self:backup(_path.data.."thirtythree/backups/"..name..".json")
   end
 
   params.action_read=function(filename)
-    file = io.open(filename, "r")
-    io.input(file) 
+    file=io.open(filename,"r")
+    io.input(file)
     local first_line=io.read()
     io.close(file)
-    local name = string.sub(first_line,4)
+    local name=string.sub(first_line,4)
     if string.sub(first_line,1,3)=="-- " then
       self:debug("loading "..filename)
       self:debug(first_line)
@@ -69,7 +69,7 @@ function Snapshot:list_sounds(filename)
   wav_temp:unmarshal(data.wav)
   filenames=wav_temp:filenames()
   self:debug("found files in "..filename)
-  for _, fname in ipairs(filenames) do 
+  for _,fname in ipairs(filenames) do
     self:debug(fname)
   end
   return filenames

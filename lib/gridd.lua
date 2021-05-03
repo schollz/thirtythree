@@ -12,7 +12,7 @@ function Gridd:new(o)
 
   -- initiate the grid
   m.grid_on=true
-  local grid = util.file_exists(_path.code.."midigrid") and include "midigrid/lib/mg_128" or grid
+  local grid=util.file_exists(_path.code.."midigrid") and include "midigrid/lib/mg_128" or grid
   m.g=grid.connect()
   m.g.key=function(x,y,z)
     if m.grid_on then
@@ -39,10 +39,10 @@ end
 
 function Gridd:update()
   if self.grid_on then
-    self.grid_blink = self.grid_blink + 1
-    if self.grid_blink > 7 then 
+    self.grid_blink=self.grid_blink+1
+    if self.grid_blink>7 then
       self.grid_blink=0
-      global_blink = 1 - global_blink
+      global_blink=1-global_blink
     end
     self:grid_redraw()
   end
@@ -87,7 +87,7 @@ function Gridd:get_visual()
 
 
   for op_id,op in pairs(ops) do
-    if op_id <= params:get("operators") then
+    if op_id<=params:get("operators") then
       for i=B_FIRST,B_LAST do
         local r,c=op.buttons[i].pos()
         local l=op.buttons[i].light()

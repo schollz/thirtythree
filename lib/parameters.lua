@@ -7,7 +7,7 @@ function register_parameters()
   params:set_action("operators",function(v)
     params:write(_path.data.."thirtythree/defaults")
   end)
-  -- for _, p in ipairs({"snapshot","layout","load sounds","fx global","operators"}) do 
+  -- for _, p in ipairs({"snapshot","layout","load sounds","fx global","operators"}) do
   --   params:set_action(p,function()
   --     print("parameter action!")
   --     params:write(_path.data.."thirtythree/defaults")

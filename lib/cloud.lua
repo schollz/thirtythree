@@ -68,7 +68,7 @@ function Cloud:init()
     -- when downloading, loop through the psets and find which has the last name available
 
     sounds=snapshot:list_sounds(x)
-    for _, snd_file in ipairs(sounds) do
+    for _,snd_file in ipairs(sounds) do
       if not string.find(snd_file,"code/thirtythree") then
         self:debug("uploading "..snd_file)
         pathtofile=snd_file
@@ -100,20 +100,20 @@ function Cloud:init()
     params:set("share_message",msg)
   end)
   params:add{type='binary',name='refresh directory',id='share_refresh',behavior='momentary',action=function(v)
-      print("updating directory")
-      params:set("share_message","refreshing directory.")
-      _menu.redraw()
-      share.make_virtual_directory()
-      params:set("share_message","directory updated.")
-    end
-  }
-  params:add_text('share_message',">","")
-  self.enabled=true
+    print("updating directory")
+    params:set("share_message","refreshing directory.")
+    _menu.redraw()
+    share.make_virtual_directory()
+    params:set("share_message","directory updated.")
+  end
+}
+params:add_text('share_message',">","")
+self.enabled=true
 end
 
 function Cloud:reset()
-  if not self.enabled then 
-    do return end 
+  if not self.enabled then
+    do return end
   end
   params:set("share_upload",_path.data.."thirtythree/backups/",true)
 end
