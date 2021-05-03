@@ -50,6 +50,8 @@ function Cloud:init()
       do return end
     end
 
+    -- find pset associated with this
+
     -- choose data name
     -- (here dataname is from the selector)
     local dataname=share.trim_prefix(x,names_dir)
@@ -63,6 +65,7 @@ function Cloud:init()
     uploader:upload{dataname=dataname,pathtofile=pathtofile,target=target}
 
     -- find the pset and upload it as temporary name
+
     -- loop through thirtythree-XX.pset and find which has the name dataname
 
     -- when downloading, loop through the psets and find which has the last name available

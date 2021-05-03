@@ -133,7 +133,9 @@ function scale_names()
   return all_scale_names
 end
 
-
-
+function path_split(filename)
+  local pathname,fname,ext=string.match(filename,"(.-)([^\\/]-%.?([^%.\\/]*))$")
+  return pathname,fname,ext
+end
 
 

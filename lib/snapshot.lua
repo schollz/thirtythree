@@ -66,6 +66,9 @@ function Snapshot:pset_from_name(name)
 end
 
 function Snapshot:pset_name(pset_filename)
+  if not string.find(pset_filename,".pset") then
+    do return end
+  end
   file=io.open(pset_filename,"r")
   io.input(file)
   local first_line=io.read()
