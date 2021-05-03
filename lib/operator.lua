@@ -1004,9 +1004,13 @@ function Operator:buttons_register()
             sel_files=false
             if fname~=nil and fname~="cancel" then
               self:debug("selected "..fname)
+              local pathname,filename_w_ext,ext=string.match(fname,"(.-)([^\\/]-%.?([^%.\\/]*))$")
+              -- copy the file to the audio directory
+              local new_fname=_path.audio.."thirtythree/"..filename_w_ext
+              os.execute("cp "..fname.." "..new_fname)
               self.cur_snd_id=b
               sel_adj=ADJ_TRIM
-              self:sound_load(self.cur_snd_id,fname)
+              self:sound_load(self.cur_snd_id,new_fname)
             end
           end)
         else

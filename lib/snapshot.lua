@@ -1,17 +1,37 @@
 local Snapshot={}
 
+function Snapshot:debug(s)
+  if mode_debug then
+    print("snapshot: "..s)
+  end
+end
+
 function Snapshot:new(o)
   o=o or {}
   setmetatable(o,self)
   self.__index=self
+  o:init()
   return o
 end
 
+function Snapshot:init()
 
-function Snapshot:backup(snapshot_num)
+  params.action_write=function(filename,name)
+    self:debug("writing "..filename.." also known as "..name)
+    self:backup(0,filename..".json")
+  end
+
+  params.action_read=function(filename)
+    self:debug("loading "..filename)
+    self:restore(0,filename..".json")
+  end
+
+end
+
+function Snapshot:backup(snapshot_num,filename)
   graphics:alert("saving")
   local t1=clock.get_beat_sec()*clock.get_beats()
-  local filename=_path.data.."thirtythree/save"..(snapshot_num~=nil and snapshot_num or params:get("snapshot"))..".json"
+  filename = filename or _path.data.."thirtythree/save"..(snapshot_num~=nil and snapshot_num or params:get("snapshot"))..".json"
   print("saving to ")
   local data={}
 
@@ -34,9 +54,9 @@ function Snapshot:backup(snapshot_num)
   graphics:alert("saved in "..t2.." s")
 end
 
-function Snapshot:restore(snapshot_num)
+function Snapshot:restore(snapshot_num,filename)
   local t1=clock.get_beat_sec()*clock.get_beats()
-  local filename=_path.data.."thirtythree/save"..(snapshot_num~=nil and snapshot_num or params:get("snapshot"))..".json"
+  filename = filename or _path.data.."thirtythree/save"..(snapshot_num~=nil and snapshot_num or params:get("snapshot"))..".json"
   if not util.file_exists(filename) then
     print("no save file to load")
     do return end
