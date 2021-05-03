@@ -46,7 +46,7 @@ end
 function Snapshot:pset_next()
   for i=1,99 do
     fname=_path.data..string.format("thirtythree/thirtythree-%02d.pset",i)
-    if not util.file_exsts(fname) then
+    if not util.file_exists(fname) then
       return fname
     end
   end
