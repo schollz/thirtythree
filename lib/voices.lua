@@ -14,20 +14,15 @@ function Voices:new(o)
 
   -- collect position information from supercollider
   -- osc input
-  -- osc.event=function(path,args,from)
-  --   if path=="tt_pos" then
-  --     if args[1]>0 then
-  --       o.pos=args[2]
-  --       if sel_adj==ADJ_TRIM then
-  --         graphics:update()
-  --       end
-  --     end
-  --   end
-  -- end
+  osc.event=function(path,args,from)
+    if path=="voicedone" then
+      print("voice done: "..args[1])
+      o.played[tonumber(args[1])]={snd_id=0,last_played=0,locked=false,duration=0}
+    end
+  end
 
   return o
 end
-
 
 function Voices:reset()
   print("reseting voices")
