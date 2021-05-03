@@ -48,7 +48,7 @@ function os.time2()
   return clock.get_beats()*clock.get_beat_sec()
 end
 
-function _list_files(d,files,recursive)
+function os._list_files(d,files,recursive)
   -- list files in a flat table
   if d=="." or d=="./" then
     d=""
@@ -80,11 +80,11 @@ function _list_files(d,files,recursive)
   return files
 end
 
-function list_files(d,recurisve)
+function os.list_files(d,recurisve)
   if recursive==nil then
     recursive=false
   end
-  return _list_files(d,{},recursive)
+  return os._list_files(d,{},recursive)
 end
 
 function os.read_file(filename)
@@ -102,7 +102,7 @@ end
 -- transpose_rate returns a transpostion to a rate
 -- tranpose +i notes
 -- https://github.com/monome/norns/blob/main/lua/lib/intonation.lua#L16
-local rates_12note = {1/1,16/15,9/8,6/5,5/4,4/3,45/32,3/2,8/5,5/3,16/9,15/8}
+local rates_12note={1/1,16/15,9/8,6/5,5/4,4/3,45/32,3/2,8/5,5/3,16/9,15/8}
 function pitch_to_rate(i)
   i=i+1
   octave=0
@@ -125,10 +125,17 @@ assert(pitch_to_rate(-1)==15/8/2)
 
 
 local all_scale_names={}
-for i = 1, #MusicUtil.SCALES do
-  table.insert(all_scale_names, string.lower(MusicUtil.SCALES[i].name))
+for i=1,#MusicUtil.SCALES do
+  table.insert(all_scale_names,string.lower(MusicUtil.SCALES[i].name))
 end
 
 function scale_names()
   return all_scale_names
 end
+
+function path_split(filename)
+  local pathname,fname,ext=string.match(filename,"(.-)([^\\/]-%.?([^%.\\/]*))$")
+  return pathname,fname,ext
+end
+
+

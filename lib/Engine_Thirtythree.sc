@@ -9,6 +9,7 @@ Engine_Thirtythree : CroneEngine {
     var fxBusBitcrush;
     var fxSynBitcrush;
     var pitchToRate;
+    var osfun;
     // var osfunThirtyThree;
     // Thirtythree ^
 
@@ -41,7 +42,7 @@ Engine_Thirtythree : CroneEngine {
         });
 
         SynthDef("playerThirtythree",{ 
-            arg bufnum, amp=0, ampLag=0, t_trig=0,fadeout=0.05,
+            arg bufnum, amp=0, playerNum, ampLag=0, t_trig=0,fadeout=0.05,
             pitchBase=0,pitchAdj=0,
             sampleStart=0,sampleEnd=1,samplePos=0,
             rate=0,rateSlew=0,bpm_sample=1,bpm_target=1,
@@ -134,6 +135,8 @@ Engine_Thirtythree : CroneEngine {
                 level:amp,
             );
 
+            SendTrig.kr(Trig.kr(A2K.kr(1-amp.sign)),playerNum,1);  
+
             Out.ar(fxOutBitcrush,snd*fxSendBitcrush);
             Out.ar(0,snd*(1-fxSendBitcrush))
         }).add; 
@@ -142,8 +145,15 @@ Engine_Thirtythree : CroneEngine {
 
         playerThirtythree = Array.fill(12,{arg i;
             // Synth("playerThirtythree"++i,[\fxOutBitcrush,fxBusBitcrush],target:context.xg);
-            Synth("playerThirtythree",[\fxOutBitcrush,fxBusBitcrush.index],target:context.xg);
+            Synth("playerThirtythree",[\fxOutBitcrush,fxBusBitcrush.index,\playerNum,i],target:context.xg);
         });
+
+        osfun = OSCFunc({ 
+            arg msg, time; 
+            [time, msg].postln; 
+            // send lua the 1-index version of the voice
+            NetAddr("127.0.0.1", 10111).sendMsg("voicedone",1,msg[2]+1);  
+        },'/tr', context.server.addr);
         
         this.addCommand("tt_load","is", { arg msg;
             // lua is sending 1-index
@@ -340,6 +350,7 @@ Engine_Thirtythree : CroneEngine {
         fxSynBitcrush.free;
         fxBusBitcrush.free;
         pitchToRate.free;
+        osfun.free;
         // osfunThirtyThree.free;
         // ^ Thirtythree specific
     }

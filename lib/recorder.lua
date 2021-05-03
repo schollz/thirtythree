@@ -72,7 +72,7 @@ end
 function Recorder:files()
   local current_max=0
   local num_files=0
-  for _,fname in ipairs(list_files(_path.audio.."thirtythree")) do
+  for _,fname in ipairs(os.list_files(_path.audio.."thirtythree")) do
     num_files=num_files+1
     local loop_num=tonumber(string.match(fname,'sample(%d*)'))
     if loop_num~=nil and loop_num>current_max then

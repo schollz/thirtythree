@@ -14,7 +14,7 @@ end
 json=require("cjson")
 
 -- globals
-MusicUtil = require "musicutil"
+MusicUtil=require "musicutil"
 include("lib/parameters")
 include("lib/constants")
 include("lib/utils")
@@ -57,6 +57,8 @@ sound=include("lib/sound")
 operator=include("lib/operator")
 snapshot_=include("lib/snapshot")
 snapshot=snapshot_:new()
+cloud_=include("lib/cloud")
+cloud=cloud_:new()
 
 function init()
   -- start updater
@@ -71,11 +73,15 @@ end
 
 function startup()
   startup_initiated=true
+
+  -- initialize cloud
+  cloud:init()
+
   graphics:alert("loading")
   check_and_install_aubioonset()
 
   -- initialize operators
-  for i=1,4 do 
+  for i=1,4 do
     ops[i]=operator:new({id=i})
     ops[i]:init()
   end
@@ -90,7 +96,9 @@ function startup()
   dev=dev_:new()
   startup_done=true
 
-  snapshot:restore("default")
+  snapshot:restore(DEFAULT_SAVE)
+
+  cloud:reset()
 end
 
 function updater(c)
@@ -98,7 +106,7 @@ function updater(c)
     print("starting up")
     clock.run(startup)
   end
-  if graphics.dirty then 
+  if graphics.dirty then
     graphics.dirty=false
     redraw()
   end
@@ -107,21 +115,21 @@ function updater(c)
     local is_idle=true
     local current_time=os.time2()
     for i=1,params:get("operators") do
-      if ops[i].mode_play then 
-        is_idle=false 
+      if ops[i].mode_play then
+        is_idle=false
         break
-      end 
-      if current_time-ops[i].last_button_press<3 and current_time-ops[i].last_button_press>0 then 
-        is_idle=false 
+      end
+      if current_time-ops[i].last_button_press<3 and current_time-ops[i].last_button_press>0 then
+        is_idle=false
         break
       end
     end
-    if is_idle then 
-      local_idle_count = local_idle_count + 1
-      if local_idle_count > 7 then
+    if is_idle then
+      local_idle_count=local_idle_count+1
+      if local_idle_count>7 then
         global_is_changed=false
         print("IDLE")
-        snapshot:backup("default")
+        snapshot:backup(DEFAULT_SAVE)
       end
     else
       local_idle_count=0

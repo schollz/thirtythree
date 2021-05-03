@@ -1,3 +1,6 @@
+-- other
+DEFAULT_SAVE=_path.data.."thirtythree/default.json"
+
 -- button constants
 B_FIRST=1
 B_LAST=23
@@ -28,7 +31,7 @@ PARM_RESONANCE=5
 
 INVERTED_KEYBOARD={13,14,15,16,9,10,11,12,5,6,7,8,1,2,3,4}
 INVERTED_KEYBOARD_MAP={}
-for i=1,16 do 
+for i=1,16 do
   INVERTED_KEYBOARD_MAP[INVERTED_KEYBOARD[i]]=i
 end
 

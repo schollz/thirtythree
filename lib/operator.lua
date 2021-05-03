@@ -85,9 +85,9 @@ end
 function Operator:marshal()
   local data={}
   for k,v in pairs(self) do
-    print(k,v)
+    -- print(k,v)
     if k~="buttons" and k~="pattern" and k~="sound" and k~="sound_prevent" and k~="mode_write" and k~="mode_play" and k~="sound_fx_current" then
-      self:debug("encoding "..k)
+      -- self:debug("encoding "..k)
       data[k]=json.encode(v)
     end
   end
@@ -175,7 +175,7 @@ end
 -- sound functions
 --
 function Operator:sound_current_name()
-  if self.sound[self.cur_snd_id][1].wav ~= nil then 
+  if self.sound[self.cur_snd_id][1].wav~=nil then
     do return self.sound[self.cur_snd_id][1].wav.name end
   end
   return ""
@@ -192,8 +192,8 @@ function Operator:sound_initialize(snd_id)
     end
     local pitch=0
     if snd_id<=8 then
-       -- pitch=INVERTED_KEYBOARD[smpl_id]-9
-      if self.cur_scale==nil then 
+      -- pitch=INVERTED_KEYBOARD[smpl_id]-9
+      if self.cur_scale==nil then
         self.cur_scale=1
       end
       local scale=MusicUtil.generate_scale_of_length(0,self.cur_scale,96)
@@ -278,9 +278,9 @@ end
 function Operator:pitch_set(d)
   self.pitch=util.clamp(self.pitch+math.sign(d),-12,12)
   -- determine pitch based on the scale
-  local note = 0
-  if self.pitch ~= 0 then 
-    local notes = MusicUtil.generate_scale_of_length(0,self.cur_scale,96)
+  local note=0
+  if self.pitch~=0 then
+    local notes=MusicUtil.generate_scale_of_length(0,self.cur_scale,96)
     note=notes[36+self.pitch]-60 -- note relative to a fixed root of "C"
   end
   self:parameter_update_sounds_and_locks("pitch",note)
@@ -407,7 +407,7 @@ function Operator:pattern_step()
   -- self:debug("cur_ptn_step: "..self.cur_ptn_step)
 
   -- jump to next pattern or return to beginning
-  if self.cur_ptn_step>16 or self.cur_ptn_sync_step%16==1 then
+  if self.cur_ptn_step>16 or self.cur_ptn_sync_step%16==0 then
     -- goto next pattern
     self.pattern_chain_index=self.pattern_chain_index+1
     if self.pattern_chain_index>#self.pattern_chain then
@@ -459,7 +459,7 @@ function Operator:pattern_step()
           -- play fx globally
           if params:get("fx global")==2 then
             self:debug("applying fx "..fx_id.." to all")
-            for snd_id2=1,16 do 
+            for snd_id2=1,16 do
               fx_to_play[snd_id2][fx_id]=true
             end
           end
@@ -469,8 +469,8 @@ function Operator:pattern_step()
           self.pattern[self.cur_ptn_id][self.cur_ptn_step].flock[self.cur_snd_id][fx_id]=true
           -- save this fx globally
           if params:get("fx global")==2 then
-            for snd_id2=1,16 do 
-               self.pattern[self.cur_ptn_id][self.cur_ptn_step].flock[snd_id2][fx_id]=true
+            for snd_id2=1,16 do
+              self.pattern[self.cur_ptn_id][self.cur_ptn_step].flock[snd_id2][fx_id]=true
             end
           end
           if fx_id==FX_NONE then
@@ -480,10 +480,10 @@ function Operator:pattern_step()
             end
             -- erase fx globally
             if params:get("fx global")==2 then
-              for snd_id2=1,16 do 
+              for snd_id2=1,16 do
                 for j=1,16 do
-                   self.pattern[self.cur_ptn_id][self.cur_ptn_step].flock[snd_id2][j]=false
-                 end
+                  self.pattern[self.cur_ptn_id][self.cur_ptn_step].flock[snd_id2][j]=false
+                end
               end
             end
           end
@@ -557,7 +557,7 @@ function Operator:pattern_step()
 
   -- update sound with parameter locks for any sound thats doing stuff in the pattern
   for snd_id,_ in pairs(snd_list) do
-      self.pattern[self.cur_ptn_id][self.cur_ptn_step].plock[snd_id]:play_if_locked()
+    self.pattern[self.cur_ptn_id][self.cur_ptn_step].plock[snd_id]:play_if_locked()
   end
 
   -- update any current playing sounds with fx
@@ -657,7 +657,7 @@ function Operator:pattern_reset()
       self.cur_ptn_sync_step=op.cur_ptn_sync_step
     end
   end
-  if not others_playing then 
+  if not others_playing then
     self:debug("hard restart")
     timekeeper:hard_restart()
   end
@@ -777,13 +777,13 @@ function Operator:buttons_register()
     self.buttons[i]={pressed=false,time_press=0}
     self.buttons[i].press=function(on)
       -- only allow buttons from available operators
-      if params:get("operators")<self.id then 
-        do return end 
+      if params:get("operators")<self.id then
+        do return end
       end
 
       -- if in write mode and something happens, need to update
-      if self.mode_write then 
-        if i >= B_BUTTON_FIRST and i<= B_BUTTON_LAST then 
+      if self.mode_write then
+        if i>=B_BUTTON_FIRST and i<=B_BUTTON_LAST then
           global_is_changed=true
         end
       end
@@ -853,7 +853,7 @@ function Operator:buttons_register()
   end
   self.buttons[B_PLAY].on_press=function()
     if self.buttons[B_WRITE].pressed and self.buttons[B_SOUND].pressed then
-      snapshot:backup()
+      snapshot:backup(DEFAULT_SAVE)
       do return end
     end
     if not self.mode_play then
@@ -904,7 +904,7 @@ function Operator:buttons_register()
   end
   self.buttons[B_RECORD].on_press=function()
     if self.buttons[B_WRITE].pressed and self.buttons[B_SOUND].pressed then
-      snapshot:restore()
+      snapshot:restore(DEFAULT_SAVE)
     end
   end
   self.buttons[B_RECORD].off_press=function()
@@ -913,6 +913,7 @@ function Operator:buttons_register()
       local fname=recorder:recorded_file()
       if fname~=nil then
         -- there was a recording, load it into the currenet sound
+	-- TODO: go through patterns and erase any instance of this sound?
         self:sound_load(self.cur_snd_id,fname)
       end
     end
@@ -1004,9 +1005,13 @@ function Operator:buttons_register()
             sel_files=false
             if fname~=nil and fname~="cancel" then
               self:debug("selected "..fname)
+              local pathname,filename_w_ext,ext=string.match(fname,"(.-)([^\\/]-%.?([^%.\\/]*))$")
+              -- copy the file to the audio directory
+              local new_fname=_path.audio.."thirtythree/"..filename_w_ext
+              os.execute("cp "..fname.." "..new_fname)
               self.cur_snd_id=b
               sel_adj=ADJ_TRIM
-              self:sound_load(self.cur_snd_id,fname)
+              self:sound_load(self.cur_snd_id,new_fname)
             end
           end)
         else
