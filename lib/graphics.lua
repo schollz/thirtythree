@@ -12,6 +12,7 @@ function Graphics:new(o)
   o.alert_clock_id=nil
   o.alert_msg=""
   o.dirty=false
+  o.animation_frame=0
   return o
 end
 
@@ -154,6 +155,56 @@ function Graphics:show_level(level,time_left)
   -- pitch=-12
   local slider=UI.Slider.new(28,55-9,92,10,level,0,1,{},'right')
   slider:redraw()
+end
+
+
+
+function Graphics:main_screen()
+  self.animation_frame = self.animation_frame + 1
+  if ops[sel_operator].buttons[B_FX].pressed then 
+    if self.animation_frame >=4 and self.animation_frame <= 6 then 
+      self.animation_frame = 13
+    elseif self.animation_frame > 15 then 
+      self.animation_frame = 13
+    elseif self.animation_frame == 12 then 
+      self.animation_frame = 1
+    end
+  else
+    if self.animation_frame == 12 then 
+      self.animation_frame = 1
+    elseif self.animation_frame > 12 then 
+      self.animation_frame = 5
+    end
+  end
+  screen.display_png("/home/we/dust/code/thirtythree/defaults/img/3/pixil-layer-Layer "..self.animation_frame..".png",0,0)
+  screen.stroke()
+  if ops[sel_operator].buttons[B_FX].pressed  then
+   -- ::_::
+   local l=math.floor(math.random(0,2000)/100)+30
+   for i=0,l do 
+    r,s,c=math.random(0,2000)/100+20,self:sin(i/l),self:cos(i/l)
+    sx,sy,gx,gy=s*r+34,c*r+34,s*120,c*120
+    screen.level(7)
+    screen.move(sx,sy)
+    screen.line(64+gx,64+gy)
+    screen.stroke()
+  end
+ end
+end
+
+--- Cos of value
+-- Value is expected to be between 0..1 (instead of 0..360)
+-- @param x value
+function Graphics:cos(x)
+  return math.cos(math.rad(x * 360))
+end
+
+--- Cos of value
+-- Value is expected to be between 0..1 (instead of 0..360)
+-- Result is sign-inverted, as per PICO-8 convention
+-- @param x value
+function Graphics:sin(x)
+  return -math.sin(math.rad(x * 360))
 end
 
 return Graphics
