@@ -39,9 +39,18 @@ function Snapshot:init()
       cloud:reset()
     end
   end
-
 end
 
+
+-- pset_next returns the name of the next pset
+function Snapshot:pset_next()
+  for i=1,99 do
+    fname=_path.data..string.format("thirtythree/thirtythree-%02d.pset",i)
+    if not util.file_exsts(fname) then
+      return fname
+    end
+  end
+end
 
 function Snapshot:list_sounds(filename)
   if not util.file_exists(filename) then
