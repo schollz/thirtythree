@@ -127,7 +127,8 @@ function Sound:play(override)
   -- get new voice
   do_update=false
   if voice==nil then
-    voice=voices:new_voice(self.op_id,self.snd_id,(e-s)*self.wav.duration)
+    -- allocation twice the time we need (supercollider will say when its done)
+    voice=voices:new_voice(self.op_id,self.snd_id,(e-s)*self.wav.duration*2)
   elseif voice==1 then -- main voice
     voice=voices:get_main()
   else
