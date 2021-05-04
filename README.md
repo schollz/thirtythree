@@ -11,7 +11,7 @@ I love the po-33 and for a long time I've wanted something similar for norns (e.
 - thirtythree fx *stack* (except looping fx) so multiple fx can be applied simultanouesly.
 - in addition to recording from line-in, you can also load a file into any bank (see `PARAMS` menu). 
 - you have two choices of layouts (see the `PARAMS` menu) - the classic 5x5 type layout and a compressed 4x6 layout that lets you stamp more of the thirtythree apps across the grid. 
-- you can chain up to four operators on a grid, and there is ~12 note polyphony shared across all of the operators.
+- you can chain up to four operators on a grid, and there is ~10 note polyphony shared across all of the operators.
 - thirtythree doesn't save instantaneously like the po-33 does. you can save manually using the key combo (below) or wait for the auto-save to occur (which occurs after idling for ~3 seconds).
 - thirtythree dumps can be shared via the [norns.online cloud](https://norns.online/share/thirtythree/).
 
