@@ -41,7 +41,7 @@ function Recorder:record_start()
   end
   -- determine the new file name
   local current_max,num_files=self:files()
-  fname="sample"..current_max..".wav"
+  fname="sample_"..random_string(4).."_"..current_max..".wav"
   self.file=_path.audio.."thirtythree/"..fname
   audio.tape_record_open(self.file)
   audio.tape_record_start()
@@ -74,7 +74,7 @@ function Recorder:files()
   local num_files=0
   for _,fname in ipairs(os.list_files(_path.audio.."thirtythree")) do
     num_files=num_files+1
-    local loop_num=tonumber(string.match(fname,'sample(%d*)'))
+    local loop_num=tonumber(string.match(fname,'%d+'))
     if loop_num~=nil and loop_num>current_max then
       current_max=loop_num
     end

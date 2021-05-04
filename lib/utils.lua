@@ -138,4 +138,13 @@ function path_split(filename)
   return pathname,fname,ext
 end
 
+local charset = {}  do -- [0-9a-zA-Z]
+    for c = 65, 90  do table.insert(charset, string.char(c)) end
+    for c = 97, 122 do table.insert(charset, string.char(c)) end
+end
 
+function random_string(length)
+    if not length or length <= 0 then return '' end
+    math.randomseed(os.clock()^5)
+    return random_string(length - 1) .. charset[math.random(1, #charset)]
+end
