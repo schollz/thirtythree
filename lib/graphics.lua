@@ -179,7 +179,7 @@ function Graphics:main_screen()
   screen.display_png("/home/we/dust/code/thirtythree/defaults/img/3/pixil-layer-Layer "..self.animation_frame..".png",0,0)
   screen.stroke()
   if ops[sel_operator].buttons[B_FX].pressed and
-    (animation_frame>=13 and animation_frame<=15) then
+    (self.animation_frame>=13 and self.animation_frame<=15) then
     -- ::_::
     local l=math.floor(math.random(0,2000)/100)+30
     for i=0,l do
