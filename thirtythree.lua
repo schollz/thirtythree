@@ -1,6 +1,6 @@
--- thirtythree
+-- thirtythree v0.1.0
 --
---
+-- po-33 for the norns+grid
 
 
 mode_debug=true
