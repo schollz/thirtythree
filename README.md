@@ -1,8 +1,8 @@
 # thirtythree
 
-![image](https://user-images.githubusercontent.com/6550035/116799473-85c14780-aaae-11eb-8430-1987c69ce517.jpg)
+a po-33 clone for norns+grid.
 
-A po-33 clone for norns+grid
+![image](https://user-images.githubusercontent.com/6550035/116799473-85c14780-aaae-11eb-8430-1987c69ce517.jpg)
 
 https://vimeo.com/545281946
 
@@ -27,7 +27,7 @@ I love the po-33 and for a long time I've wanted something similar for norns (e.
 ## documentation
 
 
-[the official guide](https://teenage.engineering/guides/po-33/en) for the po-33 explains the usage for this app as thirtythree follows all of the same key combos. basics:
+[the official te guide](https://teenage.engineering/guides/po-33/en) for the po-33 explains the usage for this app as thirtythree follows all of the same key combos. basics:
 
 - [x] melodic (buttons 1-8) and drum splicing (buttons 9-16)
 - [x] record with <kbd>record</kbd>+<kbd>1-16</kbd> (option to load files instead in parameters)
@@ -102,6 +102,12 @@ once you run that app and choose a username, you can then use thirtythree to upl
 - sometimes there is race condition in the bpm, if you get wacko pattern stepping, restart. so far I haven't been able to reproduce consistently.
 - using 6/8 beat fx might cause operators to get out of sync. if this happens, stop all the patterns and start them again and they should sync back up.
 
+
+## thanks :pray:
+
+thank you @license and @catfact for never ceasing to teach me a half dozen supercollider tricks in half as many lines of code. thanks to @proswell and [@CrazyEmporer893](https://www.instagram.com/crazyemperor893/) for beta testing. thanks to @eigen for the [p8 library](https://github.com/p3r7/p8) which was a jumping off point for the graphics and source of the [the manga](https://github.com/p3r7/p8/blob/main/manga_effect.lua). thanks to @glia for allow me to include [a yelidek kit](https://ifizu.bandcamp.com/album/yelidek) as the default drum kit.  thank you [@jredou_ko](https://www.instagram.com/jredou_ko/) for help with the graphics.
+
+
 ## install
 
 install with 
@@ -110,11 +116,7 @@ install with
 ;install https://github.com/schollz/thirtythree
 ```
 
-the first time you run thirtythree it will update your norns with the [aubio library](https://aubio.org/) which is used to generate onsets. this might take 10-15 seconds.
-
-## thank you
-
-thank you @license and @catfact for never ceasing to teach me a half dozen supercollider tricks in half as many lines of code. thanks to @proswell and @CrazyEmporer893 for beta testing. thanks to @eigen for the [p8 library](https://github.com/p3r7/p8) which was a jumping off point for the graphics and source of the [the manga](https://github.com/p3r7/p8/blob/main/manga_effect.lua). thanks to @glia for allow me to include [a yelidek kit](https://ifizu.bandcamp.com/album/yelidek) as the default drum kit.  thank you [@jredou_ko](https://www.instagram.com/jredou_ko/) for help with the graphics.
+the first time you run thirtythree it will update your norns with the [aubio library](https://aubio.org/) which is used to generate default onsets. this might take 10-15 seconds.
 
 ## todo
 
