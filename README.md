@@ -4,12 +4,15 @@
 
 A po-33 clone for norns+grid
 
+https://vimeo.com/545281946
+
+
 I love the po-33 and for a long time I've wanted something similar for norns (e.g. a micro-sampler/splicer + sequencer). I tried making something similar in [abacus](https://llllllll.co/t/abacus) but I didn't have a grid so the ux was very limited and ultimately gave me a bad flow. after making [amen](https://llllllll.co/t/amen) which is a great looper+fx for me, I realized that a lot of my work could be re-used to make a splicer+sequencer too. instead of designing a ux from scratch like I did for abacus, I decided to just copy the ux from the po-33 to have complete skill transferability between instruments (much like you would have between two pianos or two saxophones). however there are some key differences:
 
-- thirtythree is based in the norns which has higher sound quality (48khz, 24bit, stereo samples), though higher is not always better :)
+- thirtythree is based in the norns which has higher sound quality (48khz, 24bit, stereo samples (though higher is not always better))
 - thirtythree fx are *sound*-specific instead of global (see `PARAMS` menu to toggle global fx in the po-33). 
 - thirtythree fx *stack* (except looping fx) so multiple fx can be applied simultanouesly.
-- in addition to recording from line-in, you can also load a file into any bank (see `PARAMS` menu). 
+- in addition to recording from line-in, you can also load a file into any bank (see `PARAMS` menu to toggle this bheavior). 
 - you have two choices of layouts (see the `PARAMS` menu) - the classic 5x5 type layout and a compressed 4x6 layout that lets you stamp more of the thirtythree apps across the grid. 
 - you can chain up to four operators on a grid, and there is ~10 note polyphony shared across all of the operators.
 - thirtythree doesn't save instantaneously like the po-33 does. you can save manually using the key combo (below) or wait for the auto-save to occur (which occurs after idling for ~3 seconds).
@@ -94,12 +97,29 @@ once you run that app and choose a username, you can then use thirtythree to upl
 
 ### known limitations/bugs
 
-- backups will not restore if you move/delete the original audio. backups store a reference to the audio file and not the actual audio data (stretch goal to fix this).
+- backups will not restore if you move/delete the `~/dust/audio/thirtythree` audio folder, where all the audio data is stored.
 - looping fx don't stack.
 - sometimes there is race condition in the bpm, if you get wacko pattern stepping, restart. so far I haven't been able to reproduce consistently.
-- using 6/8 beat fx might cause operators to get out of sync. operators will try to stay in sync, but if this happens, stop all the patterns and start them again.
+- using 6/8 beat fx might cause operators to get out of sync. if this happens, stop all the patterns and start them again and they should sync back up.
 
+## install
+
+install with 
+
+```
+;install https://github.com/schollz/thirtythree
+```
+
+the first time you run thirtythree it will update your norns with the [aubio library](https://aubio.org/) which is used to generate onsets. this might take 10-15 seconds.
+
+## thank you
+
+thank you @license and @catfact for never ceasing to teach me a half dozen supercollider tricks in half as many lines of code. thanks to @proswell and @CrazyEmporer893 for beta testing. thanks to @eigen for the [p8 library](https://github.com/p3r7/p8) which was a jumping off point for the graphics and source of the [the manga](https://github.com/p3r7/p8/blob/main/manga_effect.lua). thanks to @glia for allow me to include [a yelidek kit](https://ifizu.bandcamp.com/album/yelidek) as the default drum kit.  thank you [@jredou_ko](https://www.instagram.com/jredou_ko/) for help with the graphics.
 
 ## todo
 
 - [ ] show alert when chaining pattern / add to ui?
+
+## license
+
+MIT
