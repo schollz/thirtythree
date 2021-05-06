@@ -41,7 +41,7 @@ function Dev:new(o)
     ops[i].cur_snd_id=16
   end
 
-  sel_adj=ADJ_TRIM
+  -- sel_adj=ADJ_TRIM
   -- snapshot:backup()
   -- snapshot:restore()
   return o
