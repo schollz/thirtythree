@@ -40,6 +40,7 @@ I love the po-33 and for a long time I've wanted something similar for norns (e.
 - [x] adjust filter (lp+hp) with <kbd>E2</kbd> and <kbd>E3</kbd>
 - [x] adjust trim (start+end) with <kbd>E2</kbd> and <kbd>E3</kbd>
 - [x] delete sound with <kbd>record</kbd>+<kbd>sound</kbd>
+- [ ] copy sound with <kbd>write</kbd>+</kbd>sound</kbd>+<kbd>1-16</kbd>
 - [ ] copy slice with <kbd>write</kbd>+<kbd>sound</kbd>+<kbd>9-16</kbd>+<kbd>1-16</kbd>
 - [x] add effects with <kbd>fx</kbd>+<kbd>1-16</kbd>
 - [x] change swing with <kbd>bpm</kbd>+<kbd>K3</kbd>
