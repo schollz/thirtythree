@@ -1,4 +1,4 @@
--- thirtythree v0.1.0
+-- thirtythree v0.2.0
 --
 -- po-33 for the norns+grid
 
