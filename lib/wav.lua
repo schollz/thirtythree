@@ -91,6 +91,12 @@ function Wav:get(filename)
         table.insert(onsets, onset)
       end
     end
+    if #onsets==1 then
+      onsets={}
+      for i=1,16 do
+        table.insert(onsets,(i-1)/16.0)
+      end
+    end
     table.insert(onsets,1.0)
     self.files[filename].onsets={}
     for i,_ in ipairs(onsets) do
