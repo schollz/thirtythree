@@ -64,7 +64,7 @@ function Operator:init()
   self.cur_smpl_id=1
   self.cur_ptn_id=1
   self.cur_ptn_step=0
-  self.cur_ptn_sync_step=0
+  self.cur_ptn_sync_step=-1
   self.cur_fx_id={}
   self.skip_sound_once=0
 
@@ -407,8 +407,7 @@ function Operator:pattern_step()
   -- self:debug("cur_ptn_step: "..self.cur_ptn_step)
 
   -- jump to next pattern or return to beginning
-  print(self.cur_ptn_step,self.cur_ptn_sync_step)
-  if self.cur_ptn_step>16 or self.cur_ptn_sync_step%17==0 then
+  if self.cur_ptn_step>16 or self.cur_ptn_sync_step%16==0 then
     self:debug("next pattern")
     -- goto next pattern
     self.pattern_chain_index=self.pattern_chain_index+1
@@ -419,6 +418,7 @@ function Operator:pattern_step()
     self.cur_ptn_step=1
     self:debug("continuing with pattern "..self.cur_ptn_id)
   end
+  print(self.cur_ptn_step,self.cur_ptn_sync_step)
 
   -- if holding down write after selecting parameter,
   -- then continually lock in that parameter
@@ -646,7 +646,7 @@ end
 function Operator:pattern_reset()
   self:debug("pattern_reset")
   self.cur_ptn_step=0
-  self.cur_ptn_sync_step=0 -- resets the sync
+  self.cur_ptn_sync_step=-1 -- resets the sync
   self.pattern_chain_index=1
   self.cur_ptn_id=self.pattern_chain[1]
 
