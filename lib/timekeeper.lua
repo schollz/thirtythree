@@ -87,4 +87,8 @@ function Timekeeper:hard_restart()
   voices:reset()
 end
 
+function Timekeeper:stop()
+  self.lattice:stop()
+end
+
 return Timekeeper

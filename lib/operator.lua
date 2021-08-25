@@ -643,7 +643,7 @@ function Operator:pattern_step()
   self.skip_sound_once=0
 end
 
-function Operator:pattern_reset()
+function Operator:pattern_reset(toggle_play)
   self:debug("pattern_reset")
   self.cur_ptn_step=0
   self.cur_ptn_sync_step=-1 -- resets the sync
@@ -661,8 +661,16 @@ function Operator:pattern_reset()
     end
   end
   if not others_playing then
+    timekeeper:stop()
+    if toggle_play then 
+      self.mode_play=not self.mode_play
+    end
     self:debug("hard restart")
     timekeeper:hard_restart()
+    do return end
+  end
+  if toggle_play then 
+    self.mode_play=not self.mode_play
   end
 end
 
@@ -876,9 +884,10 @@ function Operator:buttons_register()
       engine.tt_amp(2,0,1)
     end
     if not self.mode_play then
-      self:pattern_reset()
+      self:pattern_reset(true) -- toggle play inside reset
+    else
+      self.mode_play = not self.mode_play
     end
-    self.mode_play=not self.mode_play
   end
   self.buttons[B_PLAY].light=function()
     if self.mode_play then
