@@ -407,7 +407,9 @@ function Operator:pattern_step()
   -- self:debug("cur_ptn_step: "..self.cur_ptn_step)
 
   -- jump to next pattern or return to beginning
-  if self.cur_ptn_step>16 or self.cur_ptn_sync_step%16==0 then
+  print(self.cur_ptn_step,self.cur_ptn_sync_step)
+  if self.cur_ptn_step>16 or self.cur_ptn_sync_step%17==0 then
+    self:debug("next pattern")
     -- goto next pattern
     self.pattern_chain_index=self.pattern_chain_index+1
     if self.pattern_chain_index>#self.pattern_chain then
@@ -642,6 +644,7 @@ function Operator:pattern_step()
 end
 
 function Operator:pattern_reset()
+  self:debug("pattern_reset")
   self.cur_ptn_step=0
   self.cur_ptn_sync_step=0 -- resets the sync
   self.pattern_chain_index=1
@@ -852,6 +855,7 @@ function Operator:buttons_register()
     end
   end
   self.buttons[B_PLAY].on_press=function()
+    self:debug("pressed play")
     if self.buttons[B_WRITE].pressed and self.buttons[B_SOUND].pressed then
       snapshot:backup(DEFAULT_SAVE)
       do return end
