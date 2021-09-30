@@ -18,6 +18,26 @@ function Voices:new(o)
     if path=="voicedone" then
       print("voice done: "..args[1])
       o.played[tonumber(args[1])]={snd_id=0,last_played=0,locked=false,duration=0}
+    elseif path=="onsets" then
+      local fname=args[1]
+      local dur=tonumber(args[2])
+      local data=args[3]
+      local onsets={}
+      print("onsets detected")
+      print(fname,dur)
+      for substring in data:gmatch("%S+") do
+        if string.find(substring,",") then 
+          substring=substring:sub(1,-2)
+          print(tonumber(substring))
+          table.insert(onsets,tonumber(substring)/dur)
+        end
+      end
+      if #onsets==0 then 
+        for i=1,16 do
+          table.insert(onsets,(i-1)/16.0)
+        end
+      end
+      global_onsets[fname]=onsets
     end
   end
 

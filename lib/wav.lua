@@ -71,33 +71,40 @@ function Wav:get(filename)
     self.files[filename].sc_index=self.sc_index
 
     -- onset detection
-    local onset_string = ""
-    if util.file_exists(filename..".onsets") then 
-      self:debug("reading file: "..filename..".onsets")
-      onset_string = os.read_file(filename..".onsets")
-    else
-      cmd="aubioonset -i "..filename.." -B 4096 -H 2048 -t 0.3 -M 0.3"
-      self:debug("using aubioonset: "..cmd)
-      onset_string = os.capture(cmd)
-    end
-    onsets = {0}
-    for substring in onset_string:gmatch("%S+") do
-      local onset=tonumber(substring)/self.files[filename].duration
-      if onset ~= 0 then
-        if onset==nil then
-          print("error with onset")
-        end
-        -- self:debug(tonumber(substring),self.files[filename].duration,onset)
-        table.insert(onsets, onset)
-      end
-    end
-    if #onsets==1 then
+    -- local onset_string = ""
+    -- if util.file_exists(filename..".onsets") then 
+    --   self:debug("reading file: "..filename..".onsets")
+    --   onset_string = os.read_file(filename..".onsets")
+    -- else
+    --   cmd="aubioonset -i "..filename.." -B 4096 -H 2048 -t 0.3 -M 0.3"
+    --   self:debug("using aubioonset: "..cmd)
+    --   onset_string = os.capture(cmd)
+    -- end
+    -- onsets = {0}
+    -- for substring in onset_string:gmatch("%S+") do
+    --   local onset=tonumber(substring)/self.files[filename].duration
+    --   if onset ~= 0 then
+    --     if onset==nil then
+    --       print("error with onset")
+    --     end
+    --     -- self:debug(tonumber(substring),self.files[filename].duration,onset)
+    --     table.insert(onsets, onset)
+    --   end
+    -- end
+    local onsets=global_onsets[filename]
+    if onsets==nil then
+      print("no onsets found, dividing into 16")
       onsets={}
       for i=1,16 do
         table.insert(onsets,(i-1)/16.0)
       end
+    else
+      print("got "..#onsets.." onsets")
     end
     table.insert(onsets,1.0)
+    if onsets[1]>0.1 then
+      table.insert(onsets,1,0)
+    end
     self.files[filename].onsets={}
     for i,_ in ipairs(onsets) do
       if i>1 then

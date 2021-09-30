@@ -2,7 +2,6 @@
 --
 -- po-33 for the norns+grid
 
-
 mode_debug=true
 
 --json
@@ -29,6 +28,8 @@ global_blink=1
 global_is_changed=false
 local_idle_count=0
 ops={} -- operators
+global_onsets={}
+global_onsets_detecting={}
 
 -- engine
 engine.name="Thirtythree"
@@ -78,7 +79,7 @@ function startup()
   cloud:init()
 
   graphics:alert("loading")
-  check_and_install_aubioonset()
+  --check_and_install_aubioonset()
 
   -- initialize operators
   for i=1,4 do

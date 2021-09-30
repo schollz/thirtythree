@@ -54,14 +54,35 @@ function Sound:unmarshal(content)
 end
 
 function Sound:load(filename)
-  self.wav=wav:get(filename)
-  -- partition transients
-  if (not self.melodic) and self.wav.onsets[self.id]~=nil then
-    self.s=self.wav.onsets[self.id][1]
-    self.e=self.wav.onsets[self.id][2]
+  if self.melodic then 
+    self.wav=wav:get(filename)
+    self.loaded=true
+    do return end
+  end
+  if global_onsets_detecting[filename]==nil then
+    global_onsets_detecting[filename]=true
+    engine.tt_onset(filename)
   end
 
-  self.loaded=true
+  clock.run(function()
+    -- wait for onsets before getting
+    if global_onsets[filename]==nil then
+      for i=1,20 do
+        if global_onsets[filename]~=nil then 
+          break
+        end
+        clock.sleep(0.05)
+      end
+    end
+    self.wav=wav:get(filename)
+    -- partition transients
+    if (not self.melodic) and self.wav.onsets[self.id]~=nil then
+      self.s=self.wav.onsets[self.id][1]
+      self.e=self.wav.onsets[self.id][2]
+    end
+
+    self.loaded=true
+  end)
 end
 
 function Sound:dump()
